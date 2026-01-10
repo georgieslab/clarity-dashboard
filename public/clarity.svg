@@ -1,0 +1,13 @@
+<svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Outer eye shape -->
+  <ellipse cx="24" cy="24" rx="20" ry="12" stroke="#faf8f3" stroke-width="2.5" stroke-linecap="round"/>
+  
+  <!-- Inner circle (pupil) -->
+  <circle cx="24" cy="24" r="6" fill="#faf8f3"/>
+  
+  <!-- Iris ring -->
+  <circle cx="24" cy="24" r="9" stroke="#0d7377" stroke-width="2" fill="none"/>
+  
+  <!-- Highlight dot -->
+  <circle cx="26" cy="22" r="2" fill="#d96846"/>
+</svg>
