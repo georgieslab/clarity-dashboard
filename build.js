@@ -1,5 +1,5 @@
 import * as esbuild from 'esbuild';
-import { readFileSync, writeFileSync, mkdirSync } from 'fs';
+import { readFileSync, writeFileSync, mkdirSync, cpSync } from 'fs';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
 
@@ -38,4 +38,10 @@ const html = readFileSync('index.html', 'utf-8')
 
 writeFileSync(join(__dirname, 'dist', 'index.html'), html);
 
-console.log('✅ Build complete! CSS bundled! Run: node server.js');
+// Copy public folder to dist
+try {
+  cpSync('public', 'dist', { recursive: true });
+  console.log('✅ Build complete! CSS bundled! Public files copied! Run: node server.js');
+} catch (err) {
+  console.log('✅ Build complete! CSS bundled! (No public folder to copy)');
+}

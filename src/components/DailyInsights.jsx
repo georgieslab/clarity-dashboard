@@ -2,11 +2,12 @@ import { useState, useEffect } from 'react';
 import { storage } from '../utils/storage';
 import { generateWeeklyInsights } from '../utils/claude';
 
-export default function WeeklyInsights() {
+export default function DailyInsights() {
   const [insights, setInsights] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [lastGenerated, setLastGenerated] = useState(null);
+  const [countdown, setCountdown] = useState('');
 
   // Load cached insights on mount
   useEffect(() => {
@@ -19,6 +20,34 @@ export default function WeeklyInsights() {
     };
     loadData();
   }, []);
+
+  // Real-time countdown
+  useEffect(() => {
+    if (!lastGenerated) return;
+
+    const updateCountdown = () => {
+      const lastGen = new Date(lastGenerated);
+      const nextAllowed = new Date(lastGen.getTime() + 24 * 60 * 60 * 1000);
+      const now = new Date();
+      const diff = nextAllowed - now;
+
+      if (diff <= 0) {
+        setCountdown('');
+        return;
+      }
+
+      const hours = Math.floor(diff / (1000 * 60 * 60));
+      const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+      setCountdown(`${hours}h ${minutes}m ${seconds}s`);
+    };
+
+    updateCountdown();
+    const interval = setInterval(updateCountdown, 1000);
+
+    return () => clearInterval(interval);
+  }, [lastGenerated]);
 
   const collectData = async () => {
     // Get all data from storage
@@ -136,11 +165,11 @@ export default function WeeklyInsights() {
         );
       }
       
-      if (section.includes('**One Action This Week**')) {
+      if (section.includes('**One Action This Week**') || section.includes('**One Action Today**')) {
         return (
           <div key={i} className="insight-section action">
-            <h3 className="insight-header action">🎯 One Action This Week</h3>
-            <p className="insight-text">{section.replace('**One Action This Week**', '').trim()}</p>
+            <h3 className="insight-header action">🎯 One Action Today</h3>
+            <p className="insight-text">{section.replace('**One Action This Week**', '').replace('**One Action Today**', '').trim()}</p>
           </div>
         );
       }
@@ -156,7 +185,7 @@ export default function WeeklyInsights() {
 
   return (
     <div className="tracker-card insights-card">
-      <h2>Weekly Insights</h2>
+      <h2>💡 Daily Insights</h2>
 
       {error && (
         <div className="error-message">
@@ -172,9 +201,9 @@ export default function WeeklyInsights() {
 
       {!insights && !loading && !error && (
         <div className="insights-empty">
-          <p>Generate AI-powered insights from your weekly data.</p>
+          <p>Generate AI-powered insights from your daily progress.</p>
           <p className="insights-hint">
-            Claude will analyze your sobriety, job search, and therapy progress.
+            Claude will analyze your sobriety, job search, and therapy data.
           </p>
         </div>
       )}
@@ -210,7 +239,7 @@ export default function WeeklyInsights() {
         disabled={loading || !canGenerate()}
         className="generate-btn"
       >
-        {loading ? 'Generating...' : canGenerate() ? 'Generate Insights' : 'Available in 24h'}
+        {loading ? 'Generating...' : canGenerate() ? 'Generate Insights' : `Available in ${countdown}`}
       </button>
     </div>
   );
