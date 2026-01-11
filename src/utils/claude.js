@@ -1,6 +1,9 @@
 // Client-side functions that call our secure backend
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+// CRITICAL FIX: Use empty string instead of localhost
+// This makes fetch use relative paths: /api/chat instead of http://localhost:3000/api/chat
+// Works in production because backend and frontend are on same domain
+const API_URL = import.meta.env.VITE_API_URL || '';
 
 export async function generateWeeklyInsights(data) {
   const { sobrietyDays, applications, therapySessions } = data;
