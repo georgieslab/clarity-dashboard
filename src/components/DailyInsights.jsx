@@ -49,6 +49,7 @@ export default function DailyInsights() {
     return () => clearInterval(interval);
   }, [lastGenerated]);
 
+  // FIXED: Return data in the format claude.js expects
   const collectData = async () => {
     // Get all data from storage
     const sobriety = await storage.get('sobriety') || {};
@@ -56,54 +57,19 @@ export default function DailyInsights() {
     const therapy = await storage.get('therapy') || [];
 
     // Calculate sobriety days
-    let daysClean = 0;
+    let sobrietyDays = 0;
     if (sobriety.startDate) {
       const start = new Date(sobriety.startDate);
       const today = new Date();
-      daysClean = Math.floor((today - start) / (1000 * 60 * 60 * 24));
+      sobrietyDays = Math.floor((today - start) / (1000 * 60 * 60 * 24));
     }
 
-    // Get recent applications (last 7 days)
-    const weekAgo = new Date();
-    weekAgo.setDate(weekAgo.getDate() - 7);
-    const recentApps = applications.filter(a => new Date(a.dateApplied) >= weekAgo);
-
-    // Get therapy stats
-    const today = new Date();
-    const thisWeek = therapy.filter(s => {
-      const sessionDate = new Date(s.date);
-      return sessionDate >= weekAgo;
-    });
-
-    // Extract recent topics
-    const recentTopics = thisWeek
-      .filter(s => s.topics)
-      .flatMap(s => s.topics.split(',').map(t => t.trim()))
-      .slice(0, 5);
-
+    // Return in the format generateWeeklyInsights expects:
+    // { sobrietyDays, applications, therapySessions }
     return {
-      sobriety: {
-        daysClean,
-        startDate: sobriety.startDate
-      },
-      jobSearch: {
-        total: applications.length,
-        applied: applications.filter(a => a.status === 'applied').length,
-        interviewed: applications.filter(a => a.status === 'interviewed').length,
-        rejected: applications.filter(a => a.status === 'rejected').length,
-        offered: applications.filter(a => a.status === 'offered').length,
-        recent: recentApps
-      },
-      therapy: {
-        total: therapy.length,
-        thisWeek: thisWeek.length,
-        thisMonth: therapy.filter(s => {
-          const sessionDate = new Date(s.date);
-          return sessionDate.getMonth() === today.getMonth() && 
-                 sessionDate.getFullYear() === today.getFullYear();
-        }).length,
-        recentTopics
-      }
+      sobrietyDays,
+      applications: Array.isArray(applications) ? applications : [],
+      therapySessions: Array.isArray(therapy) ? therapy : []
     };
   };
 
@@ -124,7 +90,8 @@ export default function DailyInsights() {
         timestamp: new Date().toISOString()
       });
     } catch (err) {
-      setError(err.message);
+      console.error('Insights generation error:', err);
+      setError(err.message || 'Failed to generate insights');
     } finally {
       setLoading(false);
     }
@@ -147,36 +114,36 @@ export default function DailyInsights() {
     
     return sections.map((section, i) => {
       // Check if it's a header line
-      if (section.includes('**What\'s Working**')) {
+      if (section.includes('What\'s Working') || section.includes('✨')) {
         return (
           <div key={i} className="insight-section">
             <h3 className="insight-header working">✨ What's Working</h3>
-            <p className="insight-text">{section.replace('**What\'s Working**', '').trim()}</p>
+            <p className="insight-text">{section.replace(/\*\*.*?\*\*/g, '').replace('✨', '').trim()}</p>
           </div>
         );
       }
       
-      if (section.includes('**What Needs Attention**')) {
+      if (section.includes('What Needs Attention') || section.includes('⚠️')) {
         return (
           <div key={i} className="insight-section">
             <h3 className="insight-header attention">⚠️ What Needs Attention</h3>
-            <p className="insight-text">{section.replace('**What Needs Attention**', '').trim()}</p>
+            <p className="insight-text">{section.replace(/\*\*.*?\*\*/g, '').replace('⚠️', '').trim()}</p>
           </div>
         );
       }
       
-      if (section.includes('**One Action This Week**') || section.includes('**One Action Today**')) {
+      if (section.includes('One Action') || section.includes('🎯')) {
         return (
           <div key={i} className="insight-section action">
-            <h3 className="insight-header action">🎯 One Action Today</h3>
-            <p className="insight-text">{section.replace('**One Action This Week**', '').replace('**One Action Today**', '').trim()}</p>
+            <h3 className="insight-header action">🎯 One Action This Week</h3>
+            <p className="insight-text">{section.replace(/\*\*.*?\*\*/g, '').replace('🎯', '').trim()}</p>
           </div>
         );
       }
       
-      // Title or other text
+      // Skip title sections
       if (section.includes('##')) {
-        return null; // Skip the title
+        return null;
       }
       
       return null;
@@ -192,8 +159,7 @@ export default function DailyInsights() {
           <p>⚠️ {error}</p>
           {error.includes('API key') && (
             <p className="error-hint">
-              Add your Anthropic API key to <code>.env</code> file:<br/>
-              <code>VITE_ANTHROPIC_API_KEY=your_key_here</code>
+              Add your Anthropic API key to environment variables
             </p>
           )}
         </div>
