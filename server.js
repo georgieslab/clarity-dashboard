@@ -55,6 +55,8 @@ app.post('/api/voice/converse', async (req, res) => {
     const promptText = (req.body.transcript || req.body.message || req.body.text || "").trim() || "Hello Clarity";
     const context = req.body.context;
 
+    const hasImage = Boolean(req.body.image && req.body.image.base64);
+
     const systemPrompt = `You are "Lumen", an executive wellness and telemetry copilot built on OpenAI ChatGPT technology.
 Identity & Persona:
 - You are Lumen, created with OpenAI ChatGPT. You are NOT Claude or Anthropic. If the user asks about your model, you are Lumen, powered by OpenAI ChatGPT.
@@ -64,7 +66,7 @@ Tone & Guidelines:
 - Validate effort and emotional weight with sincere respect, never patronizing.
 - When they mention stress or cravings, offer gentle grounding and mindful perspective.
 - Keep answers concise, conversational, and direct (1-3 sentences maximum so speech flows naturally).
-- NEVER use markdown headers, asterisks, bullet points, or emojis, since your output is spoken directly via text-to-speech.
+- NEVER use markdown headers, asterisks, bullet points, or emojis, since your output is spoken directly via text-to-speech.${hasImage ? '\n- The user attached an image payload. Carefully analyze and describe key details from the image in your response with executive/mindful perspective.' : ''}
 User Context telemetry:
 - Sobriety streak: ${context?.sobrietyDays ?? 0} days clean
 - Job applications tracked: ${context?.applicationsCount ?? 0}
@@ -90,7 +92,7 @@ User Context telemetry:
 
     // Ensure current promptText and optional image are added
     const userContent = [];
-    if (req.body.image && req.body.image.base64) {
+    if (hasImage) {
       try {
         const base64Data = req.body.image.base64.replace(/^data:image\/\w+;base64,/, '');
         let format = (req.body.image.mimeType || 'image/jpeg').split('/')[1] || 'jpeg';
@@ -131,9 +133,16 @@ User Context telemetry:
 
     let replyText = "";
 
-    // 1. Try Amazon Bedrock (OpenAI ChatGPT models)
+    // 1. Try Amazon Bedrock (OpenAI ChatGPT & Multimodal Vision models)
     if (process.env.AWS_ACCESS_KEY_ID && process.env.AWS_SECRET_ACCESS_KEY) {
-      const candidateModels = [
+      const candidateModels = hasImage ? [
+        "eu.anthropic.claude-3-5-sonnet-20241022-v2:0",
+        "us.anthropic.claude-3-5-sonnet-20241022-v2:0",
+        "anthropic.claude-3-haiku-20240307-v1:0",
+        process.env.BEDROCK_MODEL_ID,
+        "openai.gpt-oss-120b-1:0",
+        "openai.gpt-6.1-sol"
+      ].filter(Boolean) : [
         process.env.BEDROCK_MODEL_ID,
         "openai.gpt-oss-120b-1:0",
         "openai.gpt-6.1-sol",
@@ -147,7 +156,7 @@ User Context telemetry:
           messages: finalMessages,
           system: [{ text: systemPrompt }],
           inferenceConfig: {
-            maxTokens: 300,
+            maxTokens: 350,
             temperature: 0.7
           }
         });
@@ -166,6 +175,50 @@ User Context telemetry:
         } catch (err) {
           console.warn(`Model ${model} failed (${err.name}: ${err.message}). Trying next candidate...`);
         }
+      }
+    }
+
+    // 2. Anthropic Direct SDK Fallback (especially for Vision & Multimodal analysis)
+    const anthropicKey = process.env.VITE_ANTHROPIC_API_KEY || process.env.ANTHROPIC_API_KEY;
+    if (!replyText && anthropicKey) {
+      try {
+        const sdkClient = new Anthropic({ apiKey: anthropicKey });
+        const userMsgContent = [];
+
+        if (hasImage) {
+          const base64Data = req.body.image.base64.replace(/^data:image\/\w+;base64,/, '');
+          let mediaType = req.body.image.mimeType || 'image/jpeg';
+          if (mediaType === 'image/jpg') mediaType = 'image/jpeg';
+
+          userMsgContent.push({
+            type: 'image',
+            source: {
+              type: 'base64',
+              media_type: mediaType,
+              data: base64Data
+            }
+          });
+        }
+
+        userMsgContent.push({
+          type: 'text',
+          text: promptText || "Analyze this image and provide mindful executive guidance."
+        });
+
+        const msgResponse = await sdkClient.messages.create({
+          model: 'claude-sonnet-4-20250514',
+          max_tokens: 350,
+          system: systemPrompt,
+          messages: [{ role: 'user', content: userMsgContent }]
+        });
+
+        const textRes = msgResponse.content?.find(c => c.text)?.text || msgResponse.content?.[0]?.text || "";
+        if (textRes && textRes.trim().length > 0) {
+          replyText = textRes.trim();
+          console.log("Voice converse successfully responded via Anthropic SDK vision fallback");
+        }
+      } catch (sdkErr) {
+        console.warn("Anthropic SDK vision fallback error:", sdkErr.message);
       }
     }
 
