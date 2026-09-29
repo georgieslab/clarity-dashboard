@@ -52,7 +52,7 @@ export default function SobrietyTracker({ isCollapsed, onToggleCollapse, onHide 
   };
 
   return (
-    <div className={`tracker-card ${isCollapsed ? 'collapsed' : ''}`}>
+    <div className={`tracker-card card-sobriety ${isCollapsed ? 'collapsed' : ''}`}>
       <div className="card-header" onClick={isCollapsed ? onToggleCollapse : undefined}>
         <h2>
           <span className="card-title-group" onClick={onToggleCollapse} role="button" tabIndex={0}>

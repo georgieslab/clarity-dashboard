@@ -88,11 +88,31 @@ User Context telemetry:
       }
     }
 
-    // Ensure current promptText is added
+    // Ensure current promptText and optional image are added
+    const userContent = [];
+    if (req.body.image && req.body.image.base64) {
+      try {
+        const base64Data = req.body.image.base64.replace(/^data:image\/\w+;base64,/, '');
+        let format = (req.body.image.mimeType || 'image/jpeg').split('/')[1] || 'jpeg';
+        if (format === 'jpg') format = 'jpeg';
+        if (!['png', 'jpeg', 'gif', 'webp'].includes(format)) format = 'jpeg';
+
+        userContent.push({
+          image: {
+            format,
+            source: { bytes: Buffer.from(base64Data, 'base64') }
+          }
+        });
+      } catch (imgErr) {
+        console.warn('Could not parse image payload for Bedrock:', imgErr.message);
+      }
+    }
+    userContent.push({ text: promptText || "Please analyze this image and provide mindful feedback." });
+
     if (formattedMessages.length > 0 && formattedMessages[formattedMessages.length - 1].role === 'user') {
-      formattedMessages[formattedMessages.length - 1].content[0].text += `\n${promptText}`;
+      formattedMessages[formattedMessages.length - 1].content = userContent;
     } else {
-      formattedMessages.push({ role: 'user', content: [{ text: promptText }] });
+      formattedMessages.push({ role: 'user', content: userContent });
     }
 
     // Bedrock ConverseCommand requires the first message to be role 'user'
@@ -106,7 +126,7 @@ User Context telemetry:
       finalMessages.shift();
     }
     if (finalMessages.length === 0) {
-      finalMessages = [{ role: 'user', content: [{ text: promptText }] }];
+      finalMessages = [{ role: 'user', content: userContent }];
     }
 
     let replyText = "";

@@ -69,7 +69,7 @@ export default function JobSearchTracker({ isCollapsed, onToggleCollapse, onHide
   };
 
   return (
-    <div className={`tracker-card ${isCollapsed ? 'collapsed' : ''}`}>
+    <div className={`tracker-card card-pipeline ${isCollapsed ? 'collapsed' : ''}`}>
       <div className="card-header" onClick={isCollapsed ? onToggleCollapse : undefined}>
         <h2>
           <span className="card-title-group" onClick={onToggleCollapse} role="button" tabIndex={0}>
@@ -206,9 +206,9 @@ export default function JobSearchTracker({ isCollapsed, onToggleCollapse, onHide
                             <span className="interview-chip-text">INTERVIEW STAGE</span>
                           </div>
                         )}
-                        <h3>{app.company}</h3>
-                        <p>{app.role}</p>
-                        <span className="date">{app.dateApplied}</span>
+                        <h3 className="app-company-name">{app.company}</h3>
+                        <p className="app-role-name">{app.role}</p>
+                        <span className="date app-date-applied">{app.dateApplied}</span>
                       </div>
                       <div className="app-actions">
                         <select 

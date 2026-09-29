@@ -10,19 +10,12 @@ export default function VoiceAssistant() {
   const [isThinking, setIsThinking] = useState(false);
   const [transcript, setTranscript] = useState('');
   const [textInput, setTextInput] = useState('');
-  const [messages, setMessages] = useState([
-    {
-      id: 'lumen-init',
-      role: 'assistant',
-      text: DEFAULT_WELCOME,
-      timestamp: Date.now()
-    }
-  ]);
-
+  const [selectedImage, setSelectedImage] = useState(null);
   const recognitionRef = useRef(null);
   const currentAudioRef = useRef(null);
   const isOpenRef = useRef(isOpen);
   const messagesEndRef = useRef(null);
+  const fileInputRef = useRef(null);
 
   // Load persistent chat history from storage on mount
   useEffect(() => {
@@ -190,15 +183,43 @@ export default function VoiceAssistant() {
     }
   }, [isListening]);
 
-  const sendToBedrock = async (userVoiceInput) => {
-    if (!userVoiceInput || !userVoiceInput.trim()) return;
-    const cleanInput = userVoiceInput.trim();
+  const handleImageChange = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (file.size > 8 * 1024 * 1024) {
+      alert("Please select an image smaller than 8MB.");
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const dataUrl = event.target.result;
+      setSelectedImage({
+        dataUrl,
+        base64: dataUrl,
+        mimeType: file.type || 'image/jpeg',
+        name: file.name
+      });
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleClearImage = () => {
+    setSelectedImage(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  };
+
+  const sendToBedrock = async (userVoiceInput, imageParam = selectedImage) => {
+    if ((!userVoiceInput || !userVoiceInput.trim()) && !imageParam) return;
+    const cleanInput = (userVoiceInput || "").trim();
 
     // 1. Append user message turn immediately
     const userMsg = {
       id: `user-${Date.now()}`,
       role: 'user',
-      text: cleanInput,
+      text: cleanInput || (imageParam ? "Sent an image for analysis" : ""),
+      image: imageParam?.dataUrl || null,
       timestamp: Date.now()
     };
     const updatedMessages = [...messages, userMsg];
@@ -206,6 +227,10 @@ export default function VoiceAssistant() {
 
     setTranscript('');
     setTextInput('');
+    setSelectedImage(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
     setIsThinking(true);
 
     try {
@@ -217,13 +242,20 @@ export default function VoiceAssistant() {
         text: m.text
       }));
 
+      const bodyPayload = {
+        transcript: cleanInput,
+        image: imageParam ? { base64: imageParam.base64, mimeType: imageParam.mimeType } : null,
+        context,
+        history: historyPayload
+      };
+
       // Try local /api/voice/converse first, with automatic fallback to live backend
       let response;
       try {
         response = await fetch('/api/voice/converse', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ transcript: cleanInput, context, history: historyPayload })
+          body: JSON.stringify(bodyPayload)
         });
       } catch (networkErr) {
         console.warn('Local proxy unreachable, falling back to live production backend');
@@ -234,7 +266,7 @@ export default function VoiceAssistant() {
         response = await fetch('https://clarity-dashboard-lnho.onrender.com/api/voice/converse', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ transcript: cleanInput, context, history: historyPayload })
+          body: JSON.stringify(bodyPayload)
         });
       }
 
@@ -261,7 +293,6 @@ export default function VoiceAssistant() {
         setIsSpeaking(true);
         audio.onended = () => {
           setIsSpeaking(false);
-          // Continuous hands-free loop: auto-listen for user's next turn if modal is still open
           if (isOpenRef.current) {
             setTimeout(() => {
               if (isOpenRef.current) {
@@ -286,7 +317,6 @@ export default function VoiceAssistant() {
         utterance.onstart = () => setIsSpeaking(true);
         utterance.onend = () => {
           setIsSpeaking(false);
-          // Continuous hands-free loop: auto-listen for user's next turn if modal is still open
           if (isOpenRef.current) {
             setTimeout(() => {
               if (isOpenRef.current) {
@@ -313,8 +343,8 @@ export default function VoiceAssistant() {
 
   const handleTextSubmit = (e) => {
     e.preventDefault();
-    if (textInput.trim()) {
-      sendToBedrock(textInput.trim());
+    if (textInput.trim() || selectedImage) {
+      sendToBedrock(textInput.trim(), selectedImage);
     }
   };
 
@@ -435,7 +465,12 @@ export default function VoiceAssistant() {
                     </span>
                   )}
                 </div>
-                <p className="voice-chat-text">{msg.text}</p>
+                {msg.image && (
+                  <div className="voice-msg-image-wrap">
+                    <img src={msg.image} alt="User visual payload" className="voice-msg-image" />
+                  </div>
+                )}
+                {msg.text && <p className="voice-chat-text">{msg.text}</p>}
               </div>
             ))}
 
@@ -482,27 +517,56 @@ export default function VoiceAssistant() {
             </button>
           </div>
 
-          {/* Optional Text Input Bar for Quiet Environments */}
-          <form className="voice-input-form" onSubmit={handleTextSubmit}>
-            <input 
-              type="text"
-              className="voice-text-input"
-              placeholder="Or type a message to Lumen..."
-              value={textInput}
-              onChange={(e) => setTextInput(e.target.value)}
-            />
-            <button 
-              type="submit" 
-              className="voice-send-btn" 
-              disabled={!textInput.trim() || isThinking}
-              aria-label="Send message"
-            >
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                <line x1="22" y1="2" x2="11" y2="13"></line>
-                <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
-              </svg>
-            </button>
-          </form>
+          {/* Optional Text Input & Image Upload Controls for Quiet Environments */}
+          <div className="voice-bottom-controls">
+            {selectedImage && (
+              <div className="voice-image-preview-bar">
+                <div className="voice-preview-left">
+                  <img src={selectedImage.dataUrl} alt="Preview" className="voice-preview-thumb" />
+                  <span className="voice-preview-name">{selectedImage.name}</span>
+                </div>
+                <button type="button" onClick={handleClearImage} className="voice-clear-img-btn" title="Remove image">
+                  ✕
+                </button>
+              </div>
+            )}
+            <form className="voice-input-form" onSubmit={handleTextSubmit}>
+              <button 
+                type="button" 
+                className="voice-attach-btn" 
+                onClick={() => fileInputRef.current?.click()}
+                title="Send an image to Lumen for AI vision analysis"
+                aria-label="Send image"
+              >
+                📷
+              </button>
+              <input 
+                type="file" 
+                ref={fileInputRef} 
+                accept="image/*" 
+                style={{ display: 'none' }} 
+                onChange={handleImageChange} 
+              />
+              <input 
+                type="text"
+                className="voice-text-input"
+                placeholder={selectedImage ? "Add a caption or ask Lumen about this image..." : "Type or send an image to Lumen..."}
+                value={textInput}
+                onChange={(e) => setTextInput(e.target.value)}
+              />
+              <button 
+                type="submit" 
+                className="voice-send-btn" 
+                disabled={(!textInput.trim() && !selectedImage) || isThinking}
+                aria-label="Send message"
+              >
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <line x1="22" y1="2" x2="11" y2="13"></line>
+                  <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                </svg>
+              </button>
+            </form>
+          </div>
         </div>
       )}
     </>

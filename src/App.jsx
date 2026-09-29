@@ -21,9 +21,10 @@ const DEFAULT_TILES = {
 function App() {
   const [tilesState, setTilesState] = useState(DEFAULT_TILES);
   const [showLayoutMenu, setShowLayoutMenu] = useState(false);
+  const [tileGlow, setTileGlow] = useState(true);
   const menuRef = useRef(null);
 
-  // Load layout from persistent storage on mount
+  // Load layout and tile glow settings from persistent storage on mount
   useEffect(() => {
     const loadLayout = async () => {
       try {
@@ -34,12 +35,26 @@ function App() {
             ...saved
           }));
         }
+        const savedGlow = await storage.get('clarity_tile_glow');
+        if (savedGlow !== null && savedGlow !== undefined) {
+          setTileGlow(Boolean(savedGlow));
+        }
       } catch (e) {
-        console.warn('Could not load clarity_tiles_layout:', e);
+        console.warn('Could not load dashboard settings:', e);
       }
     };
     loadLayout();
   }, []);
+
+  const toggleTileGlow = async () => {
+    const nextState = !tileGlow;
+    setTileGlow(nextState);
+    try {
+      await storage.set('clarity_tile_glow', nextState);
+    } catch (e) {
+      console.warn('Failed to save clarity_tile_glow:', e);
+    }
+  };
 
   // Close layout popover when clicking outside
   useEffect(() => {
@@ -118,7 +133,7 @@ function App() {
   const hasTopRowVisible = !tilesState.sobriety?.hidden || !tilesState.jobSearch?.hidden || !tilesState.therapy?.hidden;
 
   return (
-    <div className="dashboard">
+    <div className={`dashboard ${tileGlow ? 'tile-glow-enabled' : 'tile-glow-disabled'}`}>
       {/* Apple Fluid Ambient Gradient Canvas */}
       <div className="ambient-background" aria-hidden="true">
         <div className="ambient-orb orb-1"></div>
@@ -143,6 +158,17 @@ function App() {
         </div>
         
         <div className="header-right">
+          {/* Quick Tile Aura Glow Toggle Button */}
+          <button 
+            className={`glow-toggle-btn ${tileGlow ? 'active' : ''}`}
+            onClick={toggleTileGlow}
+            title={tileGlow ? "Tile Outer Glow: ON (Click to turn off)" : "Tile Outer Glow: OFF (Click to turn on)"}
+            aria-label="Toggle tile outer glow"
+          >
+            <span className="glow-icon-dot"></span>
+            <span>Aura {tileGlow ? 'ON' : 'OFF'}</span>
+          </button>
+
           {/* Tiles Customizer & Layout Manager Dropdown */}
           <div className="layout-controls-wrapper" ref={menuRef}>
             <button 
@@ -202,6 +228,24 @@ function App() {
                       </div>
                     </div>
                   ))}
+                </div>
+
+                {/* Outer Glow Setting in Popover */}
+                <div className="popover-glow-card">
+                  <div className="popover-glow-info">
+                    <span className="popover-glow-badge">✨</span>
+                    <div>
+                      <span className="popover-glow-title">Tile Outer Glow</span>
+                      <p className="popover-glow-desc">Vibrant auras for Pipeline and tiles</p>
+                    </div>
+                  </div>
+                  <button 
+                    onClick={toggleTileGlow}
+                    className={`popover-glow-btn ${tileGlow ? 'active' : ''}`}
+                    title="Toggle outer tile glow"
+                  >
+                    {tileGlow ? 'Glow: ON' : 'Glow: OFF'}
+                  </button>
                 </div>
 
                 {hiddenCount > 0 && (

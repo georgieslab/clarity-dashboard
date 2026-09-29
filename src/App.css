@@ -587,6 +587,111 @@ header {
   background: linear-gradient(135deg, rgba(99, 102, 241, 0.25), rgba(56, 189, 248, 0.25));
 }
 
+/* Quick Glow Toggle Button in Header */
+.glow-toggle-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.52rem 0.95rem;
+  border-radius: var(--radius-full);
+  font-size: 0.82rem;
+  font-weight: 600;
+  font-family: inherit;
+  border: 1px solid var(--glass-border);
+  background: var(--glass-bg-elevated);
+  color: var(--text-primary);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  box-shadow: var(--glass-shadow-sm), var(--glass-specular);
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.glow-toggle-btn:hover {
+  transform: translateY(-1.5px);
+  box-shadow: var(--glass-shadow-md), var(--glass-specular);
+  border-color: rgba(255, 255, 255, 0.4);
+}
+
+.glow-toggle-btn.active {
+  background: linear-gradient(135deg, rgba(236, 72, 153, 0.14), rgba(56, 189, 248, 0.16));
+  border-color: rgba(236, 72, 153, 0.45);
+  color: var(--text-primary);
+  box-shadow: 0 0 16px rgba(236, 72, 153, 0.25), var(--glass-specular);
+}
+
+.glow-icon-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #94a3b8;
+  transition: all 0.2s ease;
+}
+
+.glow-toggle-btn.active .glow-icon-dot {
+  background: #ec4899;
+  box-shadow: 0 0 8px #ec4899;
+  animation: pulseDot 1.4s infinite;
+}
+
+/* Popover Glow Settings Card */
+.popover-glow-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.65rem 0.75rem;
+  border-radius: var(--radius-sm);
+  background: var(--glass-bg-subtle);
+  border: 1px solid var(--glass-border-subtle);
+  margin-top: 0.25rem;
+}
+
+.popover-glow-info {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+}
+
+.popover-glow-badge {
+  font-size: 1rem;
+}
+
+.popover-glow-title {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  display: block;
+}
+
+.popover-glow-desc {
+  font-size: 0.7rem;
+  color: var(--text-tertiary);
+  margin: 0.1rem 0 0;
+}
+
+.popover-glow-btn {
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 0.28rem 0.75rem;
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: all 0.2s ease;
+}
+
+.popover-glow-btn.active {
+  background: linear-gradient(135deg, rgba(236, 72, 153, 0.22), rgba(139, 92, 246, 0.22));
+  color: #ec4899;
+  border-color: rgba(236, 72, 153, 0.45);
+  box-shadow: 0 0 10px rgba(236, 72, 153, 0.25);
+}
+
+.popover-glow-btn:not(.active) {
+  background: var(--glass-bg-subtle);
+  color: var(--text-tertiary);
+  border-color: var(--glass-border-subtle);
+}
+
 /* Hidden Tiles Banner on Main Dashboard */
 .hidden-tiles-banner {
   display: flex;
@@ -771,6 +876,259 @@ main {
   transform: translateY(-2px);
   box-shadow: var(--glass-shadow-md), var(--glass-specular);
   border-color: rgba(255, 255, 255, 0.3);
+}
+
+/* ==========================================================================
+   DYNAMIC TILE COLOR THEMES & OUTER AURA GLOWS
+   Each tile possesses a distinct ambient aura, specular edge, and colored accent.
+   User can toggle outer glow ON/OFF dynamically.
+   ========================================================================== */
+
+/* 1. PIPELINE TILE (Job Search Tracker) — Vibrant Magenta & Amethyst Aura */
+.tile-glow-enabled .card-pipeline {
+  border-color: rgba(236, 72, 153, 0.35);
+  background: linear-gradient(155deg, rgba(255, 255, 255, 0.8) 0%, rgba(253, 242, 248, 0.72) 100%);
+  box-shadow: 
+    0 14px 40px -4px rgba(236, 72, 153, 0.22),
+    0 0 26px rgba(139, 92, 246, 0.16),
+    var(--glass-specular);
+}
+
+.tile-glow-enabled .card-pipeline::before {
+  background: linear-gradient(90deg, transparent, rgba(236, 72, 153, 0.9), rgba(139, 92, 246, 0.9), transparent);
+}
+
+.tile-glow-enabled .card-pipeline:hover {
+  transform: translateY(-2.5px);
+  border-color: rgba(236, 72, 153, 0.5);
+  box-shadow: 
+    0 18px 48px -4px rgba(236, 72, 153, 0.3),
+    0 0 36px rgba(139, 92, 246, 0.22),
+    var(--glass-specular);
+}
+
+.tile-glow-enabled .card-pipeline .card-badge {
+  background: rgba(236, 72, 153, 0.14);
+  color: #ec4899;
+  border-color: rgba(236, 72, 153, 0.35);
+}
+
+/* 2. SOBRIETY TILE — Serene Emerald & Mint Aura */
+.tile-glow-enabled .card-sobriety {
+  border-color: rgba(16, 185, 129, 0.35);
+  background: linear-gradient(155deg, rgba(255, 255, 255, 0.8) 0%, rgba(236, 253, 245, 0.72) 100%);
+  box-shadow: 
+    0 14px 40px -4px rgba(16, 185, 129, 0.2),
+    0 0 26px rgba(6, 182, 212, 0.14),
+    var(--glass-specular);
+}
+
+.tile-glow-enabled .card-sobriety::before {
+  background: linear-gradient(90deg, transparent, rgba(16, 185, 129, 0.9), rgba(52, 211, 153, 0.9), transparent);
+}
+
+.tile-glow-enabled .card-sobriety:hover {
+  transform: translateY(-2.5px);
+  border-color: rgba(16, 185, 129, 0.48);
+  box-shadow: 
+    0 18px 48px -4px rgba(16, 185, 129, 0.28),
+    0 0 36px rgba(6, 182, 212, 0.2),
+    var(--glass-specular);
+}
+
+.tile-glow-enabled .card-sobriety .card-badge {
+  background: rgba(16, 185, 129, 0.14);
+  color: #10b981;
+  border-color: rgba(16, 185, 129, 0.35);
+}
+
+/* 3. THERAPY TILE — Celestial Indigo & Purple Aura */
+.tile-glow-enabled .card-therapy {
+  border-color: rgba(99, 102, 241, 0.35);
+  background: linear-gradient(155deg, rgba(255, 255, 255, 0.8) 0%, rgba(238, 242, 255, 0.72) 100%);
+  box-shadow: 
+    0 14px 40px -4px rgba(99, 102, 241, 0.2),
+    0 0 26px rgba(168, 85, 247, 0.14),
+    var(--glass-specular);
+}
+
+.tile-glow-enabled .card-therapy::before {
+  background: linear-gradient(90deg, transparent, rgba(99, 102, 241, 0.9), rgba(168, 85, 247, 0.9), transparent);
+}
+
+.tile-glow-enabled .card-therapy:hover {
+  transform: translateY(-2.5px);
+  border-color: rgba(99, 102, 241, 0.48);
+  box-shadow: 
+    0 18px 48px -4px rgba(99, 102, 241, 0.28),
+    0 0 36px rgba(168, 85, 247, 0.2),
+    var(--glass-specular);
+}
+
+.tile-glow-enabled .card-therapy .card-badge {
+  background: rgba(99, 102, 241, 0.14);
+  color: #6366f1;
+  border-color: rgba(99, 102, 241, 0.35);
+}
+
+/* 4. FOCUS RHYTHM (Pomodoro) — Solar Amber & Tangerine Aura */
+.tile-glow-enabled .card-pomodoro {
+  border-color: rgba(245, 158, 11, 0.35);
+  background: linear-gradient(155deg, rgba(255, 255, 255, 0.8) 0%, rgba(254, 243, 199, 0.72) 100%);
+  box-shadow: 
+    0 14px 40px -4px rgba(245, 158, 11, 0.2),
+    0 0 26px rgba(249, 115, 22, 0.14),
+    var(--glass-specular);
+}
+
+.tile-glow-enabled .card-pomodoro::before {
+  background: linear-gradient(90deg, transparent, rgba(245, 158, 11, 0.9), rgba(249, 115, 22, 0.9), transparent);
+}
+
+.tile-glow-enabled .card-pomodoro:hover {
+  transform: translateY(-2.5px);
+  border-color: rgba(245, 158, 11, 0.48);
+  box-shadow: 
+    0 18px 48px -4px rgba(245, 158, 11, 0.28),
+    0 0 36px rgba(249, 115, 22, 0.2),
+    var(--glass-specular);
+}
+
+.tile-glow-enabled .card-pomodoro .card-badge {
+  background: rgba(245, 158, 11, 0.14);
+  color: #f59e0b;
+  border-color: rgba(245, 158, 11, 0.35);
+}
+
+/* 5. EXECUTIVE INTELLIGENCE — Apple Neural Cyan & Sapphire Aura */
+.tile-glow-enabled .card-executive {
+  border-color: rgba(56, 189, 248, 0.38);
+  background: linear-gradient(155deg, rgba(255, 255, 255, 0.82) 0%, rgba(240, 249, 255, 0.72) 100%);
+  box-shadow: 
+    0 16px 44px -4px rgba(56, 189, 248, 0.24),
+    0 0 30px rgba(99, 102, 241, 0.16),
+    var(--glass-specular);
+}
+
+.tile-glow-enabled .card-executive::before {
+  background: linear-gradient(90deg, transparent, rgba(56, 189, 248, 0.95), rgba(99, 102, 241, 0.95), transparent);
+}
+
+.tile-glow-enabled .card-executive:hover {
+  transform: translateY(-2.5px);
+  border-color: rgba(56, 189, 248, 0.52);
+  box-shadow: 
+    0 20px 52px -4px rgba(56, 189, 248, 0.32),
+    0 0 40px rgba(99, 102, 241, 0.24),
+    var(--glass-specular);
+}
+
+.tile-glow-enabled .card-executive .card-badge {
+  background: rgba(56, 189, 248, 0.14);
+  color: #0284c7;
+  border-color: rgba(56, 189, 248, 0.35);
+}
+
+/* --------------------------------------------------------------------------
+   DARK MODE TILE AURA GLOWS
+   -------------------------------------------------------------------------- */
+[data-theme="dark"] .tile-glow-enabled .card-pipeline {
+  border-color: rgba(236, 72, 153, 0.42);
+  background: linear-gradient(155deg, rgba(34, 20, 44, 0.68) 0%, rgba(22, 27, 44, 0.58) 100%);
+  box-shadow: 
+    0 16px 48px -4px rgba(236, 72, 153, 0.35),
+    0 0 34px rgba(139, 92, 246, 0.24),
+    var(--glass-specular);
+}
+
+[data-theme="dark"] .tile-glow-enabled .card-pipeline:hover {
+  box-shadow: 
+    0 22px 56px -4px rgba(236, 72, 153, 0.45),
+    0 0 44px rgba(139, 92, 246, 0.32),
+    var(--glass-specular);
+}
+
+[data-theme="dark"] .tile-glow-enabled .card-sobriety {
+  border-color: rgba(16, 185, 129, 0.4);
+  background: linear-gradient(155deg, rgba(16, 36, 30, 0.68) 0%, rgba(22, 27, 44, 0.58) 100%);
+  box-shadow: 
+    0 16px 48px -4px rgba(16, 185, 129, 0.32),
+    0 0 34px rgba(6, 182, 212, 0.2),
+    var(--glass-specular);
+}
+
+[data-theme="dark"] .tile-glow-enabled .card-sobriety:hover {
+  box-shadow: 
+    0 22px 56px -4px rgba(16, 185, 129, 0.42),
+    0 0 44px rgba(6, 182, 212, 0.28),
+    var(--glass-specular);
+}
+
+[data-theme="dark"] .tile-glow-enabled .card-therapy {
+  border-color: rgba(99, 102, 241, 0.4);
+  background: linear-gradient(155deg, rgba(26, 22, 54, 0.68) 0%, rgba(22, 27, 44, 0.58) 100%);
+  box-shadow: 
+    0 16px 48px -4px rgba(99, 102, 241, 0.32),
+    0 0 34px rgba(168, 85, 247, 0.22),
+    var(--glass-specular);
+}
+
+[data-theme="dark"] .tile-glow-enabled .card-therapy:hover {
+  box-shadow: 
+    0 22px 56px -4px rgba(99, 102, 241, 0.42),
+    0 0 44px rgba(168, 85, 247, 0.3),
+    var(--glass-specular);
+}
+
+[data-theme="dark"] .tile-glow-enabled .card-pomodoro {
+  border-color: rgba(245, 158, 11, 0.4);
+  background: linear-gradient(155deg, rgba(38, 28, 16, 0.68) 0%, rgba(22, 27, 44, 0.58) 100%);
+  box-shadow: 
+    0 16px 48px -4px rgba(245, 158, 11, 0.32),
+    0 0 34px rgba(249, 115, 22, 0.22),
+    var(--glass-specular);
+}
+
+[data-theme="dark"] .tile-glow-enabled .card-pomodoro:hover {
+  box-shadow: 
+    0 22px 56px -4px rgba(245, 158, 11, 0.42),
+    0 0 44px rgba(249, 115, 22, 0.3),
+    var(--glass-specular);
+}
+
+[data-theme="dark"] .tile-glow-enabled .card-executive {
+  border-color: rgba(56, 189, 248, 0.42);
+  background: linear-gradient(155deg, rgba(16, 32, 54, 0.68) 0%, rgba(22, 27, 44, 0.58) 100%);
+  box-shadow: 
+    0 18px 52px -4px rgba(56, 189, 248, 0.38),
+    0 0 38px rgba(99, 102, 241, 0.26),
+    var(--glass-specular);
+}
+
+[data-theme="dark"] .tile-glow-enabled .card-executive:hover {
+  box-shadow: 
+    0 24px 60px -4px rgba(56, 189, 248, 0.48),
+    0 0 48px rgba(99, 102, 241, 0.34),
+    var(--glass-specular);
+}
+
+/* --------------------------------------------------------------------------
+   GLOW OFF (NEUTRAL CLEAN APPLE GLASS MODE)
+   -------------------------------------------------------------------------- */
+.tile-glow-disabled .tracker-card {
+  box-shadow: var(--glass-shadow-sm), var(--glass-specular) !important;
+  border-color: var(--glass-border) !important;
+  background: var(--glass-bg) !important;
+}
+
+.tile-glow-disabled .tracker-card::before {
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.5), transparent) !important;
+}
+
+.tile-glow-disabled .tracker-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--glass-shadow-md), var(--glass-specular) !important;
+  border-color: rgba(255, 255, 255, 0.3) !important;
 }
 
 .card-header {
@@ -1135,12 +1493,13 @@ main {
 }
 
 .applications-list, .sessions-list {
-  max-height: 320px;
+  max-height: 400px;
   overflow-y: auto;
-  padding-right: 0.35rem;
+  overflow-x: hidden;
+  padding-right: 0.45rem;
   display: flex;
   flex-direction: column;
-  gap: 0.65rem;
+  gap: 0.75rem;
 }
 
 .applications-list::-webkit-scrollbar,
@@ -1163,16 +1522,20 @@ main {
 }
 
 .application-item {
-  padding: 0.85rem 1rem;
+  flex-shrink: 0;
+  min-height: 72px;
+  padding: 0.92rem 1.15rem;
   background: var(--glass-bg-subtle);
   border: 1px solid var(--glass-border-subtle);
   border-radius: var(--radius-sm);
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 1rem;
   transition: all 0.25s ease;
   position: relative;
   overflow: hidden;
+  box-sizing: border-box;
 }
 
 .application-item:hover {
@@ -1350,22 +1713,43 @@ main {
   font-weight: 700;
 }
 
-.app-info h3 {
-  font-size: 0.92rem;
-  font-weight: 600;
+.app-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.22rem;
+  min-width: 0;
+  flex: 1;
+  justify-content: center;
+}
+
+.app-info h3,
+.app-company-name {
+  font-size: 0.96rem;
+  font-weight: 700;
   color: var(--text-primary);
-  margin-bottom: 0.15rem;
+  line-height: 1.25;
+  margin: 0;
+  word-break: break-word;
+  display: block;
 }
 
-.app-info p {
+.app-info p,
+.app-role-name {
   color: var(--text-secondary);
-  font-size: 0.78rem;
-  margin-bottom: 0.2rem;
+  font-size: 0.82rem;
+  line-height: 1.32;
+  margin: 0;
+  word-break: break-word;
+  display: block;
 }
 
-.app-info .date {
+.app-info .date,
+.app-date-applied {
   color: var(--text-tertiary);
   font-size: 0.7rem;
+  line-height: 1.2;
+  margin-top: 0.12rem;
+  display: block;
 }
 
 .app-actions {
@@ -2775,6 +3159,104 @@ main {
 .voice-send-btn:disabled {
   opacity: 0.35;
   cursor: not-allowed;
+}
+
+/* Multimodal Vision Image Upload & Bubble Styles */
+.voice-bottom-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  margin-top: 0.1rem;
+}
+
+.voice-image-preview-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.35rem 0.65rem;
+  border-radius: var(--radius-sm);
+  background: linear-gradient(135deg, rgba(236, 72, 153, 0.12), rgba(139, 92, 246, 0.12));
+  border: 1px solid rgba(236, 72, 153, 0.35);
+  animation: siriPop 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.voice-preview-left {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  min-width: 0;
+  flex: 1;
+}
+
+.voice-preview-thumb {
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  object-fit: cover;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  flex-shrink: 0;
+}
+
+.voice-preview-name {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.voice-clear-img-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-tertiary);
+  font-size: 0.8rem;
+  cursor: pointer;
+  padding: 0.1rem 0.3rem;
+  border-radius: 4px;
+  transition: all 0.15s ease;
+}
+
+.voice-clear-img-btn:hover {
+  color: var(--danger);
+  background: var(--danger-glass);
+}
+
+.voice-attach-btn {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 1px solid var(--glass-border-subtle);
+  background: var(--glass-bg-subtle);
+  font-size: 0.82rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+  padding: 0;
+}
+
+.voice-attach-btn:hover {
+  background: var(--glass-bg-elevated);
+  border-color: rgba(236, 72, 153, 0.4);
+  transform: scale(1.05);
+}
+
+.voice-msg-image-wrap {
+  margin-top: 0.35rem;
+  margin-bottom: 0.35rem;
+}
+
+.voice-msg-image {
+  max-width: 220px;
+  max-height: 180px;
+  border-radius: var(--radius-sm);
+  object-fit: cover;
+  border: 1px solid var(--glass-border);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+  display: block;
 }
 
 /* --------------------------------------------------------------------------

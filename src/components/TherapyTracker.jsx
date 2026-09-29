@@ -74,7 +74,7 @@ export default function TherapyTracker({ isCollapsed, onToggleCollapse, onHide }
   }).length;
 
   return (
-    <div className={`tracker-card ${isCollapsed ? 'collapsed' : ''}`}>
+    <div className={`tracker-card card-therapy ${isCollapsed ? 'collapsed' : ''}`}>
       <div className="card-header" onClick={isCollapsed ? onToggleCollapse : undefined}>
         <h2>
           <span className="card-title-group" onClick={onToggleCollapse} role="button" tabIndex={0}>
