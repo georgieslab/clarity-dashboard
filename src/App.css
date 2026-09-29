@@ -23,6 +23,16 @@
   --glass-border-subtle: rgba(0, 0, 0, 0.06);
   --glass-specular: inset 0 1px 1px 0 rgba(255, 255, 255, 0.9), inset 0 -1px 1px 0 rgba(0, 0, 0, 0.03);
 
+  /* Organic Gooey Plasma Metaball Sphere Variables */
+  --loader-c1: #38bdf8;
+  --loader-c2: #ec4899;
+  --loader-shadow-outer: rgba(56, 189, 248, 0.55);
+  --loader-shadow-inner: rgba(236, 72, 153, 0.55);
+  --loader-gradient-start: rgba(56, 189, 248, 0.25);
+  --loader-gradient-end: rgba(236, 72, 153, 0.5);
+  --loader-inset-top: rgba(56, 189, 248, 0.55);
+  --loader-inset-bottom: rgba(236, 72, 153, 0.55);
+
   /* Typography Colors */
   --text-primary: #0f172a;
   --text-secondary: #475569;
@@ -78,6 +88,16 @@
   --glass-border: rgba(255, 255, 255, 0.14);
   --glass-border-subtle: rgba(255, 255, 255, 0.06);
   --glass-specular: inset 0 1px 1px 0 rgba(255, 255, 255, 0.25), inset 0 -1px 1px 0 rgba(0, 0, 0, 0.4);
+
+  /* Organic Gooey Plasma Metaball Sphere Variables (Dark) */
+  --loader-c1: #38bdf8;
+  --loader-c2: #f43f5e;
+  --loader-shadow-outer: rgba(56, 189, 248, 0.75);
+  --loader-shadow-inner: rgba(244, 63, 94, 0.75);
+  --loader-gradient-start: rgba(56, 189, 248, 0.35);
+  --loader-gradient-end: rgba(244, 63, 94, 0.65);
+  --loader-inset-top: rgba(56, 189, 248, 0.75);
+  --loader-inset-bottom: rgba(244, 63, 94, 0.75);
 
   --text-primary: #f8fafc;
   --text-secondary: #cbd5e1;
@@ -1410,51 +1430,60 @@ main {
 }
 
 /* Floating FAB 3D Multi-Layer Sphere */
-.siri-orb {
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
+.siri-orb.loader-mini {
+  --c1: var(--loader-c1);
+  --c2: var(--loader-c2);
+  --t: 2.2s;
+  --size: 0.48;
   position: relative;
-  background: radial-gradient(circle at 32% 28%, #38bdf8 0%, #818cf8 35%, #ec4899 75%, #4f46e5 100%);
-  box-shadow: 0 0 24px rgba(129, 140, 248, 0.9), inset 0 3px 8px rgba(255, 255, 255, 0.9), inset 0 -4px 10px rgba(0, 0, 0, 0.35);
-  animation: siriSpin 7s linear infinite;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.siri-orb::after {
-  content: '';
-  position: absolute;
-  top: 6px;
-  left: 10px;
-  width: 14px;
-  height: 8px;
+  width: 100px;
+  height: 100px;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.75);
-  filter: blur(1.5px);
-  transform: rotate(-30deg);
+  transform: scale(var(--size));
+  box-shadow:
+    0 0 25px 0 var(--loader-shadow-outer),
+    0 15px 35px 0 var(--loader-shadow-inner);
+  animation: colorize calc(var(--t) * 3) ease-in-out infinite;
+  overflow: hidden;
+  margin: 0;
+  display: block;
+  background-color: transparent;
+  flex-shrink: 0;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-.voice-fab.listening .siri-orb {
-  animation: siriPulse 0.9s ease-in-out infinite alternate;
-  box-shadow: 0 0 38px rgba(236, 72, 153, 1), inset 0 0 16px rgba(255, 255, 255, 0.9);
+.siri-orb.loader-mini::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border-top: 1px solid var(--c1);
+  border-bottom: 1px solid var(--c2);
+  background: linear-gradient(180deg, var(--loader-gradient-start), var(--loader-gradient-end));
+  box-shadow:
+    inset 0 10px 10px 0 var(--loader-inset-top),
+    inset 0 -10px 10px 0 var(--loader-inset-bottom);
+  z-index: 3;
+  pointer-events: none;
 }
 
-.voice-fab.speaking .siri-orb {
-  animation: siriSpeaking 0.7s ease-in-out infinite alternate;
-  box-shadow: 0 0 38px rgba(56, 189, 248, 1), inset 0 0 16px rgba(255, 255, 255, 0.9);
+.voice-fab:hover .siri-orb.loader-mini {
+  --size: 0.52;
+  box-shadow:
+    0 0 30px 0 var(--loader-shadow-outer),
+    0 18px 40px 0 var(--loader-shadow-inner);
 }
 
-@keyframes siriSpin {
-  0% { transform: rotate(0deg); filter: hue-rotate(0deg); }
-  50% { transform: rotate(180deg) scale(1.04); filter: hue-rotate(45deg); }
-  100% { transform: rotate(360deg); filter: hue-rotate(0deg); }
+.voice-fab.listening .siri-orb.loader-mini {
+  --t: 1.4s;
+  --size: 0.54;
+  box-shadow: 0 0 35px 0 rgba(236, 72, 153, 0.8), 0 15px 35px 0 rgba(168, 85, 247, 0.8);
 }
 
-@keyframes siriPulse {
-  0% { transform: scale(0.96); filter: brightness(1); }
-  100% { transform: scale(1.18); filter: brightness(1.25); }
+.voice-fab.speaking .siri-orb.loader-mini {
+  --t: 1.3s;
+  --size: 0.52;
+  box-shadow: 0 0 35px 0 rgba(56, 189, 248, 0.8), 0 15px 35px 0 rgba(129, 140, 248, 0.8);
 }
 
 /* 3D Voice Assistant Deck */
@@ -1548,8 +1577,8 @@ main {
 }
 
 .siri-interactive-sphere {
-  width: 140px;
-  height: 140px;
+  width: 170px;
+  height: 170px;
   border-radius: 50%;
   position: relative;
   cursor: pointer;
@@ -1564,156 +1593,167 @@ main {
   transform: scale(1.03);
 }
 
-/* Central 3D Liquid Sphere with Specular Lens & Subsurface Scattering */
-.siri-core {
-  width: 76px;
-  height: 76px;
-  border-radius: 50%;
-  background: radial-gradient(circle at 35% 30%, #38bdf8 0%, #818cf8 35%, #ec4899 75%, #4f46e5 100%);
-  box-shadow: 
-    0 0 35px rgba(129, 140, 248, 0.95),
-    inset 0 4px 10px rgba(255, 255, 255, 0.9),
-    inset -4px -6px 14px rgba(0, 0, 0, 0.45);
+/* Central Organic Gooey Plasma Metaball Sphere (Clarity Signature Visualizer) */
+.siri-core.loader {
+  --c1: var(--loader-c1);
+  --c2: var(--loader-c2);
+  --t: 2.2s;
+  --size: 1;
   position: relative;
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  transform: scale(var(--size));
+  box-shadow:
+    0 0 25px 0 var(--loader-shadow-outer),
+    0 20px 50px 0 var(--loader-shadow-inner);
+  animation: colorize calc(var(--t) * 3) ease-in-out infinite;
+  overflow: hidden;
+  margin: 0 auto;
+  display: block;
+  background-color: transparent;
   z-index: 5;
-  animation: siriSpin 8s linear infinite;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease;
+}
+
+.siri-core.loader::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border-top: 1px solid var(--c1);
+  border-bottom: 1px solid var(--c2);
+  background: linear-gradient(180deg, var(--loader-gradient-start), var(--loader-gradient-end));
+  box-shadow:
+    inset 0 10px 10px 0 var(--loader-inset-top),
+    inset 0 -10px 10px 0 var(--loader-inset-bottom);
+  z-index: 3;
+  pointer-events: none;
+}
+
+/* Gooey Inner Filter Container */
+.loader-inner {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  overflow: hidden;
+  filter: url('#clarity-goo') url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg"><filter id="g"><feGaussianBlur in="SourceGraphic" stdDeviation="5"/><feColorMatrix values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 22 -9"/></filter></svg>#g');
+  -webkit-filter: url('#clarity-goo') url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg"><filter id="g"><feGaussianBlur in="SourceGraphic" stdDeviation="5"/><feColorMatrix values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 22 -9"/></filter></svg>#g');
+  z-index: 1;
+}
+
+/* Organic Floating Metaballs */
+.blob {
+  position: absolute;
+  border-radius: 42%;
+  background: linear-gradient(180deg, var(--c1) 30%, var(--c2) 70%);
+}
+
+.b1 {
+  width: 44px;
+  height: 44px;
+  top: 12px;
+  left: 28px;
+  transform-origin: 50% 130%;
+  animation: spin var(--t) linear infinite reverse;
+}
+
+.b2 {
+  width: 40px;
+  height: 40px;
+  top: 18px;
+  left: 30px;
+  transform-origin: 50% -30%;
+  animation: spin var(--t) linear infinite;
+  animation-delay: calc(var(--t) / -3);
+}
+
+.b3 {
+  width: 30px;
+  height: 30px;
+  top: 28px;
+  left: 35px;
+  transform-origin: -30% -10%;
+  animation: spin var(--t) linear infinite reverse;
+}
+
+.b4 {
+  width: 28px;
+  height: 28px;
+  top: 30px;
+  left: 36px;
+  transform-origin: -30% -10%;
+  animation: spin var(--t) linear infinite reverse;
+  animation-delay: calc(var(--t) / -2);
+}
+
+.b5 {
+  width: 30px;
+  height: 30px;
+  top: 28px;
+  left: 35px;
+  transform-origin: 130% -10%;
+  animation: spin var(--t) linear infinite;
+}
+
+.b6 {
+  width: 28px;
+  height: 28px;
+  top: 30px;
+  left: 36px;
+  transform-origin: 130% -10%;
+  animation: spin var(--t) linear infinite;
+  animation-delay: calc(var(--t) / -1.5);
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes colorize {
+  0% {
+    filter: hue-rotate(0deg);
+  }
+  20% {
+    filter: hue-rotate(-30deg);
+  }
+  40% {
+    filter: hue-rotate(-60deg);
+  }
+  60% {
+    filter: hue-rotate(-90deg);
+  }
+  80% {
+    filter: hue-rotate(-45deg);
+  }
+  100% {
+    filter: hue-rotate(0deg);
+  }
 }
 
 .siri-specular-lens {
   position: absolute;
-  top: 8px;
-  left: 14px;
-  width: 22px;
-  height: 12px;
+  top: 10px;
+  left: 18px;
+  width: 28px;
+  height: 16px;
   border-radius: 50%;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.1));
-  filter: blur(1px);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.85), rgba(255, 255, 255, 0.05));
+  filter: blur(1.5px);
   transform: rotate(-35deg);
   pointer-events: none;
+  z-index: 4;
 }
 
-.siri-inner-plasma {
-  width: 44px;
-  height: 44px;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(255, 255, 255, 0.8) 0%, rgba(236, 72, 153, 0.3) 60%, transparent 80%);
-  animation: plasmaShift 3s ease-in-out infinite alternate;
-}
 
-@keyframes plasmaShift {
-  0% { transform: scale(0.85) translate(-2px, -2px); opacity: 0.6; }
-  100% { transform: scale(1.15) translate(3px, 2px); opacity: 0.95; }
-}
-
-/* Multi-axis 3D Gyro Rings */
-.siri-ring {
-  position: absolute;
-  border-radius: 50%;
-  border: 1.5px solid transparent;
-  pointer-events: none;
-}
-
-.siri-ring.ring-1 {
-  width: 104px;
-  height: 104px;
-  border-top-color: #38bdf8;
-  border-bottom-color: #ec4899;
-  animation: ringRotateX 4s linear infinite;
-  opacity: 0.8;
-}
-
-.siri-ring.ring-2 {
-  width: 124px;
-  height: 124px;
-  border-left-color: #818cf8;
-  border-right-color: #c084fc;
-  animation: ringRotateY 6s linear infinite;
-  opacity: 0.65;
-}
-
-.siri-ring.ring-3 {
-  width: 138px;
-  height: 138px;
-  border-top-color: rgba(236, 72, 153, 0.8);
-  border-right-color: rgba(56, 189, 248, 0.8);
-  animation: ringRotateZ 8s linear infinite reverse;
-  opacity: 0.55;
-}
-
-.siri-ring.ring-4 {
-  width: 90px;
-  height: 90px;
-  border: 1px dashed rgba(255, 255, 255, 0.4);
-  animation: ringRotateZ 12s linear infinite;
-}
-
-@keyframes ringRotateX {
-  0% { transform: rotateX(0deg) rotateZ(0deg); }
-  100% { transform: rotateX(360deg) rotateZ(360deg); }
-}
-
-@keyframes ringRotateY {
-  0% { transform: rotateY(0deg) rotateZ(45deg); }
-  100% { transform: rotateY(360deg) rotateZ(405deg); }
-}
-
-@keyframes ringRotateZ {
-  0% { transform: rotateZ(0deg); }
-  100% { transform: rotateZ(360deg); }
-}
-
-/* Orbiting Satellites (3D Micro-spheres) */
-.orbital-cluster {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  animation: orbitSpin 6s linear infinite;
-  pointer-events: none;
-}
-
-.satellite {
-  position: absolute;
-  border-radius: 50%;
-  box-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
-}
-
-.satellite.sat-1 {
-  top: 4px;
-  left: 50%;
-  width: 10px;
-  height: 10px;
-  background: radial-gradient(circle at 30% 30%, #ffffff, #38bdf8);
-}
-
-.satellite.sat-2 {
-  bottom: 8px;
-  left: 20%;
-  width: 8px;
-  height: 8px;
-  background: radial-gradient(circle at 30% 30%, #ffffff, #ec4899);
-}
-
-.satellite.sat-3 {
-  top: 60%;
-  right: 2px;
-  width: 7px;
-  height: 7px;
-  background: radial-gradient(circle at 30% 30%, #ffffff, #818cf8);
-}
-
-@keyframes orbitSpin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
 
 /* Sound Wave Ripples on Vocal Activity */
 .siri-wave-ripple {
   position: absolute;
-  width: 80px;
-  height: 80px;
+  width: 100px;
+  height: 100px;
   border-radius: 50%;
   border: 2px solid rgba(56, 189, 248, 0.5);
   opacity: 0;
@@ -1731,66 +1771,47 @@ main {
 }
 
 @keyframes waveExpand {
-  0% { transform: scale(0.9); opacity: 0.8; }
-  100% { transform: scale(1.9); opacity: 0; }
+  0% { transform: scale(0.9); opacity: 0.85; }
+  100% { transform: scale(2.05); opacity: 0; }
 }
 
-.siri-interactive-sphere.listening .siri-core {
-  animation: siriPulse 0.75s ease-in-out infinite alternate;
-  box-shadow: 0 0 50px rgba(236, 72, 153, 1), inset 0 0 20px rgba(255, 255, 255, 0.95);
+/* Interactive Behavioral States */
+.siri-interactive-sphere.listening .siri-core.loader {
+  --t: 1.4s;
+  --size: 1.08;
+  box-shadow:
+    0 0 35px 0 rgba(236, 72, 153, 0.75),
+    0 20px 55px 0 rgba(168, 85, 247, 0.75);
 }
 
-/* 3D Multi-point Radiant Shadow Thinking Sphere (Clarity Cyan/Purple/Pink palette) */
-.siri-interactive-sphere.thinking .siri-core {
-  background-color: #6366f1;
-  background-image: radial-gradient(circle at 35% 30%, #38bdf8 0%, #818cf8 35%, #ec4899 75%, #4f46e5 100%);
-  box-shadow: 
-    -18px -18px 22px rgba(56, 189, 248, 0.85),
-    18px -18px 22px rgba(129, 140, 248, 0.85),
-    18px 18px 22px rgba(236, 72, 153, 0.85),
-    -18px 18px 22px rgba(168, 85, 247, 0.85),
-    -18px 0 22px rgba(2, 132, 199, 0.85),
-    18px 0 22px rgba(192, 132, 252, 0.85),
-    inset 0 0 16px rgba(255, 255, 255, 0.9);
-  animation: thinkingRotate 1.2s infinite ease-in-out;
+.siri-interactive-sphere.thinking .siri-core.loader {
+  --t: 0.85s;
+  --size: 1.16;
+  box-shadow:
+    0 0 45px 0 rgba(56, 189, 248, 0.9),
+    0 20px 60px 0 rgba(236, 72, 153, 0.85);
+  animation: colorize 2.4s ease-in-out infinite, thinkingPulse 1s ease-in-out infinite alternate;
 }
 
-@keyframes thinkingRotate {
-  0% {
-    transform: rotate(360deg) scale(0.85);
-  }
-  50% {
-    transform: rotate(0deg) scale(1.18);
-  }
-  100% {
-    transform: rotate(360deg) scale(0.85);
-  }
+@keyframes thinkingPulse {
+  0% { transform: scale(1.06); }
+  100% { transform: scale(1.22); }
 }
 
-.siri-interactive-sphere.thinking .siri-ring {
-  opacity: 0.9;
-  border-width: 2px;
-  animation-duration: 2s;
+
+
+.siri-interactive-sphere.speaking .siri-core.loader {
+  --t: 1.2s;
+  --size: 1.1;
+  box-shadow:
+    0 0 40px 0 rgba(56, 189, 248, 0.85),
+    0 20px 55px 0 rgba(129, 140, 248, 0.85);
+  animation: colorize 3.6s ease-in-out infinite, speakingPulse 0.7s ease-in-out infinite alternate;
 }
 
-.siri-interactive-sphere.thinking .siri-specular-lens {
-  opacity: 0.95;
-  animation: thinkingLens 1.2s infinite ease-in-out alternate;
-}
-
-@keyframes thinkingLens {
-  0% { transform: scale(0.8) rotate(-35deg); }
-  100% { transform: scale(1.25) rotate(-35deg); }
-}
-
-.siri-interactive-sphere.speaking .siri-core {
-  animation: siriSpeaking 0.6s ease-in-out infinite alternate;
-  box-shadow: 0 0 45px rgba(56, 189, 248, 1), inset 0 0 20px rgba(255, 255, 255, 0.95);
-}
-
-@keyframes siriSpeaking {
-  0% { transform: scale(0.94); filter: hue-rotate(0deg); }
-  100% { transform: scale(1.15); filter: hue-rotate(60deg); }
+@keyframes speakingPulse {
+  0% { transform: scale(1.02); }
+  100% { transform: scale(1.15); }
 }
 
 .voice-status-label {

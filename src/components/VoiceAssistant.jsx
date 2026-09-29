@@ -172,6 +172,17 @@ export default function VoiceAssistant() {
 
   return (
     <>
+      {/* Hidden SVG Gooey Filter for Organic Metaball Fluid Simulation */}
+      <svg width="0" height="0" style={{ position: 'absolute', width: 0, height: 0, pointerEvents: 'none' }} aria-hidden="true">
+        <defs>
+          <filter id="clarity-goo">
+            <feGaussianBlur in="SourceGraphic" stdDeviation="5" result="blur" />
+            <feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 22 -9" result="goo" />
+            <feComposite in="SourceGraphic" in2="goo" operator="atop" />
+          </filter>
+        </defs>
+      </svg>
+
       {/* Apple Siri Floating Liquid Orb FAB */}
       <button 
         className={`voice-fab ${isOpen ? 'open' : ''} ${isListening ? 'listening' : ''} ${isSpeaking ? 'speaking' : ''}`}
@@ -179,8 +190,15 @@ export default function VoiceAssistant() {
         aria-label="Toggle voice assistant"
         title="Clarity Voice Assistant"
       >
-        <div className="siri-orb">
-          <div className="siri-glow"></div>
+        <div className="siri-orb loader-mini">
+          <div className="loader-inner">
+            <div className="blob b1"></div>
+            <div className="blob b2"></div>
+            <div className="blob b3"></div>
+            <div className="blob b4"></div>
+            <div className="blob b5"></div>
+            <div className="blob b6"></div>
+          </div>
         </div>
       </button>
 
@@ -208,27 +226,21 @@ export default function VoiceAssistant() {
               className={`siri-interactive-sphere ${isListening ? 'listening' : ''} ${isThinking ? 'thinking' : ''} ${isSpeaking ? 'speaking' : ''}`}
               onClick={handleToggleListening}
             >
-              {/* Outer 3D Gyro Atmospheric Rings */}
-              <div className="siri-ring ring-1"></div>
-              <div className="siri-ring ring-2"></div>
-              <div className="siri-ring ring-3"></div>
-              <div className="siri-ring ring-4"></div>
-
-              {/* 3D Orbiting Satellites */}
-              <div className="orbital-cluster">
-                <div className="satellite sat-1"></div>
-                <div className="satellite sat-2"></div>
-                <div className="satellite sat-3"></div>
-              </div>
-
               {/* 3D Wave Ripple Glow on Voice Activity */}
               <div className="siri-wave-ripple"></div>
               <div className="siri-wave-ripple ripple-delay"></div>
 
-              {/* Central Hyper-realistic 3D Liquid Sphere */}
-              <div className="siri-core">
+              {/* Central Hyper-realistic 3D Gooey Plasma Sphere */}
+              <div className="siri-core loader">
+                <div className="loader-inner">
+                  <div className="blob b1"></div>
+                  <div className="blob b2"></div>
+                  <div className="blob b3"></div>
+                  <div className="blob b4"></div>
+                  <div className="blob b5"></div>
+                  <div className="blob b6"></div>
+                </div>
                 <div className="siri-specular-lens"></div>
-                <div className="siri-inner-plasma"></div>
               </div>
             </div>
 
