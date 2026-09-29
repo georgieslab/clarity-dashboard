@@ -369,6 +369,21 @@ export default function VoiceAssistant() {
         </defs>
       </svg>
 
+      {/* Floating Hovering Badge when Chat is Collapsed */}
+      {!isOpen && (
+        <div 
+          className="voice-fab-badge"
+          onClick={() => setIsOpen(true)}
+          role="button"
+          tabIndex={0}
+          title="Open Lumen AI Assistant"
+        >
+          <span className="voice-badge-dot"></span>
+          <span className="voice-badge-text">LUMEN AI Assistant</span>
+          <span className="voice-badge-sparkle">✨</span>
+        </div>
+      )}
+
       {/* Floating Liquid Orb FAB */}
       <button 
         className={`voice-fab ${isOpen ? 'open' : ''} ${isListening ? 'listening' : ''} ${isSpeaking ? 'speaking' : ''}`}

@@ -2496,6 +2496,89 @@ main {
 /* --------------------------------------------------------------------------
    Interactive Apple Siri 3D Voice Assistant (Amazon Bedrock & Polly)
    -------------------------------------------------------------------------- */
+/* Collapsed Floating Badge */
+.voice-fab-badge {
+  position: fixed;
+  bottom: 1.7rem;
+  right: 5.4rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.45rem 0.9rem;
+  border-radius: var(--radius-full);
+  background: var(--glass-bg-elevated);
+  backdrop-filter: var(--glass-blur-nav);
+  -webkit-backdrop-filter: var(--glass-blur-nav);
+  border: 1.5px solid rgba(139, 92, 246, 0.45);
+  box-shadow: 
+    0 8px 24px rgba(0, 0, 0, 0.35), 
+    0 0 16px rgba(139, 92, 246, 0.25), 
+    0 0 10px rgba(56, 189, 248, 0.2), 
+    var(--glass-specular);
+  cursor: pointer;
+  z-index: 100;
+  animation: hoverBadgeFloat 3.2s ease-in-out infinite alternate, siriPop 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  user-select: none;
+  transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.voice-fab-badge:hover {
+  transform: translateY(-5px) scale(1.04);
+  border-color: rgba(236, 72, 153, 0.7);
+  box-shadow: 
+    0 10px 30px rgba(236, 72, 153, 0.35), 
+    0 0 20px rgba(139, 92, 246, 0.4), 
+    var(--glass-specular);
+}
+
+.voice-fab-badge:active {
+  transform: scale(0.97);
+}
+
+.voice-badge-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #38bdf8;
+  box-shadow: 0 0 10px #38bdf8;
+  animation: pulseDot 1.6s infinite;
+  flex-shrink: 0;
+}
+
+.voice-badge-text {
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  background: linear-gradient(135deg, #38bdf8 0%, #a855f7 50%, #ec4899 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  white-space: nowrap;
+}
+
+.voice-badge-sparkle {
+  font-size: 0.75rem;
+  display: inline-block;
+  animation: sparklePulse 2s ease-in-out infinite alternate;
+}
+
+@keyframes hoverBadgeFloat {
+  0% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+  100% {
+    transform: translateY(0px);
+  }
+}
+
+@keyframes sparklePulse {
+  0% { opacity: 0.6; transform: scale(0.9) rotate(0deg); }
+  100% { opacity: 1; transform: scale(1.15) rotate(12deg); }
+}
+
 .voice-fab {
   position: fixed;
   bottom: 1.5rem;
