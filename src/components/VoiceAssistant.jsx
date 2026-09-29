@@ -174,7 +174,7 @@ export default function VoiceAssistant() {
           <div className="voice-header">
             <div className="voice-header-title">
               <span className="voice-pulse-dot"></span>
-              <h3>Clarity Voice</h3>
+              <h3>Clarity Voice 3D</h3>
             </div>
             <span className="voice-provider-tag">{providerBadge}</span>
             <button 
@@ -187,25 +187,43 @@ export default function VoiceAssistant() {
           </div>
 
           <div className="voice-visualizer-container">
-            {/* Interactive Siri Voice Sphere */}
+            {/* Interactive True 3D Siri Multi-Sphere Visualizer */}
             <div 
               className={`siri-interactive-sphere ${isListening ? 'listening' : ''} ${isThinking ? 'thinking' : ''} ${isSpeaking ? 'speaking' : ''}`}
               onClick={handleToggleListening}
             >
-              <div className="siri-core"></div>
+              {/* Outer 3D Gyro Atmospheric Rings */}
               <div className="siri-ring ring-1"></div>
               <div className="siri-ring ring-2"></div>
               <div className="siri-ring ring-3"></div>
+              <div className="siri-ring ring-4"></div>
+
+              {/* 3D Orbiting Satellites */}
+              <div className="orbital-cluster">
+                <div className="satellite sat-1"></div>
+                <div className="satellite sat-2"></div>
+                <div className="satellite sat-3"></div>
+              </div>
+
+              {/* 3D Wave Ripple Glow on Voice Activity */}
+              <div className="siri-wave-ripple"></div>
+              <div className="siri-wave-ripple ripple-delay"></div>
+
+              {/* Central Hyper-realistic 3D Liquid Sphere */}
+              <div className="siri-core">
+                <div className="siri-specular-lens"></div>
+                <div className="siri-inner-plasma"></div>
+              </div>
             </div>
 
             <p className="voice-status-label">
               {isListening 
-                ? "Listening... (tap when done)" 
+                ? "🎙️ Listening... (tap to finish)" 
                 : isThinking 
-                ? "Bedrock is synthesizing..." 
+                ? "✨ Amazon Bedrock thinking..." 
                 : isSpeaking 
-                ? "Speaking..." 
-                : "Tap sphere to speak"}
+                ? "🔊 Danielle Neural speaking..." 
+                : "Tap 3D sphere to talk"}
             </p>
           </div>
 
