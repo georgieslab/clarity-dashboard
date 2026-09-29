@@ -7,9 +7,9 @@
     "dev": "vite",
     "dev:server": "node server.js",
     "dev:all": "concurrently \"npm run dev\" \"npm run dev:server\"",
-    "build": "vite build",
+    "build": "vite build && node build.js",
     "preview": "vite preview",
-    "start": "node server.js"
+    "start": "NODE_ENV=production node server.js"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.32.1",
