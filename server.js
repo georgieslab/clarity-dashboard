@@ -71,13 +71,14 @@ User Context telemetry:
 
     let replyText = "";
 
-    // 1. Try Amazon Bedrock (Claude 3.5 Sonnet / Haiku on Bedrock)
+    // 1. Try Amazon Bedrock (Requested model e.g. OpenAI GPT-6.1-Sol or Claude Haiku)
     if (process.env.AWS_ACCESS_KEY_ID && process.env.AWS_SECRET_ACCESS_KEY) {
-      try {
-        const modelId = process.env.BEDROCK_MODEL_ID || "eu.anthropic.claude-haiku-4-5-20251001-v1:0";
-        
+      const primaryModel = process.env.BEDROCK_MODEL_ID || "global.openai.gpt-6.1-sol";
+      const fallbackModel = "eu.anthropic.claude-haiku-4-5-20251001-v1:0";
+
+      const runConverse = async (targetModel) => {
         const command = new ConverseCommand({
-          modelId: modelId,
+          modelId: targetModel,
           messages: [
             {
               role: "user",
@@ -90,12 +91,20 @@ User Context telemetry:
             temperature: 0.7
           }
         });
+        const response = await bedrock.send(command);
+        return response.output.message.content[0].text;
+      };
 
-        const bedrockResponse = await bedrock.send(command);
-        replyText = bedrockResponse.output.message.content[0].text;
-      } catch (bedrockErr) {
-        console.error("Bedrock converse failed:", bedrockErr);
-        replyText = "I am right here with you. How are you feeling about your journey today?";
+      try {
+        replyText = await runConverse(primaryModel);
+      } catch (primaryErr) {
+        console.warn(`Primary Bedrock model (${primaryModel}) not available (${primaryErr.name}: ${primaryErr.message}). Falling back to ${fallbackModel}`);
+        try {
+          replyText = await runConverse(fallbackModel);
+        } catch (fallbackErr) {
+          console.error("Fallback Bedrock converse failed:", fallbackErr);
+          replyText = "I am right here with you. How are you feeling about your journey today?";
+        }
       }
     }
 
