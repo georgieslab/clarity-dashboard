@@ -8,7 +8,6 @@ export default function VoiceAssistant() {
   const [isThinking, setIsThinking] = useState(false);
   const [transcript, setTranscript] = useState('');
   const [lastReply, setLastReply] = useState("I'm Lumen, your mindful copilot. I'm here to support your sobriety streak, therapy reflections, and daily focus. How are you feeling right now?");
-  const [providerBadge, setProviderBadge] = useState('Mindful Copilot');
 
   const recognitionRef = useRef(null);
   const currentAudioRef = useRef(null);
@@ -136,7 +135,6 @@ export default function VoiceAssistant() {
 
       const data = await response.json();
       setLastReply(data.replyText);
-      setProviderBadge(data.provider === 'bedrock-polly' ? 'Bedrock + Polly Neural' : 'Bedrock + Speech API');
 
       // Play synthesized audio
       if (data.audioBase64) {
@@ -164,7 +162,7 @@ export default function VoiceAssistant() {
       }
     } catch (err) {
       console.error('Voice converse error:', err);
-      setLastReply("I couldn't reach Bedrock right now. Make sure your server is running with AWS keys.");
+      setLastReply("I'm having a little trouble connecting right now. Let's take a breath and try again in a moment.");
     } finally {
       setIsThinking(false);
     }
@@ -211,7 +209,6 @@ export default function VoiceAssistant() {
               <h3>LUMEN</h3>
               <span className="voice-role-tag">Mindful Copilot</span>
             </div>
-            <span className="voice-provider-tag">{providerBadge}</span>
             <button 
               onClick={() => setIsOpen(false)} 
               className="voice-close-btn"
