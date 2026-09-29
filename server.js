@@ -175,21 +175,73 @@ User Context telemetry:
   }
 });
 
-// Daily insights endpoint
+// Daily insights endpoint — Powered by OpenAI GPT-6.1 Sol on Amazon Bedrock
 app.post('/api/insights', async (req, res) => {
   try {
     const { prompt } = req.body;
 
-    const message = await anthropic.messages.create({
-      model: 'claude-sonnet-4-20250514',
-      max_tokens: 1024,
-      messages: [{ role: 'user', content: prompt }]
-    });
+    let content = "";
 
-    res.json({ content: message.content[0].text });
+    // 1. Try Amazon Bedrock with OpenAI GPT-6.1-Sol (or fallback to Claude)
+    if (process.env.AWS_ACCESS_KEY_ID && process.env.AWS_SECRET_ACCESS_KEY) {
+      const primaryModel = process.env.BEDROCK_INSIGHTS_MODEL_ID || process.env.BEDROCK_MODEL_ID || "global.openai.gpt-6.1-sol";
+      const fallbackModel = "eu.anthropic.claude-haiku-4-5-20251001-v1:0";
+
+      const runBedrockInsights = async (targetModel) => {
+        const command = new ConverseCommand({
+          modelId: targetModel,
+          messages: [
+            {
+              role: "user",
+              content: [{ text: prompt }]
+            }
+          ],
+          system: [{ 
+            text: "You are an executive wellness and life telemetry intelligence coach. Analyze the user's progress with sharp, grounded, insightful, and actionable clarity. Highlight breakthrough patterns, blind spots, and high-leverage next steps."
+          }],
+          inferenceConfig: {
+            maxTokens: 1024,
+            temperature: 0.6
+          }
+        });
+        const response = await bedrock.send(command);
+        return response.output.message.content[0].text;
+      };
+
+      try {
+        content = await runBedrockInsights(primaryModel);
+      } catch (primaryErr) {
+        console.warn(`Primary Bedrock insights model (${primaryModel}) unavailable:`, primaryErr.message, `. Trying fallback ${fallbackModel}`);
+        try {
+          content = await runBedrockInsights(fallbackModel);
+        } catch (fallbackErr) {
+          console.error("Fallback Bedrock insights failed:", fallbackErr.message);
+        }
+      }
+    }
+
+    // 2. Fallback to Anthropic SDK if Bedrock unavailable and key configured
+    if (!content && process.env.ANTHROPIC_API_KEY) {
+      try {
+        const message = await anthropic.messages.create({
+          model: 'claude-sonnet-4-20250514',
+          max_tokens: 1024,
+          messages: [{ role: 'user', content: prompt }]
+        });
+        content = message.content[0].text;
+      } catch (anthropicErr) {
+        console.error('Anthropic SDK insights error:', anthropicErr.message);
+      }
+    }
+
+    if (!content) {
+      throw new Error('Unable to generate insights via AI provider');
+    }
+
+    res.json({ content, provider: 'bedrock-gpt-sol' });
   } catch (error) {
     console.error('Insights error:', error);
-    res.status(500).json({ error: 'Failed to generate insights' });
+    res.status(500).json({ error: error.message || 'Failed to generate insights' });
   }
 });
 

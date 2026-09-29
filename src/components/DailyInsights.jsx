@@ -160,10 +160,10 @@ export default function DailyInsights({ isCollapsed, onToggleCollapse, onHide })
           <div className="card-header-actions" onClick={e => e.stopPropagation()}>
             {isCollapsed && (
               <span className="card-stat-pill">
-                {insights ? 'Analysis Ready' : 'Claude Ready'}
+                {insights ? 'Analysis Ready' : 'GPT-Sol Ready'}
               </span>
             )}
-            <span className="card-badge">Claude Sonnet 3.5</span>
+            <span className="card-badge">OpenAI GPT-6.1 Sol</span>
             <button 
               className="card-action-btn"
               onClick={onToggleCollapse}
@@ -198,7 +198,7 @@ export default function DailyInsights({ isCollapsed, onToggleCollapse, onHide })
               <p>⚠️ {error}</p>
               {error.includes('API key') && (
                 <p className="error-hint">
-                  Add your Anthropic API key to environment variables
+                  Configure AWS Bedrock credentials in environment variables
                 </p>
               )}
             </div>
@@ -208,7 +208,7 @@ export default function DailyInsights({ isCollapsed, onToggleCollapse, onHide })
             <div className="insights-empty">
               <p>Generate AI-powered insights from your daily progress.</p>
               <p className="insights-hint">
-                Claude will analyze your sobriety, job search, and therapy data.
+                OpenAI GPT-6.1 Sol will analyze your sobriety, job search, and therapy telemetry.
               </p>
             </div>
           )}

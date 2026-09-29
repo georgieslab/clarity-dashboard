@@ -44,13 +44,28 @@ Provide a weekly summary with these exact sections:
 
 Be direct. No toxic positivity. Call out patterns. Give one concrete action.`;
 
-  const response = await fetch(`${API_URL}/api/insights`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({ prompt })
-  });
+  let response;
+  try {
+    response = await fetch(`${API_URL}/api/insights`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ prompt })
+    });
+  } catch (networkErr) {
+    console.warn('Local insights proxy unreachable, trying live backend');
+  }
+
+  if (!response || !response.ok) {
+    response = await fetch('https://clarity-dashboard-lnho.onrender.com/api/insights', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ prompt })
+    });
+  }
 
   if (!response.ok) {
     throw new Error('Failed to generate insights');
