@@ -23,15 +23,19 @@
   --glass-border-subtle: rgba(0, 0, 0, 0.06);
   --glass-specular: inset 0 1px 1px 0 rgba(255, 255, 255, 0.9), inset 0 -1px 1px 0 rgba(0, 0, 0, 0.03);
 
-  /* Organic Gooey Plasma Metaball Sphere Variables */
+  /* Organic Gooey Plasma Metaball Sphere Variables (Consistent Violet, Pink, Blue) */
+  --loader-blue: #38bdf8;
+  --loader-violet: #8b5cf6;
+  --loader-pink: #ec4899;
   --loader-c1: #38bdf8;
-  --loader-c2: #ec4899;
-  --loader-shadow-outer: rgba(56, 189, 248, 0.55);
-  --loader-shadow-inner: rgba(236, 72, 153, 0.55);
-  --loader-gradient-start: rgba(56, 189, 248, 0.25);
+  --loader-c2: #8b5cf6;
+  --loader-c3: #ec4899;
+  --loader-shadow-outer: rgba(139, 92, 246, 0.6);
+  --loader-shadow-inner: rgba(236, 72, 153, 0.6);
+  --loader-gradient-start: rgba(56, 189, 248, 0.28);
   --loader-gradient-end: rgba(236, 72, 153, 0.5);
-  --loader-inset-top: rgba(56, 189, 248, 0.55);
-  --loader-inset-bottom: rgba(236, 72, 153, 0.55);
+  --loader-inset-top: rgba(56, 189, 248, 0.6);
+  --loader-inset-bottom: rgba(236, 72, 153, 0.6);
 
   /* Typography Colors */
   --text-primary: #0f172a;
@@ -89,13 +93,17 @@
   --glass-border-subtle: rgba(255, 255, 255, 0.06);
   --glass-specular: inset 0 1px 1px 0 rgba(255, 255, 255, 0.25), inset 0 -1px 1px 0 rgba(0, 0, 0, 0.4);
 
-  /* Organic Gooey Plasma Metaball Sphere Variables (Dark) */
+  /* Organic Gooey Plasma Metaball Sphere Variables (Dark: Consistent Violet, Pink, Blue) */
+  --loader-blue: #38bdf8;
+  --loader-violet: #a855f7;
+  --loader-pink: #f43f5e;
   --loader-c1: #38bdf8;
-  --loader-c2: #f43f5e;
-  --loader-shadow-outer: rgba(56, 189, 248, 0.75);
+  --loader-c2: #a855f7;
+  --loader-c3: #f43f5e;
+  --loader-shadow-outer: rgba(168, 85, 247, 0.75);
   --loader-shadow-inner: rgba(244, 63, 94, 0.75);
   --loader-gradient-start: rgba(56, 189, 248, 0.35);
-  --loader-gradient-end: rgba(244, 63, 94, 0.65);
+  --loader-gradient-end: rgba(244, 63, 94, 0.6);
   --loader-inset-top: rgba(56, 189, 248, 0.75);
   --loader-inset-bottom: rgba(244, 63, 94, 0.75);
 
@@ -1429,7 +1437,7 @@ main {
   transform: scale(0.96);
 }
 
-/* Floating FAB 3D Multi-Layer Sphere */
+/* Floating FAB 3D Multi-Layer Sphere (Consistent Violet, Pink, Blue) */
 .siri-orb.loader-mini {
   --c1: var(--loader-c1);
   --c2: var(--loader-c2);
@@ -1441,8 +1449,8 @@ main {
   border-radius: 50%;
   transform: scale(var(--size));
   box-shadow:
-    0 0 25px 0 var(--loader-shadow-outer),
-    0 15px 35px 0 var(--loader-shadow-inner);
+    0 0 24px 0 var(--loader-shadow-outer),
+    0 14px 32px 0 var(--loader-shadow-inner);
   animation: colorize calc(var(--t) * 3) ease-in-out infinite;
   overflow: hidden;
   margin: 0;
@@ -1457,9 +1465,9 @@ main {
   position: absolute;
   inset: 0;
   border-radius: 50%;
-  border-top: 1px solid var(--c1);
-  border-bottom: 1px solid var(--c2);
-  background: linear-gradient(180deg, var(--loader-gradient-start), var(--loader-gradient-end));
+  border-top: 1.5px solid var(--loader-blue);
+  border-bottom: 1.5px solid var(--loader-pink);
+  background: linear-gradient(180deg, rgba(56, 189, 248, 0.25) 0%, rgba(139, 92, 246, 0.25) 50%, rgba(236, 72, 153, 0.45) 100%);
   box-shadow:
     inset 0 10px 10px 0 var(--loader-inset-top),
     inset 0 -10px 10px 0 var(--loader-inset-bottom);
@@ -1470,20 +1478,20 @@ main {
 .voice-fab:hover .siri-orb.loader-mini {
   --size: 0.52;
   box-shadow:
-    0 0 30px 0 var(--loader-shadow-outer),
-    0 18px 40px 0 var(--loader-shadow-inner);
+    0 0 32px 0 rgba(139, 92, 246, 0.8),
+    0 16px 36px 0 rgba(236, 72, 153, 0.75);
 }
 
 .voice-fab.listening .siri-orb.loader-mini {
   --t: 1.4s;
   --size: 0.54;
-  box-shadow: 0 0 35px 0 rgba(236, 72, 153, 0.8), 0 15px 35px 0 rgba(168, 85, 247, 0.8);
+  box-shadow: 0 0 35px 0 rgba(236, 72, 153, 0.85), 0 15px 35px 0 rgba(139, 92, 246, 0.85);
 }
 
 .voice-fab.speaking .siri-orb.loader-mini {
   --t: 1.3s;
   --size: 0.52;
-  box-shadow: 0 0 35px 0 rgba(56, 189, 248, 0.8), 0 15px 35px 0 rgba(129, 140, 248, 0.8);
+  box-shadow: 0 0 35px 0 rgba(56, 189, 248, 0.85), 0 15px 35px 0 rgba(139, 92, 246, 0.85);
 }
 
 /* 3D Voice Assistant Deck */
@@ -1530,12 +1538,24 @@ main {
 }
 
 .voice-header-title h3 {
-  font-size: 1.1rem;
-  font-weight: 700;
-  letter-spacing: -0.02em;
-  background: linear-gradient(135deg, var(--text-primary) 40%, var(--accent-primary) 100%);
+  font-size: 1.15rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  background: linear-gradient(135deg, var(--loader-blue) 0%, var(--loader-violet) 50%, var(--loader-pink) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+}
+
+.voice-role-tag {
+  font-size: 0.65rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  padding: 0.2rem 0.55rem;
+  border-radius: var(--radius-full);
+  background: rgba(139, 92, 246, 0.12);
+  border: 1px solid rgba(139, 92, 246, 0.3);
 }
 
 .voice-provider-tag {
@@ -1593,7 +1613,7 @@ main {
   transform: scale(1.03);
 }
 
-/* Central Organic Gooey Plasma Metaball Sphere (Clarity Signature Visualizer) */
+/* Central Organic Gooey Plasma Metaball Sphere (Consistent Violet, Pink, Blue) */
 .siri-core.loader {
   --c1: var(--loader-c1);
   --c2: var(--loader-c2);
@@ -1605,8 +1625,8 @@ main {
   border-radius: 50%;
   transform: scale(var(--size));
   box-shadow:
-    0 0 25px 0 var(--loader-shadow-outer),
-    0 20px 50px 0 var(--loader-shadow-inner);
+    0 0 30px 0 var(--loader-shadow-outer),
+    0 18px 45px 0 var(--loader-shadow-inner);
   animation: colorize calc(var(--t) * 3) ease-in-out infinite;
   overflow: hidden;
   margin: 0 auto;
@@ -1621,9 +1641,9 @@ main {
   position: absolute;
   inset: 0;
   border-radius: 50%;
-  border-top: 1px solid var(--c1);
-  border-bottom: 1px solid var(--c2);
-  background: linear-gradient(180deg, var(--loader-gradient-start), var(--loader-gradient-end));
+  border-top: 1.5px solid var(--loader-blue);
+  border-bottom: 1.5px solid var(--loader-pink);
+  background: linear-gradient(180deg, rgba(56, 189, 248, 0.22) 0%, rgba(139, 92, 246, 0.25) 50%, rgba(236, 72, 153, 0.45) 100%);
   box-shadow:
     inset 0 10px 10px 0 var(--loader-inset-top),
     inset 0 -10px 10px 0 var(--loader-inset-bottom);
@@ -1642,11 +1662,10 @@ main {
   z-index: 1;
 }
 
-/* Organic Floating Metaballs */
+/* Organic Floating Metaballs - Consistent Violet, Pink, and Blue */
 .blob {
   position: absolute;
   border-radius: 42%;
-  background: linear-gradient(180deg, var(--c1) 30%, var(--c2) 70%);
 }
 
 .b1 {
@@ -1654,6 +1673,7 @@ main {
   height: 44px;
   top: 12px;
   left: 28px;
+  background: linear-gradient(135deg, var(--loader-blue) 15%, var(--loader-violet) 85%);
   transform-origin: 50% 130%;
   animation: spin var(--t) linear infinite reverse;
 }
@@ -1663,6 +1683,7 @@ main {
   height: 40px;
   top: 18px;
   left: 30px;
+  background: linear-gradient(180deg, var(--loader-violet) 20%, var(--loader-pink) 80%);
   transform-origin: 50% -30%;
   animation: spin var(--t) linear infinite;
   animation-delay: calc(var(--t) / -3);
@@ -1673,6 +1694,7 @@ main {
   height: 30px;
   top: 28px;
   left: 35px;
+  background: linear-gradient(225deg, var(--loader-pink) 25%, var(--loader-violet) 85%);
   transform-origin: -30% -10%;
   animation: spin var(--t) linear infinite reverse;
 }
@@ -1682,6 +1704,7 @@ main {
   height: 28px;
   top: 30px;
   left: 36px;
+  background: linear-gradient(135deg, var(--loader-blue) 20%, var(--loader-pink) 85%);
   transform-origin: -30% -10%;
   animation: spin var(--t) linear infinite reverse;
   animation-delay: calc(var(--t) / -2);
@@ -1692,6 +1715,7 @@ main {
   height: 30px;
   top: 28px;
   left: 35px;
+  background: linear-gradient(180deg, var(--loader-violet) 15%, var(--loader-pink) 85%);
   transform-origin: 130% -10%;
   animation: spin var(--t) linear infinite;
 }
@@ -1701,6 +1725,7 @@ main {
   height: 28px;
   top: 30px;
   left: 36px;
+  background: linear-gradient(270deg, var(--loader-blue) 20%, var(--loader-violet) 85%);
   transform-origin: 130% -10%;
   animation: spin var(--t) linear infinite;
   animation-delay: calc(var(--t) / -1.5);
@@ -1712,21 +1737,16 @@ main {
   }
 }
 
+/* Colorize strictly locked to Violet, Pink, Blue gamut */
 @keyframes colorize {
   0% {
     filter: hue-rotate(0deg);
   }
-  20% {
-    filter: hue-rotate(-30deg);
+  35% {
+    filter: hue-rotate(20deg);
   }
-  40% {
-    filter: hue-rotate(-60deg);
-  }
-  60% {
-    filter: hue-rotate(-90deg);
-  }
-  80% {
-    filter: hue-rotate(-45deg);
+  70% {
+    filter: hue-rotate(-18deg);
   }
   100% {
     filter: hue-rotate(0deg);
@@ -1740,7 +1760,7 @@ main {
   width: 28px;
   height: 16px;
   border-radius: 50%;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.85), rgba(255, 255, 255, 0.05));
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.85), rgba(56, 189, 248, 0.15));
   filter: blur(1.5px);
   transform: rotate(-35deg);
   pointer-events: none;

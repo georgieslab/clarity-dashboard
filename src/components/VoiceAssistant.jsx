@@ -7,8 +7,8 @@ export default function VoiceAssistant() {
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [isThinking, setIsThinking] = useState(false);
   const [transcript, setTranscript] = useState('');
-  const [lastReply, setLastReply] = useState('Tap the Siri orb or speak to converse with Clarity.');
-  const [providerBadge, setProviderBadge] = useState('Amazon Bedrock');
+  const [lastReply, setLastReply] = useState("I'm Lumen, your mindful copilot. I'm here to support your sobriety streak, therapy reflections, and daily focus. How are you feeling right now?");
+  const [providerBadge, setProviderBadge] = useState('Mindful Copilot');
 
   const recognitionRef = useRef(null);
   const currentAudioRef = useRef(null);
@@ -208,20 +208,21 @@ export default function VoiceAssistant() {
           <div className="voice-header">
             <div className="voice-header-title">
               <span className="voice-pulse-dot"></span>
-              <h3>Clarity Voice 3D</h3>
+              <h3>LUMEN</h3>
+              <span className="voice-role-tag">Mindful Copilot</span>
             </div>
             <span className="voice-provider-tag">{providerBadge}</span>
             <button 
               onClick={() => setIsOpen(false)} 
               className="voice-close-btn"
-              aria-label="Close voice assistant"
+              aria-label="Close Lumen"
             >
               ✕
             </button>
           </div>
 
           <div className="voice-visualizer-container">
-            {/* Interactive True 3D Siri Multi-Sphere Visualizer */}
+            {/* Interactive True 3D Lumen Organic Sphere Visualizer */}
             <div 
               className={`siri-interactive-sphere ${isListening ? 'listening' : ''} ${isThinking ? 'thinking' : ''} ${isSpeaking ? 'speaking' : ''}`}
               onClick={handleToggleListening}
@@ -246,12 +247,12 @@ export default function VoiceAssistant() {
 
             <p className="voice-status-label">
               {isListening 
-                ? "🎙️ Listening... (tap to finish)" 
+                ? "🎙️ Lumen is listening... (tap to finish)" 
                 : isThinking 
-                ? "✨ Amazon Bedrock thinking..." 
+                ? "✨ Lumen is reflecting..." 
                 : isSpeaking 
-                ? "🔊 Matthew Neural speaking..." 
-                : "Tap 3D sphere to talk"}
+                ? "🔊 Lumen is speaking..." 
+                : "Tap sphere to speak with Lumen"}
             </p>
           </div>
 
@@ -263,7 +264,7 @@ export default function VoiceAssistant() {
           )}
 
           <div className="voice-reply-card">
-            <span className="voice-bubble-label">Clarity Assistant:</span>
+            <span className="voice-bubble-label">Lumen:</span>
             <p className="voice-reply-text">{lastReply}</p>
           </div>
 
@@ -271,20 +272,32 @@ export default function VoiceAssistant() {
             <button 
               className="voice-chip" 
               onClick={() => {
-                setTranscript("How is my executive progress today?");
-                sendToBedrock("How is my executive progress today?");
+                const prompt = "How is my sobriety streak holding today?";
+                setTranscript(prompt);
+                sendToBedrock(prompt);
               }}
             >
-              "How is my progress today?"
+              "How's my sobriety streak?"
             </button>
             <button 
               className="voice-chip" 
               onClick={() => {
-                setTranscript("Give me a quick 1-minute motivation check.");
-                sendToBedrock("Give me a quick 1-minute motivation check.");
+                const prompt = "I'm feeling a bit overwhelmed, can we take a mindful check-in?";
+                setTranscript(prompt);
+                sendToBedrock(prompt);
               }}
             >
-              "Quick motivation check"
+              "Mindful check-in"
+            </button>
+            <button 
+              className="voice-chip" 
+              onClick={() => {
+                const prompt = "Give me a calm 1-minute reflection for today's focus.";
+                setTranscript(prompt);
+                sendToBedrock(prompt);
+              }}
+            >
+              "Focus reflection"
             </button>
           </div>
         </div>
