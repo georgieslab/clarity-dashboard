@@ -15,9 +15,10 @@ const __dirname = dirname(__filename);
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Middleware
+// Middleware with extended body size limit for base64 multimodal image uploads
 app.use(cors());
-app.use(express.json());
+app.use(express.json({ limit: '15mb' }));
+app.use(express.urlencoded({ limit: '15mb', extended: true }));
 
 // Initialize Anthropic fallback
 const anthropic = new Anthropic({

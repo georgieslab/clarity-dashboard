@@ -40,13 +40,68 @@ export default function VoiceAssistant() {
     loadSavedHistory();
   }, []);
 
-  // Save history changes to persistent storage (keep latest 30 messages)
+  // Helper to downscale and compress images on the client before network/storage
+  const compressImage = (file, maxDim = 1024, quality = 0.8) => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const img = new Image();
+        img.onload = () => {
+          let width = img.width;
+          let height = img.height;
+
+          if (width > maxDim || height > maxDim) {
+            if (width > height) {
+              height = Math.round((height * maxDim) / width);
+              width = maxDim;
+            } else {
+              width = Math.round((width * maxDim) / height);
+              height = maxDim;
+            }
+          }
+
+          const canvas = document.createElement('canvas');
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, width, height);
+
+          const dataUrl = canvas.toDataURL('image/jpeg', quality);
+          resolve({
+            dataUrl,
+            base64: dataUrl,
+            mimeType: 'image/jpeg',
+            name: file.name
+          });
+        };
+        img.onerror = (err) => reject(err);
+        img.src = e.target.result;
+      };
+      reader.onerror = (err) => reject(err);
+      reader.readAsDataURL(file);
+    });
+  };
+
+  // Save history changes to persistent storage (safely strip heavy image payloads for localStorage)
   const saveMessages = async (newMsgs) => {
     setMessages(newMsgs);
     try {
-      await storage.set('lumen_chat_history', newMsgs.slice(-30));
+      const sanitised = newMsgs.slice(-20).map(m => {
+        // In persistent storage, omit large base64 strings so localStorage quota is never exceeded
+        if (m.image && m.image.length > 15000) {
+          return { ...m, image: null, text: m.text || "[Image uploaded for vision analysis]" };
+        }
+        return m;
+      });
+      await storage.set('lumen_chat_history', sanitised);
     } catch (err) {
-      console.warn('Failed to persist lumen_chat_history:', err);
+      console.warn('Failed to persist lumen_chat_history, clearing image payloads:', err);
+      try {
+        const fallbackMsgs = newMsgs.slice(-15).map(m => ({ ...m, image: null }));
+        await storage.set('lumen_chat_history', fallbackMsgs);
+      } catch (e) {
+        console.error('Storage clear error:', e);
+      }
     }
   };
 
@@ -191,24 +246,20 @@ export default function VoiceAssistant() {
     }
   }, [isListening]);
 
-  const handleImageChange = (e) => {
+  const handleImageChange = async (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
-    if (file.size > 8 * 1024 * 1024) {
-      alert("Please select an image smaller than 8MB.");
+    if (file.size > 12 * 1024 * 1024) {
+      alert("Please select an image smaller than 12MB.");
       return;
     }
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      const dataUrl = event.target.result;
-      setSelectedImage({
-        dataUrl,
-        base64: dataUrl,
-        mimeType: file.type || 'image/jpeg',
-        name: file.name
-      });
-    };
-    reader.readAsDataURL(file);
+    try {
+      const compressed = await compressImage(file, 1024, 0.8);
+      setSelectedImage(compressed);
+    } catch (err) {
+      console.error("Image compression error:", err);
+      alert("Failed to process image. Please try another image.");
+    }
   };
 
   const handleClearImage = () => {
