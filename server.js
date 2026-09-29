@@ -137,16 +137,18 @@ User Context telemetry:
     // 1. Try Amazon Bedrock (OpenAI ChatGPT & Multimodal Vision models)
     if (process.env.AWS_ACCESS_KEY_ID && process.env.AWS_SECRET_ACCESS_KEY) {
       const candidateModels = hasImage ? [
+        "openai.gpt-6.1-sol",
+        "openai.gpt-6.1",
         "eu.anthropic.claude-3-5-sonnet-20241022-v2:0",
         "us.anthropic.claude-3-5-sonnet-20241022-v2:0",
         "anthropic.claude-3-haiku-20240307-v1:0",
         process.env.BEDROCK_MODEL_ID,
-        "openai.gpt-oss-120b-1:0",
-        "openai.gpt-6.1-sol"
+        "openai.gpt-oss-120b-1:0"
       ].filter(Boolean) : [
+        "openai.gpt-6.1-sol",
+        "openai.gpt-6.1",
         process.env.BEDROCK_MODEL_ID,
         "openai.gpt-oss-120b-1:0",
-        "openai.gpt-6.1-sol",
         "openai.gpt-oss-20b-1:0",
         "eu.anthropic.claude-haiku-4-5-20251001-v1:0"
       ].filter(Boolean);
@@ -280,10 +282,11 @@ app.post('/api/insights', async (req, res) => {
     // 1. Try Amazon Bedrock with OpenAI ChatGPT models
     if (process.env.AWS_ACCESS_KEY_ID && process.env.AWS_SECRET_ACCESS_KEY) {
       const candidateModels = [
+        "openai.gpt-6.1-sol",
+        "openai.gpt-6.1",
         process.env.BEDROCK_INSIGHTS_MODEL_ID,
         process.env.BEDROCK_MODEL_ID,
         "openai.gpt-oss-120b-1:0",
-        "openai.gpt-6.1-sol",
         "openai.gpt-oss-20b-1:0",
         "eu.anthropic.claude-haiku-4-5-20251001-v1:0"
       ].filter(Boolean);
