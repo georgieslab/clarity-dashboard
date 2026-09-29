@@ -1171,6 +1171,8 @@ main {
   justify-content: space-between;
   align-items: center;
   transition: all 0.25s ease;
+  position: relative;
+  overflow: hidden;
 }
 
 .application-item:hover {
@@ -1178,6 +1180,174 @@ main {
   border-color: var(--glass-border);
   box-shadow: var(--glass-shadow-sm);
   transform: translateX(2px);
+}
+
+/* --------------------------------------------------------------------------
+   Shimmering Interview Modus UX/UI
+   -------------------------------------------------------------------------- */
+.stat {
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+
+.stat.active-filter {
+  background: rgba(56, 189, 248, 0.12);
+  border-color: var(--loader-blue);
+  box-shadow: 0 0 12px rgba(56, 189, 248, 0.2);
+}
+
+.stat.interview-stat.has-interviews {
+  border-color: rgba(236, 72, 153, 0.45);
+  background: linear-gradient(135deg, rgba(236, 72, 153, 0.1), rgba(139, 92, 246, 0.08));
+}
+
+.stat.interview-stat.active-filter {
+  border-color: #ec4899;
+  background: linear-gradient(135deg, rgba(236, 72, 153, 0.2), rgba(139, 92, 246, 0.15));
+  box-shadow: 0 0 18px rgba(236, 72, 153, 0.35);
+}
+
+.stat-shimmer-glow {
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.25), transparent);
+  pointer-events: none;
+}
+
+.stat.interview-stat.has-interviews .stat-shimmer-glow {
+  animation: interviewStatSweep 3s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+@keyframes interviewStatSweep {
+  0% { left: -100%; }
+  60%, 100% { left: 100%; }
+}
+
+.interview-mode-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.5rem 0.85rem;
+  border-radius: var(--radius-sm);
+  background: linear-gradient(135deg, rgba(236, 72, 153, 0.16), rgba(139, 92, 246, 0.14));
+  border: 1px solid rgba(236, 72, 153, 0.4);
+  box-shadow: 0 0 15px rgba(236, 72, 153, 0.18);
+  margin-bottom: 0.85rem;
+  animation: siriPop 0.25s ease forwards;
+}
+
+.interview-mode-title {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  color: #ec4899;
+  text-transform: uppercase;
+}
+
+.clear-filter-btn {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: var(--radius-full);
+  color: var(--text-primary);
+  font-size: 0.68rem;
+  font-weight: 600;
+  padding: 0.18rem 0.6rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.clear-filter-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+/* Shimmering Active Interview Application Card */
+.application-item.application-interview-mode.shimmer-card {
+  background: linear-gradient(
+    110deg,
+    rgba(236, 72, 153, 0.08) 0%,
+    rgba(236, 72, 153, 0.18) 25%,
+    rgba(56, 189, 248, 0.28) 50%,
+    rgba(139, 92, 246, 0.22) 75%,
+    rgba(236, 72, 153, 0.08) 100%
+  );
+  background-size: 250% 100%;
+  animation: interviewCardShimmer 4s ease-in-out infinite;
+  border: 1.5px solid rgba(236, 72, 153, 0.6);
+  box-shadow: 
+    0 4px 22px rgba(236, 72, 153, 0.25),
+    0 0 15px rgba(56, 189, 248, 0.2),
+    inset 0 0 12px rgba(236, 72, 153, 0.12),
+    var(--glass-specular);
+}
+
+.application-item.application-interview-mode.shimmer-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, #ec4899, #38bdf8, #8b5cf6, #ec4899);
+  background-size: 200% 100%;
+  animation: shimmerBorder 2.5s linear infinite;
+}
+
+@keyframes interviewCardShimmer {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes shimmerBorder {
+  0% { background-position: 0% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.interview-live-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.18rem 0.52rem;
+  border-radius: var(--radius-full);
+  background: rgba(236, 72, 153, 0.18);
+  border: 1px solid rgba(236, 72, 153, 0.45);
+  margin-bottom: 0.3rem;
+  box-shadow: 0 0 10px rgba(236, 72, 153, 0.2);
+}
+
+.interview-live-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #ec4899;
+  box-shadow: 0 0 10px #ec4899;
+  animation: pulseDot 1.4s infinite;
+  flex-shrink: 0;
+}
+
+.interview-chip-text {
+  font-size: 0.62rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  background: linear-gradient(135deg, #ec4899 0%, #a855f7 50%, #38bdf8 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.status-select.interview-select-shimmer {
+  border-color: #ec4899;
+  background: linear-gradient(135deg, rgba(236, 72, 153, 0.2), rgba(139, 92, 246, 0.15));
+  color: #ffffff;
+  box-shadow: 0 0 12px rgba(236, 72, 153, 0.35);
+  font-weight: 700;
 }
 
 .app-info h3 {

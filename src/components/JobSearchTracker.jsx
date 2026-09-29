@@ -4,6 +4,7 @@ import { storage } from '../utils/storage';
 export default function JobSearchTracker({ isCollapsed, onToggleCollapse, onHide }) {
   const [applications, setApplications] = useState([]);
   const [showForm, setShowForm] = useState(false);
+  const [filterMode, setFilterMode] = useState('all');
   const [formData, setFormData] = useState({
     company: '',
     role: '',
@@ -111,23 +112,50 @@ export default function JobSearchTracker({ isCollapsed, onToggleCollapse, onHide
       {!isCollapsed && (
         <div className="card-collapsible-body">
           <div className="job-stats">
-            <div className="stat">
+            <div 
+              className={`stat ${filterMode === 'all' ? 'active-filter' : ''}`}
+              onClick={() => setFilterMode('all')}
+              title="Show all applications"
+            >
               <span className="stat-number">{stats.total}</span>
               <span className="stat-label">Total</span>
             </div>
-            <div className="stat">
+            <div 
+              className={`stat ${filterMode === 'applied' ? 'active-filter' : ''}`}
+              onClick={() => setFilterMode(filterMode === 'applied' ? 'all' : 'applied')}
+              title="Filter by Waiting"
+            >
               <span className="stat-number">{stats.applied}</span>
               <span className="stat-label">Waiting</span>
             </div>
-            <div className="stat">
+            <div 
+              className={`stat interview-stat ${filterMode === 'interviewed' ? 'active-filter' : ''} ${stats.interviewed > 0 ? 'has-interviews' : ''}`}
+              onClick={() => setFilterMode(filterMode === 'interviewed' ? 'all' : 'interviewed')}
+              title="Click to toggle Interview Modus"
+            >
+              <div className="stat-shimmer-glow"></div>
               <span className="stat-number">{stats.interviewed}</span>
-              <span className="stat-label">Interview</span>
+              <span className="stat-label">Interview {stats.interviewed > 0 ? '✨' : ''}</span>
             </div>
-            <div className="stat">
+            <div 
+              className={`stat ${filterMode === 'offered' ? 'active-filter' : ''}`}
+              onClick={() => setFilterMode(filterMode === 'offered' ? 'all' : 'offered')}
+              title="Filter by Offers"
+            >
               <span className="stat-number">{stats.offered}</span>
               <span className="stat-label">Offers</span>
             </div>
           </div>
+
+          {filterMode === 'interviewed' && (
+            <div className="interview-mode-banner">
+              <div className="interview-mode-title">
+                <span className="interview-live-dot"></span>
+                <span>INTERVIEW MODUS ACTIVE ({stats.interviewed})</span>
+              </div>
+              <button className="clear-filter-btn" onClick={() => setFilterMode('all')}>Show All</button>
+            </div>
+          )}
 
           <button 
             onClick={() => setShowForm(!showForm)}
@@ -159,34 +187,50 @@ export default function JobSearchTracker({ isCollapsed, onToggleCollapse, onHide
           <div className="applications-list">
             {applications.length === 0 ? (
               <p className="empty-state">No applications yet. Start applying!</p>
+            ) : applications.filter(app => filterMode === 'all' || app.status === filterMode).length === 0 ? (
+              <p className="empty-state">No applications found in this mode</p>
             ) : (
-              applications.map(app => (
-                <div key={app.id} className="application-item">
-                  <div className="app-info">
-                    <h3>{app.company}</h3>
-                    <p>{app.role}</p>
-                    <span className="date">{app.dateApplied}</span>
-                  </div>
-                  <div className="app-actions">
-                    <select 
-                      value={app.status}
-                      onChange={(e) => handleUpdateStatus(app.id, e.target.value)}
-                      className="status-select"
+              applications
+                .filter(app => filterMode === 'all' || app.status === filterMode)
+                .map(app => {
+                  const isInterview = app.status === 'interviewed';
+                  return (
+                    <div 
+                      key={app.id} 
+                      className={`application-item ${isInterview ? 'application-interview-mode shimmer-card' : ''}`}
                     >
-                      <option value="applied">Applied</option>
-                      <option value="interviewed">Interviewed</option>
-                      <option value="rejected">Rejected</option>
-                      <option value="offered">Offered</option>
-                    </select>
-                    <button 
-                      onClick={() => handleDelete(app.id)}
-                      className="delete-btn"
-                    >
-                      ×
-                    </button>
-                  </div>
-                </div>
-              ))
+                      <div className="app-info">
+                        {isInterview && (
+                          <div className="interview-live-chip">
+                            <span className="interview-live-dot"></span>
+                            <span className="interview-chip-text">INTERVIEW STAGE</span>
+                          </div>
+                        )}
+                        <h3>{app.company}</h3>
+                        <p>{app.role}</p>
+                        <span className="date">{app.dateApplied}</span>
+                      </div>
+                      <div className="app-actions">
+                        <select 
+                          value={app.status}
+                          onChange={(e) => handleUpdateStatus(app.id, e.target.value)}
+                          className={`status-select ${isInterview ? 'interview-select-shimmer' : ''}`}
+                        >
+                          <option value="applied">Applied</option>
+                          <option value="interviewed">Interviewed</option>
+                          <option value="rejected">Rejected</option>
+                          <option value="offered">Offered</option>
+                        </select>
+                        <button 
+                          onClick={() => handleDelete(app.id)}
+                          className="delete-btn"
+                        >
+                          ×
+                        </button>
+                      </div>
+                    </div>
+                  );
+                })
             )}
           </div>
         </div>

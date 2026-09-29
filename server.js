@@ -55,8 +55,10 @@ app.post('/api/voice/converse', async (req, res) => {
     const promptText = (req.body.transcript || req.body.message || req.body.text || "").trim() || "Hello Clarity";
     const context = req.body.context;
 
-    const systemPrompt = `You are "Lumen", a mindful executive wellness and telemetry copilot designed with warmth, emotional intelligence, and calm, non-judgmental presence.
-Your purpose is to walk alongside the user as their confidant and anchor, helping them maintain their sobriety streak, process their therapy work, stay resilient in their job search, and protect their mental focus.
+    const systemPrompt = `You are "Lumen", an executive wellness and telemetry copilot built on OpenAI ChatGPT technology.
+Identity & Persona:
+- You are Lumen, created with OpenAI ChatGPT. You are NOT Claude or Anthropic. If the user asks about your model, you are Lumen, powered by OpenAI ChatGPT.
+- Your purpose is to walk alongside the user as their confidant and anchor, helping them maintain their sobriety streak, process their therapy work, stay resilient in their job search, and protect their mental focus.
 Tone & Guidelines:
 - Speak like a grounded, perceptive mentor or trusted confidant.
 - Validate effort and emotional weight with sincere respect, never patronizing.
@@ -109,10 +111,15 @@ User Context telemetry:
 
     let replyText = "";
 
-    // 1. Try Amazon Bedrock (Requested model e.g. OpenAI GPT-6.1-Sol or Claude Haiku)
+    // 1. Try Amazon Bedrock (OpenAI ChatGPT models)
     if (process.env.AWS_ACCESS_KEY_ID && process.env.AWS_SECRET_ACCESS_KEY) {
-      const primaryModel = process.env.BEDROCK_MODEL_ID || "global.openai.gpt-6.1-sol";
-      const fallbackModel = "eu.anthropic.claude-haiku-4-5-20251001-v1:0";
+      const candidateModels = [
+        process.env.BEDROCK_MODEL_ID,
+        "openai.gpt-oss-120b-1:0",
+        "openai.gpt-6.1-sol",
+        "openai.gpt-oss-20b-1:0",
+        "eu.anthropic.claude-haiku-4-5-20251001-v1:0"
+      ].filter(Boolean);
 
       const runConverse = async (targetModel) => {
         const command = new ConverseCommand({
@@ -125,18 +132,19 @@ User Context telemetry:
           }
         });
         const response = await bedrock.send(command);
-        return response.output.message.content[0].text;
+        const textBlock = response.output?.message?.content?.find(c => c.text);
+        return textBlock ? textBlock.text : (response.output?.message?.content?.[0]?.text || "");
       };
 
-      try {
-        replyText = await runConverse(primaryModel);
-      } catch (primaryErr) {
-        console.warn(`Primary Bedrock model (${primaryModel}) not available (${primaryErr.name}: ${primaryErr.message}). Falling back to ${fallbackModel}`);
+      for (const model of candidateModels) {
         try {
-          replyText = await runConverse(fallbackModel);
-        } catch (fallbackErr) {
-          console.error("Fallback Bedrock converse failed:", fallbackErr);
-          replyText = "I am right here with you. How are you feeling about your journey today?";
+          replyText = await runConverse(model);
+          if (replyText && replyText.trim().length > 0) {
+            console.log(`Voice converse successfully responded via Bedrock model: ${model}`);
+            break;
+          }
+        } catch (err) {
+          console.warn(`Model ${model} failed (${err.name}: ${err.message}). Trying next candidate...`);
         }
       }
     }
@@ -182,10 +190,16 @@ app.post('/api/insights', async (req, res) => {
 
     let content = "";
 
-    // 1. Try Amazon Bedrock with OpenAI GPT-6.1-Sol (or fallback to Claude)
+    // 1. Try Amazon Bedrock with OpenAI ChatGPT models
     if (process.env.AWS_ACCESS_KEY_ID && process.env.AWS_SECRET_ACCESS_KEY) {
-      const primaryModel = process.env.BEDROCK_INSIGHTS_MODEL_ID || process.env.BEDROCK_MODEL_ID || "global.openai.gpt-6.1-sol";
-      const fallbackModel = "eu.anthropic.claude-haiku-4-5-20251001-v1:0";
+      const candidateModels = [
+        process.env.BEDROCK_INSIGHTS_MODEL_ID,
+        process.env.BEDROCK_MODEL_ID,
+        "openai.gpt-oss-120b-1:0",
+        "openai.gpt-6.1-sol",
+        "openai.gpt-oss-20b-1:0",
+        "eu.anthropic.claude-haiku-4-5-20251001-v1:0"
+      ].filter(Boolean);
 
       const runBedrockInsights = async (targetModel) => {
         const command = new ConverseCommand({
@@ -197,7 +211,7 @@ app.post('/api/insights', async (req, res) => {
             }
           ],
           system: [{ 
-            text: "You are an executive wellness and life telemetry intelligence coach. Analyze the user's progress with sharp, grounded, insightful, and actionable clarity. Highlight breakthrough patterns, blind spots, and high-leverage next steps."
+            text: "You are an executive wellness and life telemetry intelligence coach powered by OpenAI ChatGPT. Analyze the user's progress with sharp, grounded, insightful, and actionable clarity. Highlight breakthrough patterns, blind spots, and high-leverage next steps."
           }],
           inferenceConfig: {
             maxTokens: 1024,
@@ -205,17 +219,19 @@ app.post('/api/insights', async (req, res) => {
           }
         });
         const response = await bedrock.send(command);
-        return response.output.message.content[0].text;
+        const textBlock = response.output?.message?.content?.find(c => c.text);
+        return textBlock ? textBlock.text : (response.output?.message?.content?.[0]?.text || "");
       };
 
-      try {
-        content = await runBedrockInsights(primaryModel);
-      } catch (primaryErr) {
-        console.warn(`Primary Bedrock insights model (${primaryModel}) unavailable:`, primaryErr.message, `. Trying fallback ${fallbackModel}`);
+      for (const model of candidateModels) {
         try {
-          content = await runBedrockInsights(fallbackModel);
-        } catch (fallbackErr) {
-          console.error("Fallback Bedrock insights failed:", fallbackErr.message);
+          content = await runBedrockInsights(model);
+          if (content && content.trim().length > 0) {
+            console.log(`Insights successfully generated via Bedrock model: ${model}`);
+            break;
+          }
+        } catch (err) {
+          console.warn(`Insights model ${model} failed (${err.name}: ${err.message}). Trying next candidate...`);
         }
       }
     }
