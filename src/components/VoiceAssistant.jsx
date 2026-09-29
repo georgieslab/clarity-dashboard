@@ -149,12 +149,12 @@ export default function VoiceAssistant() {
         // Find the most natural/human voice installed on the device (e.g. Apple Samantha, Daniel, Natural, Google)
         const utterance = new SpeechSynthesisUtterance(data.replyText);
         const voices = window.speechSynthesis.getVoices();
-        const premiumVoice = voices.find(v => 
-          (v.name.includes('Natural') || v.name.includes('Samantha') || v.name.includes('Daniel') || v.name.includes('Siri') || v.name.includes('Google US')) && v.lang.startsWith('en')
+        const premiumMaleVoice = voices.find(v => 
+          (v.name.includes('Daniel') || v.name.includes('George') || v.name.includes('Guy') || v.name.includes('Arthur') || v.name.includes('David') || (v.name.includes('Male') && v.name.includes('Natural'))) && v.lang.startsWith('en')
         ) || voices.find(v => v.lang.startsWith('en'));
 
-        if (premiumVoice) {
-          utterance.voice = premiumVoice;
+        if (premiumMaleVoice) {
+          utterance.voice = premiumMaleVoice;
         }
         utterance.rate = 1.0;
         utterance.pitch = 1.0;
@@ -238,7 +238,7 @@ export default function VoiceAssistant() {
                 : isThinking 
                 ? "✨ Amazon Bedrock thinking..." 
                 : isSpeaking 
-                ? "🔊 Danielle Neural speaking..." 
+                ? "🔊 Matthew Neural speaking..." 
                 : "Tap 3D sphere to talk"}
             </p>
           </div>

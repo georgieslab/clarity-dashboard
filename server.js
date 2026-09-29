@@ -105,7 +105,7 @@ User Context telemetry:
           Engine: 'neural',
           OutputFormat: 'mp3',
           Text: replyText,
-          VoiceId: process.env.POLLY_VOICE_ID || 'Danielle' // Neural natural voice
+          VoiceId: process.env.POLLY_VOICE_ID || 'Matthew' // Neural calm male voice
         });
 
         const pollyResponse = await polly.send(pollyCommand);
