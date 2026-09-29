@@ -69,6 +69,44 @@ User Context telemetry:
 - Therapy sessions logged: ${context?.therapyCount ?? 0}
 - Current Focus state: ${context?.focusTime ?? 0} minutes logged today`;
 
+    // Format conversation history for Bedrock (must alternate user/assistant and begin with user)
+    const incomingHistory = Array.isArray(req.body.history) ? req.body.history : [];
+    const formattedMessages = [];
+
+    for (const item of incomingHistory) {
+      if (!item || !item.text) continue;
+      const role = item.role === 'user' ? 'user' : 'assistant';
+      const text = String(item.text).trim();
+      if (!text) continue;
+
+      if (formattedMessages.length > 0 && formattedMessages[formattedMessages.length - 1].role === role) {
+        formattedMessages[formattedMessages.length - 1].content[0].text += ` ${text}`;
+      } else {
+        formattedMessages.push({ role, content: [{ text }] });
+      }
+    }
+
+    // Ensure current promptText is added
+    if (formattedMessages.length > 0 && formattedMessages[formattedMessages.length - 1].role === 'user') {
+      formattedMessages[formattedMessages.length - 1].content[0].text += `\n${promptText}`;
+    } else {
+      formattedMessages.push({ role: 'user', content: [{ text: promptText }] });
+    }
+
+    // Bedrock ConverseCommand requires the first message to be role 'user'
+    while (formattedMessages.length > 0 && formattedMessages[0].role !== 'user') {
+      formattedMessages.shift();
+    }
+
+    // Keep last 10 turns to avoid token bloat and maintain fast voice latency
+    let finalMessages = formattedMessages.slice(-10);
+    while (finalMessages.length > 0 && finalMessages[0].role !== 'user') {
+      finalMessages.shift();
+    }
+    if (finalMessages.length === 0) {
+      finalMessages = [{ role: 'user', content: [{ text: promptText }] }];
+    }
+
     let replyText = "";
 
     // 1. Try Amazon Bedrock (Requested model e.g. OpenAI GPT-6.1-Sol or Claude Haiku)
@@ -79,12 +117,7 @@ User Context telemetry:
       const runConverse = async (targetModel) => {
         const command = new ConverseCommand({
           modelId: targetModel,
-          messages: [
-            {
-              role: "user",
-              content: [{ text: promptText }]
-            }
-          ],
+          messages: finalMessages,
           system: [{ text: systemPrompt }],
           inferenceConfig: {
             maxTokens: 300,

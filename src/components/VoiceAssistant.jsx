@@ -1,16 +1,114 @@
 import { useState, useEffect, useRef } from 'react';
 import { storage } from '../utils/storage';
 
+const DEFAULT_WELCOME = "I'm Lumen, your mindful copilot. I'm here to support your sobriety streak, therapy reflections, and daily focus. How are you feeling right now?";
+
 export default function VoiceAssistant() {
   const [isOpen, setIsOpen] = useState(false);
   const [isListening, setIsListening] = useState(false);
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [isThinking, setIsThinking] = useState(false);
   const [transcript, setTranscript] = useState('');
-  const [lastReply, setLastReply] = useState("I'm Lumen, your mindful copilot. I'm here to support your sobriety streak, therapy reflections, and daily focus. How are you feeling right now?");
+  const [textInput, setTextInput] = useState('');
+  const [messages, setMessages] = useState([
+    {
+      id: 'lumen-init',
+      role: 'assistant',
+      text: DEFAULT_WELCOME,
+      timestamp: Date.now()
+    }
+  ]);
 
   const recognitionRef = useRef(null);
   const currentAudioRef = useRef(null);
+  const isOpenRef = useRef(isOpen);
+  const messagesEndRef = useRef(null);
+
+  // Load persistent chat history from storage on mount
+  useEffect(() => {
+    const loadSavedHistory = async () => {
+      try {
+        const saved = await storage.get('lumen_chat_history');
+        if (Array.isArray(saved) && saved.length > 0) {
+          setMessages(saved);
+        }
+      } catch (err) {
+        console.warn('Could not load lumen_chat_history:', err);
+      }
+    };
+    loadSavedHistory();
+  }, []);
+
+  // Save history changes to persistent storage (keep latest 30 messages)
+  const saveMessages = async (newMsgs) => {
+    setMessages(newMsgs);
+    try {
+      await storage.set('lumen_chat_history', newMsgs.slice(-30));
+    } catch (err) {
+      console.warn('Failed to persist lumen_chat_history:', err);
+    }
+  };
+
+  // Clear chat history
+  const handleClearHistory = async () => {
+    const reset = [
+      {
+        id: `lumen-reset-${Date.now()}`,
+        role: 'assistant',
+        text: "I've cleared our previous conversation. I'm right here with you whenever you're ready.",
+        timestamp: Date.now()
+      }
+    ];
+    await saveMessages(reset);
+  };
+
+  // Auto-scroll chat feed to latest message
+  useEffect(() => {
+    if (isOpen) {
+      messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [messages, transcript, isThinking, isOpen]);
+
+  // Keep isOpenRef synchronized
+  useEffect(() => {
+    isOpenRef.current = isOpen;
+    if (isOpen) {
+      // Auto-listen when user opens Lumen modal
+      const timer = setTimeout(() => {
+        startListeningSafe();
+      }, 350);
+      return () => clearTimeout(timer);
+    } else {
+      // Safely silence any active audio / recognition when closed
+      if (currentAudioRef.current) {
+        currentAudioRef.current.pause();
+      }
+      window.speechSynthesis?.cancel();
+      if (recognitionRef.current) {
+        try {
+          recognitionRef.current.stop();
+        } catch (e) {}
+      }
+      setIsListening(false);
+      setIsSpeaking(false);
+    }
+  }, [isOpen]);
+
+  // Safe helper to activate voice listening
+  const startListeningSafe = () => {
+    if (!recognitionRef.current || !isOpenRef.current) return;
+    if (currentAudioRef.current) {
+      currentAudioRef.current.pause();
+    }
+    window.speechSynthesis?.cancel();
+    setIsSpeaking(false);
+    setTranscript('');
+    try {
+      recognitionRef.current.start();
+    } catch (e) {
+      // Speech recognition might already be active or transitioning
+    }
+  };
 
   // Initialize Speech Recognition (Web Speech API)
   useEffect(() => {
@@ -81,18 +179,7 @@ export default function VoiceAssistant() {
     if (isListening) {
       recognitionRef.current.stop();
     } else {
-      // Stop any active speech
-      if (currentAudioRef.current) {
-        currentAudioRef.current.pause();
-      }
-      window.speechSynthesis?.cancel();
-      setIsSpeaking(false);
-      setTranscript('');
-      try {
-        recognitionRef.current.start();
-      } catch (e) {
-        console.warn('Recognition start exception:', e);
-      }
+      startListeningSafe();
     }
   };
 
@@ -104,17 +191,39 @@ export default function VoiceAssistant() {
   }, [isListening]);
 
   const sendToBedrock = async (userVoiceInput) => {
+    if (!userVoiceInput || !userVoiceInput.trim()) return;
+    const cleanInput = userVoiceInput.trim();
+
+    // 1. Append user message turn immediately
+    const userMsg = {
+      id: `user-${Date.now()}`,
+      role: 'user',
+      text: cleanInput,
+      timestamp: Date.now()
+    };
+    const updatedMessages = [...messages, userMsg];
+    await saveMessages(updatedMessages);
+
+    setTranscript('');
+    setTextInput('');
     setIsThinking(true);
+
     try {
       const context = await getTelemetryContext();
       
+      // Build lightweight conversation history slice for Bedrock context
+      const historyPayload = updatedMessages.slice(-8).map(m => ({
+        role: m.role,
+        text: m.text
+      }));
+
       // Try local /api/voice/converse first, with automatic fallback to live backend
       let response;
       try {
         response = await fetch('/api/voice/converse', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ transcript: userVoiceInput, context })
+          body: JSON.stringify({ transcript: cleanInput, context, history: historyPayload })
         });
       } catch (networkErr) {
         console.warn('Local proxy unreachable, falling back to live production backend');
@@ -125,7 +234,7 @@ export default function VoiceAssistant() {
         response = await fetch('https://clarity-dashboard-lnho.onrender.com/api/voice/converse', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ transcript: userVoiceInput, context })
+          body: JSON.stringify({ transcript: cleanInput, context, history: historyPayload })
         });
       }
 
@@ -134,16 +243,25 @@ export default function VoiceAssistant() {
       }
 
       const data = await response.json();
-      setLastReply(data.replyText);
+      const assistantText = data.replyText || "I'm right here with you. Take a breath.";
 
-      // Play synthesized audio
+      // 2. Append assistant reply turn to messages and persist
+      const assistantMsg = {
+        id: `lumen-${Date.now()}`,
+        role: 'assistant',
+        text: assistantText,
+        timestamp: Date.now()
+      };
+      await saveMessages([...updatedMessages, assistantMsg]);
+
+      // 3. Play synthesized audio
       if (data.audioBase64) {
         const audio = new Audio(`data:audio/mp3;base64,${data.audioBase64}`);
         currentAudioRef.current = audio;
         setIsSpeaking(true);
         audio.onended = () => {
           setIsSpeaking(false);
-          // Continuous hands-free chat: auto-listen for user's next utterance!
+          // Continuous hands-free loop: auto-listen for user's next turn if modal is still open
           if (isOpenRef.current) {
             setTimeout(() => {
               if (isOpenRef.current) {
@@ -154,8 +272,7 @@ export default function VoiceAssistant() {
         };
         audio.play().catch(e => console.warn('Audio playback error:', e));
       } else if ('speechSynthesis' in window) {
-        // Find the most natural/human voice installed on the device (e.g. Apple Samantha, Daniel, Natural, Google)
-        const utterance = new SpeechSynthesisUtterance(data.replyText);
+        const utterance = new SpeechSynthesisUtterance(assistantText);
         const voices = window.speechSynthesis.getVoices();
         const premiumMaleVoice = voices.find(v => 
           (v.name.includes('Daniel') || v.name.includes('George') || v.name.includes('Guy') || v.name.includes('Arthur') || v.name.includes('David') || (v.name.includes('Male') && v.name.includes('Natural'))) && v.lang.startsWith('en')
@@ -169,7 +286,7 @@ export default function VoiceAssistant() {
         utterance.onstart = () => setIsSpeaking(true);
         utterance.onend = () => {
           setIsSpeaking(false);
-          // Continuous hands-free chat: auto-listen for user's next utterance!
+          // Continuous hands-free loop: auto-listen for user's next turn if modal is still open
           if (isOpenRef.current) {
             setTimeout(() => {
               if (isOpenRef.current) {
@@ -182,9 +299,22 @@ export default function VoiceAssistant() {
       }
     } catch (err) {
       console.error('Voice converse error:', err);
-      setLastReply("I'm having a little trouble connecting right now. Let's take a breath and try again in a moment.");
+      const errorMsg = {
+        id: `lumen-err-${Date.now()}`,
+        role: 'assistant',
+        text: "I'm having a little trouble connecting right now. Let's take a breath and try again in a moment.",
+        timestamp: Date.now()
+      };
+      await saveMessages([...updatedMessages, errorMsg]);
     } finally {
       setIsThinking(false);
+    }
+  };
+
+  const handleTextSubmit = (e) => {
+    e.preventDefault();
+    if (textInput.trim()) {
+      sendToBedrock(textInput.trim());
     }
   };
 
@@ -201,12 +331,12 @@ export default function VoiceAssistant() {
         </defs>
       </svg>
 
-      {/* Apple Siri Floating Liquid Orb FAB */}
+      {/* Floating Liquid Orb FAB */}
       <button 
         className={`voice-fab ${isOpen ? 'open' : ''} ${isListening ? 'listening' : ''} ${isSpeaking ? 'speaking' : ''}`}
         onClick={() => setIsOpen(!isOpen)}
-        aria-label="Toggle voice assistant"
-        title="Clarity Voice Assistant"
+        aria-label="Toggle Lumen Voice Assistant"
+        title="Lumen // Mindful Copilot"
       >
         <div className="siri-orb loader-mini">
           <div className="loader-inner">
@@ -223,32 +353,47 @@ export default function VoiceAssistant() {
       {/* Voice Assistant Modal Deck */}
       {isOpen && (
         <div className="voice-panel">
+          {/* Header with Title and Clear Chat */}
           <div className="voice-header">
             <div className="voice-header-title">
               <span className="voice-pulse-dot"></span>
               <h3>LUMEN</h3>
               <span className="voice-role-tag">Mindful Copilot</span>
             </div>
-            <button 
-              onClick={() => setIsOpen(false)} 
-              className="voice-close-btn"
-              aria-label="Close Lumen"
-            >
-              ✕
-            </button>
+            <div className="voice-header-actions">
+              <button 
+                onClick={handleClearHistory} 
+                className="voice-clear-btn"
+                title="Clear conversation history"
+                aria-label="Clear conversation history"
+              >
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M3 6h18m-2 0v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                </svg>
+                <span>Clear</span>
+              </button>
+              <button 
+                onClick={() => setIsOpen(false)} 
+                className="voice-close-btn"
+                aria-label="Close Lumen"
+              >
+                ✕
+              </button>
+            </div>
           </div>
 
+          {/* Interactive Compact 3D Liquid Sphere Visualizer */}
           <div className="voice-visualizer-container">
-            {/* Interactive True 3D Lumen Organic Sphere Visualizer */}
             <div 
               className={`siri-interactive-sphere ${isListening ? 'listening' : ''} ${isThinking ? 'thinking' : ''} ${isSpeaking ? 'speaking' : ''}`}
               onClick={handleToggleListening}
+              title={isListening ? "Tap to pause" : "Tap to speak"}
             >
-              {/* 3D Wave Ripple Glow on Voice Activity */}
+              {/* Sound Wave Ripple Glow */}
               <div className="siri-wave-ripple"></div>
               <div className="siri-wave-ripple ripple-delay"></div>
 
-              {/* Central Hyper-realistic 3D Gooey Plasma Sphere */}
+              {/* Central Gooey Plasma Sphere (Violet, Pink, Blue) */}
               <div className="siri-core loader">
                 <div className="loader-inner">
                   <div className="blob b1"></div>
@@ -264,59 +409,100 @@ export default function VoiceAssistant() {
 
             <p className="voice-status-label">
               {isListening 
-                ? "🎙️ Listening... speak naturally (tap to pause)" 
+                ? "🎙️ Listening... speak naturally" 
                 : isThinking 
                 ? "✨ Lumen is reflecting..." 
                 : isSpeaking 
                 ? "🔊 Lumen is speaking..." 
-                : "🎙️ Tap sphere to pause or resume"}
+                : "🎙️ Tap sphere to talk"}
             </p>
           </div>
 
-          {transcript && (
-            <div className="voice-user-transcript">
-              <span className="voice-bubble-label">You:</span>
-              <p>"{transcript}"</p>
-            </div>
-          )}
+          {/* Scrollable Conversation Feed (Saved across closes & visits) */}
+          <div className="voice-chat-feed">
+            {messages.map((msg) => (
+              <div 
+                key={msg.id} 
+                className={`voice-chat-msg ${msg.role === 'user' ? 'user' : 'assistant'}`}
+              >
+                <div className="voice-msg-meta">
+                  <span className="voice-bubble-label">
+                    {msg.role === 'user' ? 'You' : 'Lumen'}
+                  </span>
+                  {msg.timestamp && (
+                    <span className="voice-msg-time">
+                      {new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                    </span>
+                  )}
+                </div>
+                <p className="voice-chat-text">{msg.text}</p>
+              </div>
+            ))}
 
-          <div className="voice-reply-card">
-            <span className="voice-bubble-label">Lumen:</span>
-            <p className="voice-reply-text">{lastReply}</p>
+            {/* Interim live speech recognition transcript */}
+            {transcript && (
+              <div className="voice-chat-msg user live-transcript">
+                <span className="voice-bubble-label">You (speaking...)</span>
+                <p className="voice-chat-text">"{transcript}"</p>
+              </div>
+            )}
+
+            {/* Thinking / Reflection indicator */}
+            {isThinking && (
+              <div className="voice-chat-msg assistant thinking-bubble">
+                <span className="voice-bubble-label">Lumen</span>
+                <div className="voice-thinking-dots">
+                  <span></span><span></span><span></span>
+                </div>
+              </div>
+            )}
+
+            <div ref={messagesEndRef} />
           </div>
 
+          {/* Quick Grounding Prompts */}
           <div className="voice-quick-actions">
             <button 
               className="voice-chip" 
-              onClick={() => {
-                const prompt = "How is my sobriety streak holding today?";
-                setTranscript(prompt);
-                sendToBedrock(prompt);
-              }}
+              onClick={() => sendToBedrock("How is my sobriety streak holding today?")}
             >
               "How's my sobriety streak?"
             </button>
             <button 
               className="voice-chip" 
-              onClick={() => {
-                const prompt = "I'm feeling a bit overwhelmed, can we take a mindful check-in?";
-                setTranscript(prompt);
-                sendToBedrock(prompt);
-              }}
+              onClick={() => sendToBedrock("I'm feeling a bit overwhelmed, can we take a mindful check-in?")}
             >
               "Mindful check-in"
             </button>
             <button 
               className="voice-chip" 
-              onClick={() => {
-                const prompt = "Give me a calm 1-minute reflection for today's focus.";
-                setTranscript(prompt);
-                sendToBedrock(prompt);
-              }}
+              onClick={() => sendToBedrock("Give me a calm 1-minute reflection for today's focus.")}
             >
               "Focus reflection"
             </button>
           </div>
+
+          {/* Optional Text Input Bar for Quiet Environments */}
+          <form className="voice-input-form" onSubmit={handleTextSubmit}>
+            <input 
+              type="text"
+              className="voice-text-input"
+              placeholder="Or type a message to Lumen..."
+              value={textInput}
+              onChange={(e) => setTextInput(e.target.value)}
+            />
+            <button 
+              type="submit" 
+              className="voice-send-btn" 
+              disabled={!textInput.trim() || isThinking}
+              aria-label="Send message"
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <line x1="22" y1="2" x2="11" y2="13"></line>
+                <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+              </svg>
+            </button>
+          </form>
         </div>
       )}
     </>

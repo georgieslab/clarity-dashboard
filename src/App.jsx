@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import SobrietyTracker from './components/SobrietyTracker';
 import JobSearchTracker from './components/JobSearchTracker';
 import TherapyTracker from './components/TherapyTracker';
@@ -7,9 +7,116 @@ import PomodoroTimer from './components/PomodoroTimer';
 import AuthButton from './components/AuthButton';
 import VoiceAssistant from './components/VoiceAssistant';
 import ThemeToggle from './components/ThemeToggle';
+import { storage } from './utils/storage';
 import './App.css';
 
+const DEFAULT_TILES = {
+  sobriety: { id: 'sobriety', name: 'Sobriety Tracker', icon: '🌱', collapsed: false, hidden: false },
+  jobSearch: { id: 'jobSearch', name: 'Job Pipeline', icon: '💼', collapsed: false, hidden: false },
+  therapy: { id: 'therapy', name: 'Therapy Tracker', icon: '🧠', collapsed: false, hidden: false },
+  pomodoro: { id: 'pomodoro', name: 'Focus Rhythm', icon: '⏳', collapsed: false, hidden: false },
+  dailyInsights: { id: 'dailyInsights', name: 'Executive Insights', icon: '✨', collapsed: false, hidden: false }
+};
+
 function App() {
+  const [tilesState, setTilesState] = useState(DEFAULT_TILES);
+  const [showLayoutMenu, setShowLayoutMenu] = useState(false);
+  const menuRef = useRef(null);
+
+  // Load layout from persistent storage on mount
+  useEffect(() => {
+    const loadLayout = async () => {
+      try {
+        const saved = await storage.get('clarity_tiles_layout');
+        if (saved && typeof saved === 'object') {
+          setTilesState(prev => ({
+            ...prev,
+            ...saved
+          }));
+        }
+      } catch (e) {
+        console.warn('Could not load clarity_tiles_layout:', e);
+      }
+    };
+    loadLayout();
+  }, []);
+
+  // Close layout popover when clicking outside
+  useEffect(() => {
+    const handleOutsideClick = (e) => {
+      if (menuRef.current && !menuRef.current.contains(e.target)) {
+        setShowLayoutMenu(false);
+      }
+    };
+    if (showLayoutMenu) {
+      document.addEventListener('mousedown', handleOutsideClick);
+    }
+    return () => document.removeEventListener('mousedown', handleOutsideClick);
+  }, [showLayoutMenu]);
+
+  // Persist tiles configuration changes
+  const updateTiles = async (newState) => {
+    setTilesState(newState);
+    try {
+      await storage.set('clarity_tiles_layout', newState);
+    } catch (e) {
+      console.warn('Failed to save clarity_tiles_layout:', e);
+    }
+  };
+
+  const toggleCollapse = (tileId) => {
+    const updated = {
+      ...tilesState,
+      [tileId]: {
+        ...tilesState[tileId],
+        collapsed: !tilesState[tileId]?.collapsed
+      }
+    };
+    updateTiles(updated);
+  };
+
+  const toggleHide = (tileId) => {
+    const updated = {
+      ...tilesState,
+      [tileId]: {
+        ...tilesState[tileId],
+        hidden: !tilesState[tileId]?.hidden
+      }
+    };
+    updateTiles(updated);
+  };
+
+  const collapseAll = () => {
+    const updated = {};
+    Object.keys(tilesState).forEach(k => {
+      updated[k] = { ...tilesState[k], collapsed: true };
+    });
+    updateTiles(updated);
+  };
+
+  const expandAll = () => {
+    const updated = {};
+    Object.keys(tilesState).forEach(k => {
+      updated[k] = { ...tilesState[k], collapsed: false };
+    });
+    updateTiles(updated);
+  };
+
+  const resetAllTiles = () => {
+    const reset = {};
+    Object.keys(DEFAULT_TILES).forEach(k => {
+      reset[k] = { ...DEFAULT_TILES[k], collapsed: false, hidden: false };
+    });
+    updateTiles(reset);
+  };
+
+  const totalTiles = Object.keys(tilesState).length;
+  const hiddenTiles = Object.values(tilesState).filter(t => t.hidden);
+  const hiddenCount = hiddenTiles.length;
+  const visibleCount = totalTiles - hiddenCount;
+
+  const hasTopRowVisible = !tilesState.sobriety?.hidden || !tilesState.jobSearch?.hidden || !tilesState.therapy?.hidden;
+
   return (
     <div className="dashboard">
       {/* Apple Fluid Ambient Gradient Canvas */}
@@ -36,19 +143,135 @@ function App() {
         </div>
         
         <div className="header-right">
+          {/* Tiles Customizer & Layout Manager Dropdown */}
+          <div className="layout-controls-wrapper" ref={menuRef}>
+            <button 
+              className={`layout-menu-btn ${showLayoutMenu ? 'active' : ''}`}
+              onClick={() => setShowLayoutMenu(!showLayoutMenu)}
+              title="Customize dashboard tiles (collapse or hide)"
+              aria-label="Customize dashboard tiles"
+            >
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <rect x="3" y="3" width="7" height="7"></rect>
+                <rect x="14" y="3" width="7" height="7"></rect>
+                <rect x="14" y="14" width="7" height="7"></rect>
+                <rect x="3" y="14" width="7" height="7"></rect>
+              </svg>
+              <span>Tiles ({visibleCount}/{totalTiles})</span>
+              {hiddenCount > 0 && <span className="layout-badge-alert">{hiddenCount}</span>}
+            </button>
+
+            {showLayoutMenu && (
+              <div className="layout-popover-menu">
+                <div className="popover-header">
+                  <div>
+                    <h4>Dashboard Tiles</h4>
+                    <p className="popover-subtitle">Expand, collapse, or hide modules</p>
+                  </div>
+                  <div className="popover-quick-actions">
+                    <button onClick={collapseAll} className="popover-action-link">Collapse All</button>
+                    <span className="popover-divider">•</span>
+                    <button onClick={expandAll} className="popover-action-link">Expand All</button>
+                  </div>
+                </div>
+
+                <div className="popover-tiles-list">
+                  {Object.values(tilesState).map(tile => (
+                    <div key={tile.id} className="popover-tile-row">
+                      <div className="popover-tile-info">
+                        <span className="popover-tile-icon">{tile.icon}</span>
+                        <span className={`popover-tile-name ${tile.hidden ? 'muted' : ''}`}>{tile.name}</span>
+                      </div>
+                      <div className="popover-tile-toggles">
+                        {!tile.hidden && (
+                          <button 
+                            className={`popover-btn-pill ${tile.collapsed ? 'collapsed' : 'expanded'}`}
+                            onClick={() => toggleCollapse(tile.id)}
+                            title={tile.collapsed ? "Expand tile" : "Collapse tile"}
+                          >
+                            {tile.collapsed ? 'Collapsed' : 'Expanded'}
+                          </button>
+                        )}
+                        <button 
+                          className={`popover-visibility-btn ${tile.hidden ? 'hidden' : 'visible'}`}
+                          onClick={() => toggleHide(tile.id)}
+                          title={tile.hidden ? "Show on dashboard" : "Hide from dashboard"}
+                        >
+                          {tile.hidden ? 'Show' : 'Hide'}
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                {hiddenCount > 0 && (
+                  <button onClick={resetAllTiles} className="popover-restore-all-btn">
+                    Restore All Hidden Tiles
+                  </button>
+                )}
+              </div>
+            )}
+          </div>
+
           <AuthButton />
         </div>
       </header>
 
       <main>
-        <div className="top-row">
-          <SobrietyTracker />
-          <JobSearchTracker />
-          <TherapyTracker />
-        </div>
+        {/* Notice banner if any tiles are currently hidden */}
+        {hiddenCount > 0 && (
+          <div className="hidden-tiles-banner">
+            <span>💡 {hiddenCount} tile{hiddenCount > 1 ? 's are' : ' is'} currently hidden.</span>
+            <button onClick={resetAllTiles} className="banner-restore-btn">
+              Show All
+            </button>
+          </div>
+        )}
 
-        <PomodoroTimer />
-        <DailyInsights />
+        {/* Top telemetry row (Sobriety, Pipeline, Therapy) */}
+        {hasTopRowVisible && (
+          <div className="top-row">
+            {!tilesState.sobriety?.hidden && (
+              <SobrietyTracker 
+                isCollapsed={tilesState.sobriety?.collapsed}
+                onToggleCollapse={() => toggleCollapse('sobriety')}
+                onHide={() => toggleHide('sobriety')}
+              />
+            )}
+            {!tilesState.jobSearch?.hidden && (
+              <JobSearchTracker 
+                isCollapsed={tilesState.jobSearch?.collapsed}
+                onToggleCollapse={() => toggleCollapse('jobSearch')}
+                onHide={() => toggleHide('jobSearch')}
+              />
+            )}
+            {!tilesState.therapy?.hidden && (
+              <TherapyTracker 
+                isCollapsed={tilesState.therapy?.collapsed}
+                onToggleCollapse={() => toggleCollapse('therapy')}
+                onHide={() => toggleHide('therapy')}
+              />
+            )}
+          </div>
+        )}
+
+        {/* Deep Work Engine */}
+        {!tilesState.pomodoro?.hidden && (
+          <PomodoroTimer 
+            isCollapsed={tilesState.pomodoro?.collapsed}
+            onToggleCollapse={() => toggleCollapse('pomodoro')}
+            onHide={() => toggleHide('pomodoro')}
+          />
+        )}
+
+        {/* Claude Daily Executive Intelligence */}
+        {!tilesState.dailyInsights?.hidden && (
+          <DailyInsights 
+            isCollapsed={tilesState.dailyInsights?.collapsed}
+            onToggleCollapse={() => toggleCollapse('dailyInsights')}
+            onHide={() => toggleHide('dailyInsights')}
+          />
+        )}
       </main>
 
       <VoiceAssistant />

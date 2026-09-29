@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { storage } from '../utils/storage';
 import { generateWeeklyInsights } from '../utils/claude';
 
-export default function DailyInsights() {
+export default function DailyInsights({ isCollapsed, onToggleCollapse, onHide }) {
   const [insights, setInsights] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -151,65 +151,103 @@ export default function DailyInsights() {
   };
 
   return (
-    <div className="tracker-card insights-card">
-      <h2>
-        <span>✨ Executive Intelligence</span>
-        <span className="card-badge">Claude Sonnet 3.5</span>
-      </h2>
-
-      {error && (
-        <div className="error-message">
-          <p>⚠️ {error}</p>
-          {error.includes('API key') && (
-            <p className="error-hint">
-              Add your Anthropic API key to environment variables
-            </p>
-          )}
-        </div>
-      )}
-
-      {!insights && !loading && !error && (
-        <div className="insights-empty">
-          <p>Generate AI-powered insights from your daily progress.</p>
-          <p className="insights-hint">
-            Claude will analyze your sobriety, job search, and therapy data.
-          </p>
-        </div>
-      )}
-
-      {loading && (
-        <div className="insights-loading">
-          <div className="loader"></div>
-          <p>Analyzing your data...</p>
-        </div>
-      )}
-
-      {insights && (
-        <div className="insights-content">
-          <div className="insights-text">
-            {formatInsights(insights)}
+    <div className={`tracker-card insights-card ${isCollapsed ? 'collapsed' : ''}`}>
+      <div className="card-header" onClick={isCollapsed ? onToggleCollapse : undefined}>
+        <h2>
+          <span className="card-title-group" onClick={onToggleCollapse} role="button" tabIndex={0}>
+            <span>✨ Executive Intelligence</span>
+          </span>
+          <div className="card-header-actions" onClick={e => e.stopPropagation()}>
+            {isCollapsed && (
+              <span className="card-stat-pill">
+                {insights ? 'Analysis Ready' : 'Claude Ready'}
+              </span>
+            )}
+            <span className="card-badge">Claude Sonnet 3.5</span>
+            <button 
+              className="card-action-btn"
+              onClick={onToggleCollapse}
+              title={isCollapsed ? "Expand card" : "Collapse card"}
+              aria-label={isCollapsed ? "Expand card" : "Collapse card"}
+            >
+              <svg className={`chevron-icon ${isCollapsed ? 'collapsed' : ''}`} width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <polyline points="6 9 12 15 18 9"></polyline>
+              </svg>
+            </button>
+            {onHide && (
+              <button 
+                className="card-action-btn hide-btn"
+                onClick={onHide}
+                title="Hide tile from dashboard"
+                aria-label="Hide tile"
+              >
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+                  <line x1="1" y1="1" x2="23" y2="23"></line>
+                </svg>
+              </button>
+            )}
           </div>
-          
-          {lastGenerated && (
-            <p className="insights-timestamp">
-              Generated: {new Date(lastGenerated).toLocaleDateString('en-US', {
-                month: 'short',
-                day: 'numeric',
-                hour: 'numeric',
-                minute: '2-digit'
-              })}
-            </p>
+        </h2>
+      </div>
+
+      {!isCollapsed && (
+        <div className="card-collapsible-body">
+          {error && (
+            <div className="error-message">
+              <p>⚠️ {error}</p>
+              {error.includes('API key') && (
+                <p className="error-hint">
+                  Add your Anthropic API key to environment variables
+                </p>
+              )}
+            </div>
           )}
+
+          {!insights && !loading && !error && (
+            <div className="insights-empty">
+              <p>Generate AI-powered insights from your daily progress.</p>
+              <p className="insights-hint">
+                Claude will analyze your sobriety, job search, and therapy data.
+              </p>
+            </div>
+          )}
+
+          {loading && (
+            <div className="insights-loading">
+              <div className="loader"></div>
+              <p>Analyzing your data...</p>
+            </div>
+          )}
+
+          {insights && (
+            <div className="insights-content">
+              <div className="insights-text">
+                {formatInsights(insights)}
+              </div>
+              
+              {lastGenerated && (
+                <p className="insights-timestamp">
+                  Generated: {new Date(lastGenerated).toLocaleDateString('en-US', {
+                    month: 'short',
+                    day: 'numeric',
+                    hour: 'numeric',
+                    minute: '2-digit'
+                  })}
+                </p>
+              )}
+            </div>
+          )}
+
+          <button 
+            onClick={handleGenerate}
+            disabled={loading || !canGenerate()}
+            className="generate-btn"
+          >
+            {loading ? 'Generating...' : canGenerate() ? 'Generate Insights' : `Available in ${countdown}`}
+          </button>
         </div>
       )}
-
-      <button 
-        onClick={handleGenerate}
-        disabled={loading || !canGenerate()}
-        className="generate-btn"
-      >
-        {loading ? 'Generating...' : canGenerate() ? 'Generate Insights' : `Available in ${countdown}`}
-      </button>
     </div>
   );
 }

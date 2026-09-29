@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { storage } from '../utils/storage';
 
-export default function PomodoroTimer() {
+export default function PomodoroTimer({ isCollapsed, onToggleCollapse, onHide }) {
   const [mode, setMode] = useState('work');
   const [timeLeft, setTimeLeft] = useState(25 * 60);
   const [isRunning, setIsRunning] = useState(false);
@@ -236,13 +236,49 @@ export default function PomodoroTimer() {
   };
 
   return (
-    <div className="tracker-card pomodoro-wide">
-      <h2>
-        <span>⏳ Focus Rhythm</span>
-        <span className="card-badge">Pomodoro Engine</span>
-      </h2>
+    <div className={`tracker-card pomodoro-wide ${isCollapsed ? 'collapsed' : ''}`}>
+      <div className="card-header" onClick={isCollapsed ? onToggleCollapse : undefined}>
+        <h2>
+          <span className="card-title-group" onClick={onToggleCollapse} role="button" tabIndex={0}>
+            <span>⏳ Focus Rhythm</span>
+          </span>
+          <div className="card-header-actions" onClick={e => e.stopPropagation()}>
+            {isCollapsed && (
+              <span className="card-stat-pill">
+                {formatTime(timeLeft)} • {mode === 'work' ? 'Focus' : 'Break'} ({sessions} sess.)
+              </span>
+            )}
+            <span className="card-badge">Pomodoro Engine</span>
+            <button 
+              className="card-action-btn"
+              onClick={onToggleCollapse}
+              title={isCollapsed ? "Expand card" : "Collapse card"}
+              aria-label={isCollapsed ? "Expand card" : "Collapse card"}
+            >
+              <svg className={`chevron-icon ${isCollapsed ? 'collapsed' : ''}`} width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <polyline points="6 9 12 15 18 9"></polyline>
+              </svg>
+            </button>
+            {onHide && (
+              <button 
+                className="card-action-btn hide-btn"
+                onClick={onHide}
+                title="Hide tile from dashboard"
+                aria-label="Hide tile"
+              >
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+                  <line x1="1" y1="1" x2="23" y2="23"></line>
+                </svg>
+              </button>
+            )}
+          </div>
+        </h2>
+      </div>
 
-      <div className="pomodoro-content">
+      {!isCollapsed && (
+        <div className="card-collapsible-body">
+          <div className="pomodoro-content">
         {/* Left: Timer */}
         <div className="pomodoro-timer-section">
           <div className="pomodoro-tabs">
@@ -393,6 +429,8 @@ export default function PomodoroTimer() {
           )}
         </div>
       </div>
+      </div>
+      )}
     </div>
   );
 }
