@@ -52,7 +52,8 @@ if (process.env.NODE_ENV === 'production') {
 // --------------------------------------------------------------------------
 app.post('/api/voice/converse', async (req, res) => {
   try {
-    const { transcript, context } = req.body;
+    const promptText = (req.body.transcript || req.body.message || req.body.text || "").trim() || "Hello Clarity";
+    const context = req.body.context;
 
     const systemPrompt = `You are "Clarity Voice", an ultra-attentive executive wellness and telemetry assistant designed with Apple Human Interface warmth and precision.
 Keep answers concise, conversational, and direct (1-3 sentences maximum so speech flows naturally).
@@ -75,7 +76,7 @@ User Context telemetry:
           messages: [
             {
               role: "user",
-              content: [{ text: transcript }]
+              content: [{ text: promptText }]
             }
           ],
           system: [{ text: systemPrompt }],
