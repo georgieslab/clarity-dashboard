@@ -3008,24 +3008,28 @@ main {
 
 .voice-chat-msg {
   border-radius: var(--radius-md);
-  padding: 0.85rem 1.15rem;
+  padding: 1rem 1.35rem;
   animation: siriPop 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
   position: relative;
-  overflow: hidden;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  height: auto;
+  min-height: fit-content;
 }
 
 .voice-chat-msg.assistant {
   background: linear-gradient(145deg, var(--glass-bg-elevated), rgba(255, 255, 255, 0.08));
-  border: 1.5px solid rgba(56, 189, 248, 0.35);
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.18), var(--glass-specular);
+  border: 1.5px solid rgba(56, 189, 248, 0.38);
+  box-shadow: 0 6px 22px rgba(0, 0, 0, 0.2), var(--glass-specular);
   align-self: flex-start;
   width: 100%;
 }
 
 .voice-chat-msg.user {
-  background: linear-gradient(135deg, rgba(236, 72, 153, 0.18), rgba(139, 92, 246, 0.22));
-  border: 1.5px solid rgba(236, 72, 153, 0.48);
-  box-shadow: 0 6px 20px rgba(236, 72, 153, 0.2), var(--glass-specular);
+  background: linear-gradient(135deg, rgba(236, 72, 153, 0.2), rgba(139, 92, 246, 0.24));
+  border: 1.5px solid rgba(236, 72, 153, 0.52);
+  box-shadow: 0 6px 22px rgba(236, 72, 153, 0.22), var(--glass-specular);
   align-self: flex-end;
   width: 100%;
 }
@@ -3307,17 +3311,22 @@ main {
 }
 
 .voice-msg-image-wrap {
-  margin-top: 0.35rem;
-  margin-bottom: 0.35rem;
+  width: 100%;
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+  display: flex;
+  justify-content: center;
 }
 
 .voice-msg-image {
-  max-width: 220px;
-  max-height: 180px;
-  border-radius: var(--radius-sm);
-  object-fit: cover;
-  border: 1px solid var(--glass-border);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+  width: 100%;
+  max-width: 360px;
+  height: auto;
+  max-height: 320px;
+  border-radius: var(--radius-md);
+  object-fit: contain;
+  border: 1.5px solid rgba(255, 255, 255, 0.4);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
   display: block;
 }
 
