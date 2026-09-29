@@ -1806,23 +1806,212 @@ main {
   margin-top: 0.35rem;
 }
 
-.insights-loading {
-  text-align: center;
-  padding: 3rem 1.5rem;
+/* --------------------------------------------------------------------------
+   Executive Intelligence Neural Waiting Stage (Apple VisionOS / GPT-Sol)
+   -------------------------------------------------------------------------- */
+.insights-neural-loading {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 1rem;
+  justify-content: center;
+  padding: 2.2rem 1rem 1.5rem;
+  gap: 1.35rem;
+  width: 100%;
+  animation: siriPop 0.3s ease forwards;
 }
 
-.loader {
-  width: 32px;
-  height: 32px;
-  border: 3px solid var(--glass-border);
-  border-top-color: var(--accent-primary);
-  border-radius: 50%;
-  animation: spin 0.8s cubic-bezier(0.68, -0.55, 0.27, 1.55) infinite;
+/* Luminous Neural Thinking Orb Stage */
+.neural-orb-stage {
+  position: relative;
+  width: 72px;
+  height: 72px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
+
+.neural-ring {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.neural-ring.ring-1 {
+  width: 70px;
+  height: 70px;
+  border: 2px solid transparent;
+  border-top-color: #38bdf8;
+  border-bottom-color: #8b5cf6;
+  animation: spinNeuralRing1 2.2s linear infinite;
+  filter: drop-shadow(0 0 10px rgba(56, 189, 248, 0.65));
+}
+
+.neural-ring.ring-2 {
+  width: 52px;
+  height: 52px;
+  border: 2px solid transparent;
+  border-left-color: #ec4899;
+  border-right-color: #38bdf8;
+  animation: spinNeuralRing2 1.7s linear infinite reverse;
+  filter: drop-shadow(0 0 10px rgba(236, 72, 153, 0.65));
+}
+
+.neural-ring.ring-3 {
+  width: 36px;
+  height: 36px;
+  border: 1.5px dashed rgba(168, 85, 247, 0.7);
+  animation: spinNeuralRing1 3.5s linear infinite;
+}
+
+.neural-spark-core {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #ffffff 20%, #ec4899 65%, transparent 100%);
+  box-shadow: 
+    0 0 16px rgba(236, 72, 153, 0.9), 
+    0 0 28px rgba(56, 189, 248, 0.7);
+  animation: neuralCoreBreathe 1.2s ease-in-out infinite alternate;
+}
+
+@keyframes spinNeuralRing1 {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes spinNeuralRing2 {
+  to { transform: rotate(-360deg); }
+}
+
+@keyframes neuralCoreBreathe {
+  0% { transform: scale(0.85); opacity: 0.8; }
+  100% { transform: scale(1.18); opacity: 1; }
+}
+
+/* Status Header & Animated Telemetry Steps */
+.neural-loading-meta {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.45rem;
+  text-align: center;
+}
+
+.neural-badge-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.22rem 0.65rem;
+  border-radius: var(--radius-full);
+  background: rgba(139, 92, 246, 0.12);
+  border: 1px solid rgba(139, 92, 246, 0.35);
+  font-size: 0.65rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  color: #a855f7;
+}
+
+.neural-pulse-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #38bdf8;
+  box-shadow: 0 0 8px #38bdf8;
+  animation: pulseDot 1.4s infinite;
+}
+
+.neural-loading-step {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0;
+  min-height: 1.4rem;
+  animation: siriPop 0.3s ease;
+  letter-spacing: -0.01em;
+}
+
+/* Shimmering 3-Column Skeleton Preview Cards */
+.insights-skeleton-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.25rem;
+  width: 100%;
+  margin-top: 0.5rem;
+}
+
+.skeleton-card {
+  padding: 1.35rem;
+  border-radius: var(--radius-md);
+  background: var(--glass-bg-subtle);
+  border: 1px solid var(--glass-border-subtle);
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  min-height: 140px;
+}
+
+.skeleton-card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg, 
+    transparent 0%, 
+    rgba(255, 255, 255, 0.12) 50%, 
+    transparent 100%
+  );
+  background-size: 200% 100%;
+  animation: skeletonCardShimmer 1.8s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes skeletonCardShimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+.skeleton-card.skeleton-working {
+  border-color: rgba(16, 185, 129, 0.3);
+}
+
+.skeleton-card.skeleton-working .skeleton-header-line {
+  background: linear-gradient(90deg, rgba(16, 185, 129, 0.6), rgba(16, 185, 129, 0.2));
+}
+
+.skeleton-card.skeleton-attention {
+  border-color: rgba(245, 158, 11, 0.3);
+}
+
+.skeleton-card.skeleton-attention .skeleton-header-line {
+  background: linear-gradient(90deg, rgba(245, 158, 11, 0.6), rgba(245, 158, 11, 0.2));
+}
+
+.skeleton-card.skeleton-action {
+  border-color: rgba(56, 189, 248, 0.35);
+  background: linear-gradient(135deg, rgba(2, 132, 199, 0.06), rgba(99, 102, 241, 0.08));
+}
+
+.skeleton-card.skeleton-action .skeleton-header-line {
+  background: linear-gradient(90deg, rgba(56, 189, 248, 0.7), rgba(99, 102, 241, 0.3));
+}
+
+.skeleton-header-line {
+  width: 55%;
+  height: 16px;
+  border-radius: 6px;
+  margin-bottom: 0.25rem;
+}
+
+.skeleton-body-line {
+  height: 11px;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.skeleton-body-line.line-1 { width: 95%; }
+.skeleton-body-line.line-2 { width: 85%; }
+.skeleton-body-line.line-3 { width: 68%; }
 
 .insights-content {
   margin-bottom: 1.5rem;

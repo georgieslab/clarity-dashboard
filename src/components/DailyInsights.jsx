@@ -2,12 +2,33 @@ import { useState, useEffect } from 'react';
 import { storage } from '../utils/storage';
 import { generateWeeklyInsights } from '../utils/claude';
 
+const LOADING_STEPS = [
+  "Synthesizing life & wellness telemetry...",
+  "Correlating sobriety streaks with focus rhythms...",
+  "Processing therapy reflections & balance...",
+  "Evaluating career pipeline velocity...",
+  "GPT-Sol generating executive brief..."
+];
+
 export default function DailyInsights({ isCollapsed, onToggleCollapse, onHide }) {
   const [insights, setInsights] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [loadingStepIndex, setLoadingStepIndex] = useState(0);
   const [error, setError] = useState(null);
   const [lastGenerated, setLastGenerated] = useState(null);
   const [countdown, setCountdown] = useState('');
+
+  // Cycle loading status text smoothly
+  useEffect(() => {
+    if (!loading) {
+      setLoadingStepIndex(0);
+      return;
+    }
+    const interval = setInterval(() => {
+      setLoadingStepIndex(prev => (prev + 1) % LOADING_STEPS.length);
+    }, 1800);
+    return () => clearInterval(interval);
+  }, [loading]);
 
   // Load cached insights on mount
   useEffect(() => {
@@ -214,9 +235,49 @@ export default function DailyInsights({ isCollapsed, onToggleCollapse, onHide })
           )}
 
           {loading && (
-            <div className="insights-loading">
-              <div className="loader"></div>
-              <p>Analyzing your data...</p>
+            <div className="insights-neural-loading">
+              {/* Luminous Neural Thinking Orb Stage */}
+              <div className="neural-orb-stage">
+                <div className="neural-ring ring-1"></div>
+                <div className="neural-ring ring-2"></div>
+                <div className="neural-ring ring-3"></div>
+                <div className="neural-spark-core">
+                  <div className="neural-sparkle"></div>
+                </div>
+              </div>
+
+              {/* Status Header & Animated Telemetry Steps */}
+              <div className="neural-loading-meta">
+                <div className="neural-badge-pill">
+                  <span className="neural-pulse-dot"></span>
+                  <span>GPT-SOL SYNTHESIS</span>
+                </div>
+                <p className="neural-loading-step">
+                  {LOADING_STEPS[loadingStepIndex]}
+                </p>
+              </div>
+
+              {/* Shimmering 3-Column Skeleton Preview Cards */}
+              <div className="insights-skeleton-grid">
+                <div className="skeleton-card skeleton-working">
+                  <div className="skeleton-header-line"></div>
+                  <div className="skeleton-body-line line-1"></div>
+                  <div className="skeleton-body-line line-2"></div>
+                  <div className="skeleton-body-line line-3"></div>
+                </div>
+                <div className="skeleton-card skeleton-attention">
+                  <div className="skeleton-header-line"></div>
+                  <div className="skeleton-body-line line-1"></div>
+                  <div className="skeleton-body-line line-2"></div>
+                  <div className="skeleton-body-line line-3"></div>
+                </div>
+                <div className="skeleton-card skeleton-action">
+                  <div className="skeleton-header-line"></div>
+                  <div className="skeleton-body-line line-1"></div>
+                  <div className="skeleton-body-line line-2"></div>
+                  <div className="skeleton-body-line line-3"></div>
+                </div>
+              </div>
             </div>
           )}
 
