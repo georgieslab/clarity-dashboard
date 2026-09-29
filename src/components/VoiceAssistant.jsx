@@ -11,6 +11,14 @@ export default function VoiceAssistant() {
   const [transcript, setTranscript] = useState('');
   const [textInput, setTextInput] = useState('');
   const [selectedImage, setSelectedImage] = useState(null);
+  const [messages, setMessages] = useState([
+    {
+      id: 'lumen-init',
+      role: 'assistant',
+      text: DEFAULT_WELCOME,
+      timestamp: Date.now()
+    }
+  ]);
   const recognitionRef = useRef(null);
   const currentAudioRef = useRef(null);
   const isOpenRef = useRef(isOpen);
