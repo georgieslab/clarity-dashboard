@@ -431,7 +431,6 @@ export default function VoiceAssistant() {
         >
           <span className="voice-badge-dot"></span>
           <span className="voice-badge-text">LUMEN AI Assistant</span>
-          <span className="voice-badge-sparkle">✨</span>
         </div>
       )}
 
