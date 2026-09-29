@@ -44,9 +44,14 @@ export const saveUserData = async (userId, dataType, data) => {
       data: data,
       updatedAt: new Date().toISOString()
     });
+    return true;
   } catch (error) {
-    console.error('Save error:', error);
-    throw error;
+    if (error?.code === 'permission-denied' || error?.message?.includes('permission')) {
+      console.warn(`Firestore write skipped for '${dataType}': Insufficient database rules.`);
+      return false;
+    }
+    console.warn('Firestore write warning:', error?.message || error);
+    return false;
   }
 };
 
@@ -85,8 +90,7 @@ export const syncAllData = async (userId, localData) => {
     
     await Promise.all(promises);
   } catch (error) {
-    console.error('Sync error:', error);
-    throw error;
+    console.warn('Sync warning:', error?.message || error);
   }
 };
 

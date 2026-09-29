@@ -33,37 +33,46 @@ export const storage = {
 
   // Set data (saves to both local and cloud if logged in)
   async set(key, value) {
+    let localSuccess = false;
     try {
-      // Always save to localStorage first (immediate)
       localStorage.setItem(key, JSON.stringify(value));
-      
-      // If logged in, also save to Firestore
-      if (currentUser) {
-        await saveUserData(currentUser.uid, key, value);
-      }
-      
-      return true;
-    } catch (error) {
-      console.error('Error writing to storage:', error);
-      return false;
+      localSuccess = true;
+    } catch (localErr) {
+      console.warn('localStorage write failed:', localErr);
     }
+    
+    // If logged in, also attempt Firestore save asynchronously
+    if (currentUser) {
+      try {
+        await saveUserData(currentUser.uid, key, value);
+      } catch (cloudErr) {
+        // Silently swallow cloud permission errors so local app functionality continues
+      }
+    }
+    
+    return localSuccess;
   },
 
   // Remove data
   async remove(key) {
+    let localSuccess = false;
     try {
       localStorage.removeItem(key);
-      
-      // If logged in, also remove from cloud
-      if (currentUser) {
-        await saveUserData(currentUser.uid, key, null);
-      }
-      
-      return true;
-    } catch (error) {
-      console.error('Error removing from storage:', error);
-      return false;
+      localSuccess = true;
+    } catch (localErr) {
+      console.warn('localStorage remove failed:', localErr);
     }
+    
+    // If logged in, also remove from cloud
+    if (currentUser) {
+      try {
+        await saveUserData(currentUser.uid, key, null);
+      } catch (cloudErr) {
+        // Silently swallow cloud permission errors
+      }
+    }
+    
+    return localSuccess;
   },
 
   // Clear all
