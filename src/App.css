@@ -1740,6 +1740,49 @@ main {
   box-shadow: 0 0 50px rgba(236, 72, 153, 1), inset 0 0 20px rgba(255, 255, 255, 0.95);
 }
 
+/* 3D Multi-point Radiant Shadow Thinking Sphere (Clarity Cyan/Purple/Pink palette) */
+.siri-interactive-sphere.thinking .siri-core {
+  background-color: #6366f1;
+  background-image: radial-gradient(circle at 35% 30%, #38bdf8 0%, #818cf8 35%, #ec4899 75%, #4f46e5 100%);
+  box-shadow: 
+    -18px -18px 22px rgba(56, 189, 248, 0.85),
+    18px -18px 22px rgba(129, 140, 248, 0.85),
+    18px 18px 22px rgba(236, 72, 153, 0.85),
+    -18px 18px 22px rgba(168, 85, 247, 0.85),
+    -18px 0 22px rgba(2, 132, 199, 0.85),
+    18px 0 22px rgba(192, 132, 252, 0.85),
+    inset 0 0 16px rgba(255, 255, 255, 0.9);
+  animation: thinkingRotate 1.2s infinite ease-in-out;
+}
+
+@keyframes thinkingRotate {
+  0% {
+    transform: rotate(360deg) scale(0.85);
+  }
+  50% {
+    transform: rotate(0deg) scale(1.18);
+  }
+  100% {
+    transform: rotate(360deg) scale(0.85);
+  }
+}
+
+.siri-interactive-sphere.thinking .siri-ring {
+  opacity: 0.9;
+  border-width: 2px;
+  animation-duration: 2s;
+}
+
+.siri-interactive-sphere.thinking .siri-specular-lens {
+  opacity: 0.95;
+  animation: thinkingLens 1.2s infinite ease-in-out alternate;
+}
+
+@keyframes thinkingLens {
+  0% { transform: scale(0.8) rotate(-35deg); }
+  100% { transform: scale(1.25) rotate(-35deg); }
+}
+
 .siri-interactive-sphere.speaking .siri-core {
   animation: siriSpeaking 0.6s ease-in-out infinite alternate;
   box-shadow: 0 0 45px rgba(56, 189, 248, 1), inset 0 0 20px rgba(255, 255, 255, 0.95);
