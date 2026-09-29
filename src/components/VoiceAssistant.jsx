@@ -141,7 +141,17 @@ export default function VoiceAssistant() {
         const audio = new Audio(`data:audio/mp3;base64,${data.audioBase64}`);
         currentAudioRef.current = audio;
         setIsSpeaking(true);
-        audio.onended = () => setIsSpeaking(false);
+        audio.onended = () => {
+          setIsSpeaking(false);
+          // Continuous hands-free chat: auto-listen for user's next utterance!
+          if (isOpenRef.current) {
+            setTimeout(() => {
+              if (isOpenRef.current) {
+                startListeningSafe();
+              }
+            }, 450);
+          }
+        };
         audio.play().catch(e => console.warn('Audio playback error:', e));
       } else if ('speechSynthesis' in window) {
         // Find the most natural/human voice installed on the device (e.g. Apple Samantha, Daniel, Natural, Google)
@@ -157,7 +167,17 @@ export default function VoiceAssistant() {
         utterance.rate = 1.0;
         utterance.pitch = 1.0;
         utterance.onstart = () => setIsSpeaking(true);
-        utterance.onend = () => setIsSpeaking(false);
+        utterance.onend = () => {
+          setIsSpeaking(false);
+          // Continuous hands-free chat: auto-listen for user's next utterance!
+          if (isOpenRef.current) {
+            setTimeout(() => {
+              if (isOpenRef.current) {
+                startListeningSafe();
+              }
+            }, 450);
+          }
+        };
         window.speechSynthesis.speak(utterance);
       }
     } catch (err) {
@@ -244,12 +264,12 @@ export default function VoiceAssistant() {
 
             <p className="voice-status-label">
               {isListening 
-                ? "🎙️ Lumen is listening... (tap to finish)" 
+                ? "🎙️ Listening... speak naturally (tap to pause)" 
                 : isThinking 
                 ? "✨ Lumen is reflecting..." 
                 : isSpeaking 
                 ? "🔊 Lumen is speaking..." 
-                : "Tap sphere to speak with Lumen"}
+                : "🎙️ Tap sphere to pause or resume"}
             </p>
           </div>
 

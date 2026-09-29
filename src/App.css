@@ -1591,45 +1591,61 @@ main {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 0.35rem 0 0.15rem;
-  gap: 0.5rem;
-  perspective: 900px;
+  justify-content: center;
+  padding: 0.4rem 0 0.2rem;
+  gap: 0.55rem;
+  width: 100%;
 }
 
 .siri-interactive-sphere {
-  width: 76px;
-  height: 76px;
+  width: 80px;
+  height: 80px;
+  min-width: 80px;
+  min-height: 80px;
+  max-width: 80px;
+  max-height: 80px;
+  aspect-ratio: 1 / 1;
   border-radius: 50%;
   position: relative;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  transform-style: preserve-3d;
-  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  flex-shrink: 0;
+  margin: 0.15rem auto;
+  overflow: visible;
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 .siri-interactive-sphere:hover {
   transform: scale(1.05);
 }
 
-/* Central Organic Gooey Plasma Metaball Sphere (Consistent Violet, Pink, Blue) */
+/* Central Organic Gooey Plasma Metaball Sphere (Guaranteed Circular Geometry) */
 .siri-core.loader {
   --c1: var(--loader-c1);
   --c2: var(--loader-c2);
   --t: 2.2s;
-  --size: 0.68;
-  position: relative;
+  --size: 0.72;
+  position: absolute;
+  top: 50%;
+  left: 50%;
   width: 100px;
   height: 100px;
+  min-width: 100px;
+  min-height: 100px;
+  max-width: 100px;
+  max-height: 100px;
+  aspect-ratio: 1 / 1;
+  flex-shrink: 0;
   border-radius: 50%;
-  transform: scale(var(--size));
+  transform: translate(-50%, -50%) scale(var(--size));
   box-shadow:
     0 0 20px 0 var(--loader-shadow-outer),
-    0 12px 30px 0 var(--loader-shadow-inner);
+    0 10px 26px 0 var(--loader-shadow-inner);
   animation: colorize calc(var(--t) * 3) ease-in-out infinite;
   overflow: hidden;
-  margin: 0 auto;
+  margin: 0;
   display: block;
   background-color: transparent;
   z-index: 5;
@@ -1655,6 +1671,8 @@ main {
 .loader-inner {
   position: absolute;
   inset: 0;
+  width: 100%;
+  height: 100%;
   border-radius: 50%;
   overflow: hidden;
   filter: url('#clarity-goo') url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg"><filter id="g"><feGaussianBlur in="SourceGraphic" stdDeviation="5"/><feColorMatrix values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 22 -9"/></filter></svg>#g');
@@ -1662,10 +1680,10 @@ main {
   z-index: 1;
 }
 
-/* Organic Floating Metaballs - Consistent Violet, Pink, and Blue */
+/* Organic Floating Metaballs - Pure Circular Geometry */
 .blob {
   position: absolute;
-  border-radius: 42%;
+  border-radius: 50%;
 }
 
 .b1 {
@@ -1770,12 +1788,16 @@ main {
 /* Sound Wave Ripples on Vocal Activity */
 .siri-wave-ripple {
   position: absolute;
-  width: 70px;
-  height: 70px;
+  top: 50%;
+  left: 50%;
+  width: 72px;
+  height: 72px;
+  aspect-ratio: 1 / 1;
   border-radius: 50%;
   border: 1.5px solid rgba(56, 189, 248, 0.45);
   opacity: 0;
   pointer-events: none;
+  transform: translate(-50%, -50%);
 }
 
 .siri-interactive-sphere.listening .siri-wave-ripple,
@@ -1789,45 +1811,46 @@ main {
 }
 
 @keyframes waveExpand {
-  0% { transform: scale(0.9); opacity: 0.85; }
-  100% { transform: scale(1.85); opacity: 0; }
+  0% { transform: translate(-50%, -50%) scale(0.9); opacity: 0.85; }
+  100% { transform: translate(-50%, -50%) scale(1.65); opacity: 0; }
 }
 
 /* Interactive Behavioral States - Compact Proportions */
 .siri-interactive-sphere.listening .siri-core.loader {
   --t: 1.4s;
-  --size: 0.74;
+  --size: 0.76;
+  transform: translate(-50%, -50%) scale(0.76);
   box-shadow:
-    0 0 26px 0 rgba(236, 72, 153, 0.75),
-    0 14px 36px 0 rgba(168, 85, 247, 0.75);
+    0 0 24px 0 rgba(236, 72, 153, 0.75),
+    0 12px 30px 0 rgba(168, 85, 247, 0.75);
 }
 
 .siri-interactive-sphere.thinking .siri-core.loader {
   --t: 0.85s;
   --size: 0.80;
   box-shadow:
-    0 0 30px 0 rgba(56, 189, 248, 0.9),
-    0 16px 40px 0 rgba(236, 72, 153, 0.85);
+    0 0 28px 0 rgba(56, 189, 248, 0.9),
+    0 14px 34px 0 rgba(236, 72, 153, 0.85);
   animation: colorize 2.4s ease-in-out infinite, thinkingPulse 1s ease-in-out infinite alternate;
 }
 
 @keyframes thinkingPulse {
-  0% { transform: scale(0.72); }
-  100% { transform: scale(0.84); }
+  0% { transform: translate(-50%, -50%) scale(0.72); }
+  100% { transform: translate(-50%, -50%) scale(0.82); }
 }
 
 .siri-interactive-sphere.speaking .siri-core.loader {
   --t: 1.2s;
   --size: 0.74;
   box-shadow:
-    0 0 28px 0 rgba(56, 189, 248, 0.85),
-    0 14px 36px 0 rgba(129, 140, 248, 0.85);
+    0 0 26px 0 rgba(56, 189, 248, 0.85),
+    0 12px 30px 0 rgba(129, 140, 248, 0.85);
   animation: colorize 3.6s ease-in-out infinite, speakingPulse 0.7s ease-in-out infinite alternate;
 }
 
 @keyframes speakingPulse {
-  0% { transform: scale(0.68); }
-  100% { transform: scale(0.78); }
+  0% { transform: translate(-50%, -50%) scale(0.70); }
+  100% { transform: translate(-50%, -50%) scale(0.78); }
 }
 
 .voice-status-label {
