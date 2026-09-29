@@ -206,17 +206,30 @@ User Context telemetry:
           text: promptText || "Analyze this image and provide mindful executive guidance."
         });
 
-        const msgResponse = await sdkClient.messages.create({
-          model: 'claude-sonnet-4-20250514',
-          max_tokens: 350,
-          system: systemPrompt,
-          messages: [{ role: 'user', content: userMsgContent }]
-        });
+        const candidateAnthropicModels = [
+          'claude-3-5-sonnet-20241022',
+          'claude-3-7-sonnet-20250219',
+          'claude-3-haiku-20240307'
+        ];
 
-        const textRes = msgResponse.content?.find(c => c.text)?.text || msgResponse.content?.[0]?.text || "";
-        if (textRes && textRes.trim().length > 0) {
-          replyText = textRes.trim();
-          console.log("Voice converse successfully responded via Anthropic SDK vision fallback");
+        for (const antModel of candidateAnthropicModels) {
+          try {
+            const msgResponse = await sdkClient.messages.create({
+              model: antModel,
+              max_tokens: 350,
+              system: systemPrompt,
+              messages: [{ role: 'user', content: userMsgContent }]
+            });
+
+            const textRes = msgResponse.content?.find(c => c.text)?.text || msgResponse.content?.[0]?.text || "";
+            if (textRes && textRes.trim().length > 0) {
+              replyText = textRes.trim();
+              console.log(`Voice converse successfully responded via Anthropic SDK (${antModel}) vision fallback`);
+              break;
+            }
+          } catch (mErr) {
+            console.warn(`Anthropic SDK model ${antModel} failed:`, mErr.message);
+          }
         }
       } catch (sdkErr) {
         console.warn("Anthropic SDK vision fallback error:", sdkErr.message);
