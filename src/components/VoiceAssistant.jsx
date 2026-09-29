@@ -108,11 +108,27 @@ export default function VoiceAssistant() {
     setIsThinking(true);
     try {
       const context = await getTelemetryContext();
-      const response = await fetch('/api/voice/converse', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ transcript: userVoiceInput, context })
-      });
+      
+      // Try local /api/voice/converse first, with automatic fallback to live backend
+      let response;
+      try {
+        response = await fetch('/api/voice/converse', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ transcript: userVoiceInput, context })
+        });
+      } catch (networkErr) {
+        console.warn('Local proxy unreachable, falling back to live production backend');
+      }
+
+      // If local proxy failed or returned 500/404, fallback to live Render endpoint
+      if (!response || !response.ok) {
+        response = await fetch('https://clarity-dashboard-lnho.onrender.com/api/voice/converse', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ transcript: userVoiceInput, context })
+        });
+      }
 
       if (!response.ok) {
         throw new Error('Failed to get voice response');
