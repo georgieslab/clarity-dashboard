@@ -503,28 +503,6 @@ export default function VoiceAssistant() {
             <div ref={messagesEndRef} />
           </div>
 
-          {/* Quick Grounding Prompts */}
-          <div className="voice-quick-actions">
-            <button 
-              className="voice-chip" 
-              onClick={() => sendToBedrock("How is my sobriety streak holding today?")}
-            >
-              "How's my sobriety streak?"
-            </button>
-            <button 
-              className="voice-chip" 
-              onClick={() => sendToBedrock("I'm feeling a bit overwhelmed, can we take a mindful check-in?")}
-            >
-              "Mindful check-in"
-            </button>
-            <button 
-              className="voice-chip" 
-              onClick={() => sendToBedrock("Give me a calm 1-minute reflection for today's focus.")}
-            >
-              "Focus reflection"
-            </button>
-          </div>
-
           {/* Optional Text Input & Image Upload Controls for Quiet Environments */}
           <div className="voice-bottom-controls">
             {selectedImage && (
@@ -541,12 +519,24 @@ export default function VoiceAssistant() {
             <form className="voice-input-form" onSubmit={handleTextSubmit}>
               <button 
                 type="button" 
-                className="voice-attach-btn" 
+                className={`voice-attach-btn ${selectedImage ? 'has-image' : ''}`}
                 onClick={() => fileInputRef.current?.click()}
                 title="Send an image to Lumen for AI vision analysis"
                 aria-label="Send image"
               >
-                📷
+                <svg className="moving-camera-svg" width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <circle className="svg-aperture-ring" cx="12" cy="13" r="8" stroke="currentColor" strokeWidth="1.5" strokeDasharray="3 3" />
+                  <path d="M23 19A2 2 0 0 1 21 21H3A2 2 0 0 1 1 19V8A2 2 0 0 1 3 6H7L9 3H15L17 6H21A2 2 0 0 1 23 8Z" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
+                  <circle className="svg-lens-iris" cx="12" cy="13" r="3" fill="currentColor" opacity="0.85" />
+                  <line className="svg-scanner-beam" x1="5" y1="13" x2="19" y2="13" stroke="url(#scannerGradient)" strokeWidth="1.5" strokeLinecap="round" />
+                  <defs>
+                    <linearGradient id="scannerGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                      <stop offset="0%" stopColor="#ec4899" stopOpacity="0" />
+                      <stop offset="50%" stopColor="#38bdf8" stopOpacity="1" />
+                      <stop offset="100%" stopColor="#8b5cf6" stopOpacity="0" />
+                    </linearGradient>
+                  </defs>
+                </svg>
               </button>
               <input 
                 type="file" 
