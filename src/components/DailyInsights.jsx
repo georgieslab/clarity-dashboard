@@ -152,7 +152,10 @@ export default function DailyInsights() {
 
   return (
     <div className="tracker-card insights-card">
-      <h2>💡 Daily Insights</h2>
+      <h2>
+        <span>✨ Executive Intelligence</span>
+        <span className="card-badge">Claude Sonnet 3.5</span>
+      </h2>
 
       {error && (
         <div className="error-message">

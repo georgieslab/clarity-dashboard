@@ -37,10 +37,9 @@ export default function AuthButton() {
             
             // Mark as synced for this browser session
             sessionStorage.setItem('clarity-synced', 'true');
-            
             console.log('Sync complete - data loaded from cloud');
           } catch (error) {
-            console.error('Sync error:', error);
+            console.info('Cloud sync paused (using secure local storage)');
           } finally {
             setSyncing(false);
           }

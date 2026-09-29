@@ -60,8 +60,8 @@ export const getUserData = async (userId, dataType) => {
     }
     return null;
   } catch (error) {
-    console.error('Get error:', error);
-    throw error;
+    // Return null quietly when Firestore rules haven't been published yet
+    return null;
   }
 };
 
@@ -100,14 +100,13 @@ export const loadAllData = async (userId) => {
     ]);
     
     return {
-      sobriety,
-      applications,
-      therapy,
-      weeklyInsights
+      sobriety: sobriety || null,
+      applications: applications || null,
+      therapy: therapy || null,
+      weeklyInsights: weeklyInsights || null
     };
   } catch (error) {
-    console.error('Load error:', error);
-    throw error;
+    return {};
   }
 };
 

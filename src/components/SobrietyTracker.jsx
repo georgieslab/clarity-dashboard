@@ -53,7 +53,10 @@ export default function SobrietyTracker() {
 
   return (
     <div className="tracker-card">
-      <h2>Sobriety</h2>
+      <h2>
+        <span>🌱 Sobriety</span>
+        <span className="card-badge">Daily Streak</span>
+      </h2>
       
       {!startDate ? (
         <div className="setup">

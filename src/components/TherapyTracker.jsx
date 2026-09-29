@@ -75,7 +75,10 @@ export default function TherapyTracker() {
 
   return (
     <div className="tracker-card">
-      <h2>Therapy</h2>
+      <h2>
+        <span>🧠 Therapy</span>
+        <span className="card-badge">Mental Balance</span>
+      </h2>
 
       <div className="therapy-stats">
         <div className="stat">

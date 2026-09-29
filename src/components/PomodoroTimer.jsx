@@ -237,7 +237,10 @@ export default function PomodoroTimer() {
 
   return (
     <div className="tracker-card pomodoro-wide">
-      <h2>🍅 Pomodoro Timer</h2>
+      <h2>
+        <span>⏳ Focus Rhythm</span>
+        <span className="card-badge">Pomodoro Engine</span>
+      </h2>
 
       <div className="pomodoro-content">
         {/* Left: Timer */}
@@ -265,6 +268,13 @@ export default function PomodoroTimer() {
 
           <div className="timer-circle">
             <svg viewBox="0 0 120 120">
+              <defs>
+                <linearGradient id="timerGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stopColor="#38bdf8" />
+                  <stop offset="50%" stopColor="#818cf8" />
+                  <stop offset="100%" stopColor="#c084fc" />
+                </linearGradient>
+              </defs>
               <circle cx="60" cy="60" r="54" className="timer-bg" />
               <circle 
                 cx="60" 

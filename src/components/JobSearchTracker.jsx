@@ -69,7 +69,10 @@ export default function JobSearchTracker() {
 
   return (
     <div className="tracker-card">
-      <h2>Job Search</h2>
+      <h2>
+        <span>💼 Pipeline</span>
+        <span className="card-badge">Career Track</span>
+      </h2>
 
       <div className="job-stats">
         <div className="stat">
