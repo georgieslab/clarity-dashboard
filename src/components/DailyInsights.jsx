@@ -73,9 +73,11 @@ export default function DailyInsights({ isCollapsed, onToggleCollapse, onHide })
   // FIXED: Return data in the format claude.js expects
   const collectData = async () => {
     // Get all data from storage
-    const sobriety = await storage.get('sobriety') || {};
-    const applications = await storage.get('applications') || [];
-    const therapy = await storage.get('therapy') || [];
+    const [sobriety, applications, therapy] = await Promise.all([
+      storage.get('sobriety').then(res => res || {}),
+      storage.get('applications').then(res => res || []),
+      storage.get('therapy').then(res => res || [])
+    ]);
 
     // Calculate sobriety days
     let sobrietyDays = 0;

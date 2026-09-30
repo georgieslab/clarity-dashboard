@@ -37,9 +37,13 @@ const polly = new PollyClient({
   credentials: awsCredentials
 });
 
-// Serve static files in production
+// Serve static files in production with cache headers
 if (process.env.NODE_ENV === 'production') {
-  app.use(express.static(join(__dirname, 'dist')));
+  app.use(express.static(join(__dirname, 'dist'), {
+    maxAge: '1d',
+    etag: true,
+    lastModified: true
+  }));
 }
 
 // Helper for OpenAI direct REST API fallback

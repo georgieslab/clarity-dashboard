@@ -16,10 +16,12 @@ export default function TelemetryAnalytics({ isCollapsed, onToggleCollapse, onHi
   useEffect(() => {
     const loadAnalyticsData = async () => {
       try {
-        const sobriety = await storage.get('sobriety') || {};
-        const applications = await storage.get('applications') || [];
-        const therapy = await storage.get('therapy') || [];
-        const pomodoroHistory = await storage.get('pomodoroHistory') || [];
+        const [sobriety, applications, therapy, pomodoroHistory] = await Promise.all([
+          storage.get('sobriety').then(res => res || {}),
+          storage.get('applications').then(res => res || []),
+          storage.get('therapy').then(res => res || []),
+          storage.get('pomodoroHistory').then(res => res || [])
+        ]);
 
         // Calculate Sobriety Days
         let sobrietyDays = 0;

@@ -41,7 +41,7 @@ export default function VoiceAssistant() {
   }, []);
 
   // Helper to downscale and compress images on the client before network/storage
-  const compressImage = (file, maxDim = 720, quality = 0.65) => {
+  const compressImage = (file, maxDim = 640, quality = 0.6) => {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
       reader.onload = (e) => {
