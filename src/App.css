@@ -371,6 +371,34 @@ header {
   gap: 0.85rem;
 }
 
+.github-header-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.42rem;
+  padding: 0.52rem 1rem;
+  border-radius: var(--radius-full);
+  font-size: 0.82rem;
+  font-weight: 600;
+  font-family: inherit;
+  border: 1px solid var(--glass-border);
+  background: var(--glass-bg-elevated);
+  color: var(--text-primary);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  box-shadow: var(--glass-shadow-sm), var(--glass-specular);
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.github-header-btn:hover {
+  transform: translateY(-1.5px);
+  box-shadow: var(--glass-shadow-md), var(--glass-specular);
+  border-color: rgba(255, 255, 255, 0.6);
+  background: var(--glass-bg-active);
+  color: var(--accent-primary);
+}
+
 /* --------------------------------------------------------------------------
    Layout Controls & Tiles Popover Menu
    -------------------------------------------------------------------------- */
