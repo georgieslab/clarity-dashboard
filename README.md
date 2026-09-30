@@ -20,6 +20,7 @@
 - **Collapsed Floating Badge**: Sleek floating glass badge with live status pulse dot that opens the Lumen assistant from anywhere.
 
 ### 📊 2. Executive Telemetry Dashboard Modules
+- **📈 Life Velocity & Telemetry Analytics**: Interactive SVG velocity chart (7d/14d/30d focus vs. applications), 28-day consistency heatmap matrix, and correlation index metrics (Interview yield %, Focus velocity, Sobriety stability).
 - **🌱 Sobriety Tracker**: Real-time clean streak counter with milestone badges and motivational celebrations.
 - **💼 Job Search Pipeline**: Drag-and-stage application tracker with active **Interview Shimmer Mode** for glowing active interview cards.
 - **🧠 Therapy Tracker**: Reflection logs, emotional horizon trends, and mental health micro-badges.
@@ -114,6 +115,7 @@ clarity/
 │   ├── components/
 │   │   ├── VoiceAssistant.jsx # Lumen Multimodal Voice & Vision Copilot
 │   │   ├── DailyInsights.jsx  # Executive Intelligence Briefing
+│   │   ├── TelemetryAnalytics.jsx # Life Velocity & Telemetry Analytics (SVG charts & heatmap)
 │   │   ├── JobSearchTracker.jsx# Job Pipeline & Interview Shimmer Mode
 │   │   ├── SobrietyTracker.jsx# Clean streak counter & milestones
 │   │   ├── TherapyTracker.jsx  # Reflection log & emotional horizon
