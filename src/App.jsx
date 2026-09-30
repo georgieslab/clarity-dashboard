@@ -4,6 +4,7 @@ import JobSearchTracker from './components/JobSearchTracker';
 import TherapyTracker from './components/TherapyTracker';
 import DailyInsights from './components/DailyInsights';
 import PomodoroTimer from './components/PomodoroTimer';
+import TelemetryAnalytics from './components/TelemetryAnalytics';
 import AuthButton from './components/AuthButton';
 import VoiceAssistant from './components/VoiceAssistant';
 import ThemeToggle from './components/ThemeToggle';
@@ -15,7 +16,8 @@ const DEFAULT_TILES = {
   jobSearch: { id: 'jobSearch', name: 'Job Pipeline', icon: '💼', collapsed: false, hidden: false },
   therapy: { id: 'therapy', name: 'Therapy Tracker', icon: '🧠', collapsed: false, hidden: false },
   pomodoro: { id: 'pomodoro', name: 'Focus Rhythm', icon: '⏳', collapsed: false, hidden: false },
-  dailyInsights: { id: 'dailyInsights', name: 'Executive Insights', icon: '✨', collapsed: false, hidden: false }
+  dailyInsights: { id: 'dailyInsights', name: 'Executive Insights', icon: '✨', collapsed: false, hidden: false },
+  telemetryAnalytics: { id: 'telemetryAnalytics', name: 'Telemetry Analytics', icon: '📈', collapsed: false, hidden: false }
 };
 
 function App() {
@@ -328,6 +330,15 @@ function App() {
             isCollapsed={tilesState.dailyInsights?.collapsed}
             onToggleCollapse={() => toggleCollapse('dailyInsights')}
             onHide={() => toggleHide('dailyInsights')}
+          />
+        )}
+
+        {/* Life Velocity & Telemetry Analytics Matrix */}
+        {!tilesState.telemetryAnalytics?.hidden && (
+          <TelemetryAnalytics 
+            isCollapsed={tilesState.telemetryAnalytics?.collapsed}
+            onToggleCollapse={() => toggleCollapse('telemetryAnalytics')}
+            onHide={() => toggleHide('telemetryAnalytics')}
           />
         )}
       </main>
