@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { storage } from '../utils/storage';
-import { generateWeeklyInsights } from '../utils/claude';
+import { generateWeeklyInsights } from '../utils/openai';
 
 const LOADING_STEPS = [
   "Synthesizing life & wellness telemetry...",

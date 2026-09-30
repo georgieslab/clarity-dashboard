@@ -1,5 +1,5 @@
-import { useState, useEffect, useRef } from 'react';
-import { sendChatMessage } from '../utils/claude';
+import { useState, useEffect } from 'react';
+import { sendChatMessage } from '../utils/openai';
 
 export default function ChatWidget() {
   const [isOpen, setIsOpen] = useState(false);
@@ -19,7 +19,7 @@ export default function ChatWidget() {
         // Welcome message
         setMessages([{
           role: 'assistant',
-          content: "Hey! I'm Claude, your AI companion. I can help with:\n\n• Reflecting on your progress\n• Setting goals\n• Problem-solving\n• General conversation\n\nWhat's on your mind?",
+          content: "Hey! I'm ChatGPT, your AI companion. I can help with:\n\n• Reflecting on your progress\n• Setting goals\n• Problem-solving\n• General conversation\n\nWhat's on your mind?",
           timestamp: new Date().toISOString()
         }]);
       }
@@ -129,7 +129,7 @@ export default function ChatWidget() {
         <div className="chat-panel">
           <div className="chat-header">
             <div className="chat-header-info">
-              <h3>Chat with Claude</h3>
+              <h3>Chat with ChatGPT</h3>
               <span className="chat-status">● Online</span>
             </div>
             <button 

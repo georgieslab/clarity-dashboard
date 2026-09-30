@@ -2,12 +2,11 @@
 
 [![React](https://img.shields.io/badge/React-18.3-61DAFB?logo=react&logoColor=white)](https://reactjs.org/)
 [![Node.js](https://img.shields.io/badge/Node.js-Express-339933?logo=node.js&logoColor=white)](https://nodejs.org/)
-[![OpenAI GPT-6.1 Sol](https://img.shields.io/badge/AI_Engine-OpenAI_GPT--6.1_Sol-412991?logo=openai&logoColor=white)](https://openai.com/)
-[![Anthropic Claude](https://img.shields.io/badge/Vision-Claude_3.5_Sonnet-D97706?logo=anthropic&logoColor=white)](https://anthropic.com/)
+[![OpenAI GPT-6.1 Sol](https://img.shields.io/badge/AI_Engine-OpenAI_ChatGPT-412991?logo=openai&logoColor=white)](https://openai.com/)
 [![AWS Bedrock](https://img.shields.io/badge/Cloud_AI-Amazon_Bedrock-FF9900?logo=amazon-aws&logoColor=white)](https://aws.amazon.com/bedrock/)
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
-**Clarity** is a full-stack executive life telemetry dashboard and multimodal AI copilot built on Apple's **visionOS liquid glass design system**. It combines personal wellness tracking (sobriety, therapy, focus routines, and job search pipeline) with **Lumen**, a real-time voice and vision AI copilot powered by **OpenAI GPT-6.1 Sol**, **Anthropic Claude**, and **Amazon Bedrock**.
+**Clarity** is a full-stack executive life telemetry dashboard and multimodal AI copilot built on Apple's **visionOS liquid glass design system**. It combines personal wellness tracking (sobriety, therapy, focus routines, and job search pipeline) with **Lumen**, a real-time voice and vision AI copilot powered by **OpenAI ChatGPT / GPT-6.1 Sol** and **Amazon Bedrock**.
 
 ---
 
@@ -16,7 +15,7 @@
 ### 🎙️ 1. Lumen — Multimodal Voice & Vision Copilot
 - **Voice-to-Voice Intelligence**: Conversational voice agent backed by **Amazon Polly Neural Engine** (Calm Male Voice: *Matthew*) and Web Speech API fallbacks.
 - **Multimodal AI Vision**: Capture or attach photos to analyze physical notes, documents, or environments. Features client-side HTML5 canvas downscaling (`720px / ~35KB JPEG payloads`) for instant response times.
-- **Multi-Engine Routing**: Priority model chain powered by **OpenAI GPT-6.1 Sol**, **Claude 3.5/3.7 Sonnet**, **Claude Haiku**, and **Amazon Bedrock**.
+- **ChatGPT Engine Routing**: Priority model chain powered by **OpenAI GPT-6.1 Sol**, **GPT-4o**, and **Amazon Bedrock**.
 - **Collapsed Floating Badge**: Sleek floating glass badge with live status pulse dot that opens the Lumen assistant from anywhere.
 
 ### 📊 2. Executive Telemetry Dashboard Modules
@@ -25,7 +24,7 @@
 - **💼 Job Search Pipeline**: Drag-and-stage application tracker with active **Interview Shimmer Mode** for glowing active interview cards.
 - **🧠 Therapy Tracker**: Reflection logs, emotional horizon trends, and mental health micro-badges.
 - **⏳ Focus Rhythm (Pomodoro)**: Customizable work/break timer routines with daily telemetry metrics.
-- **✨ Executive Intelligence Briefing**: AI daily synthesis report powered by **OpenAI GPT-6.1 Sol** with a dynamic 3D neural thinking orb stage.
+- **✨ Executive Intelligence Briefing**: AI daily synthesis report powered by **OpenAI ChatGPT** with a dynamic 3D neural thinking orb stage.
 
 ### 🎨 3. Apple visionOS Liquid Glass Design System
 - **Specular Highlights & Ambient Fluid Orbs**: Multi-stop glass refraction edges and organic ambient background blur.
@@ -44,8 +43,8 @@
 - **Frontend**: React 18, Vite 6, HTML5 Canvas API, Web Audio API, CSS3 Liquid Glass Tokens.
 - **Backend & Middleware**: Node.js, Express, CORS, dotenv, 15MB extended body parser.
 - **AI & Multimodal Engines**:
-  - **Amazon Bedrock**: `openai.gpt-6.1-sol`, `eu.anthropic.claude-3-5-sonnet-20241022-v2:0`, `anthropic.claude-3-haiku-20240307-v1:0`
-  - **Anthropic Direct SDK**: `claude-3-5-sonnet-20241022`, `claude-3-7-sonnet-20250219`
+  - **Amazon Bedrock**: `openai.gpt-6.1-sol`, `openai.gpt-6.1`, `openai.gpt-oss-120b-1:0`
+  - **OpenAI Direct API Fallback**: `gpt-4o`, `gpt-4o-mini`
   - **Amazon Polly**: Neural Voice engine (`eu-west-1` Ireland deployment)
 - **Database & Auth**: Firebase Firestore, Firebase Authentication (Google Sign-In).
 - **Deployment**: Render / Node.js production server with automated GitHub CI/CD.
@@ -84,9 +83,9 @@
    POLLY_REGION=eu-west-1
    POLLY_VOICE_ID=Matthew
 
-   # Direct Anthropic SDK Fallback Key
-   VITE_ANTHROPIC_API_KEY=your_anthropic_api_key
-   ANTHROPIC_API_KEY=your_anthropic_api_key
+   # OpenAI Direct API Fallback Key
+   OPENAI_API_KEY=your_openai_api_key
+   VITE_OPENAI_API_KEY=your_openai_api_key
    ```
 
 4. **Run the Application**:
@@ -124,12 +123,13 @@ clarity/
 │   │   └── ThemeToggle.jsx     # Floating theme switcher
 │   ├── utils/
 │   │   ├── firebase.js        # Firebase Firestore & Auth integration
-│   │   └── storage.js         # Decoupled LocalStorage & Cloud storage manager
+│   │   ├── storage.js         # Decoupled LocalStorage & Cloud storage manager
+│   │   └── openai.js          # OpenAI ChatGPT backend API utilities
 │   ├── App.jsx                # Main dashboard container & tile customizer
 │   ├── App.css                # Apple visionOS liquid glass design system
 │   └── main.jsx               # React entry point
 ├── build.js                   # High-performance esbuild bundler script
-├── server.js                  # Express API server for Bedrock, Polly & Vision
+├── server.js                  # Express API server for Bedrock OpenAI, Polly & Vision
 └── package.json
 ```
 

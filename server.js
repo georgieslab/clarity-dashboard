@@ -1,6 +1,5 @@
 import express from 'express';
 import cors from 'cors';
-import Anthropic from '@anthropic-ai/sdk';
 import { BedrockRuntimeClient, ConverseCommand } from '@aws-sdk/client-bedrock-runtime';
 import { PollyClient, SynthesizeSpeechCommand } from '@aws-sdk/client-polly';
 import { fileURLToPath } from 'url';
@@ -19,11 +18,6 @@ const PORT = process.env.PORT || 3000;
 app.use(cors());
 app.use(express.json({ limit: '15mb' }));
 app.use(express.urlencoded({ limit: '15mb', extended: true }));
-
-// Initialize Anthropic fallback
-const anthropic = new Anthropic({
-  apiKey: process.env.VITE_ANTHROPIC_API_KEY
-});
 
 // Initialize AWS Clients for Bedrock & Polly
 const awsCredentials = process.env.AWS_ACCESS_KEY_ID && process.env.AWS_SECRET_ACCESS_KEY ? {
@@ -48,8 +42,50 @@ if (process.env.NODE_ENV === 'production') {
   app.use(express.static(join(__dirname, 'dist')));
 }
 
+// Helper for OpenAI direct REST API fallback
+async function fetchOpenAIChatCompletion({ messages, systemPrompt, maxTokens = 500 }) {
+  const apiKey = process.env.OPENAI_API_KEY || process.env.VITE_OPENAI_API_KEY;
+  if (!apiKey) return null;
+
+  const payloadMessages = [];
+  if (systemPrompt) {
+    payloadMessages.push({ role: 'system', content: systemPrompt });
+  }
+
+  for (const m of messages) {
+    if (m.content || m.text) {
+      payloadMessages.push({
+        role: m.role || 'user',
+        content: m.content || m.text
+      });
+    }
+  }
+
+  const response = await fetch('https://api.openai.com/v1/chat/completions', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${apiKey}`
+    },
+    body: JSON.stringify({
+      model: process.env.OPENAI_MODEL || 'gpt-4o-mini',
+      messages: payloadMessages,
+      max_tokens: maxTokens,
+      temperature: 0.7
+    })
+  });
+
+  if (!response.ok) {
+    const errText = await response.text();
+    throw new Error(`OpenAI API error ${response.status}: ${errText}`);
+  }
+
+  const data = await response.json();
+  return data.choices?.[0]?.message?.content || "";
+}
+
 // --------------------------------------------------------------------------
-// Amazon Bedrock Conversational Voice Agent API
+// Amazon Bedrock Conversational Voice Agent API (Powered by OpenAI ChatGPT)
 // --------------------------------------------------------------------------
 app.post('/api/voice/converse', async (req, res) => {
   try {
@@ -134,23 +170,14 @@ User Context telemetry:
 
     let replyText = "";
 
-    // 1. Try Amazon Bedrock (OpenAI ChatGPT & Multimodal Vision models)
+    // 1. Try Amazon Bedrock (OpenAI ChatGPT models)
     if (process.env.AWS_ACCESS_KEY_ID && process.env.AWS_SECRET_ACCESS_KEY) {
-      const candidateModels = hasImage ? [
-        "openai.gpt-6.1-sol",
-        "openai.gpt-6.1",
-        "eu.anthropic.claude-3-5-sonnet-20241022-v2:0",
-        "us.anthropic.claude-3-5-sonnet-20241022-v2:0",
-        "anthropic.claude-3-haiku-20240307-v1:0",
-        process.env.BEDROCK_MODEL_ID,
-        "openai.gpt-oss-120b-1:0"
-      ].filter(Boolean) : [
+      const candidateModels = [
         "openai.gpt-6.1-sol",
         "openai.gpt-6.1",
         process.env.BEDROCK_MODEL_ID,
         "openai.gpt-oss-120b-1:0",
-        "openai.gpt-oss-20b-1:0",
-        "eu.anthropic.claude-haiku-4-5-20251001-v1:0"
+        "openai.gpt-oss-20b-1:0"
       ].filter(Boolean);
 
       const runConverse = async (targetModel) => {
@@ -172,7 +199,7 @@ User Context telemetry:
         try {
           replyText = await runConverse(model);
           if (replyText && replyText.trim().length > 0) {
-            console.log(`Voice converse successfully responded via Bedrock model: ${model}`);
+            console.log(`Voice converse successfully responded via Bedrock OpenAI model: ${model}`);
             break;
           }
         } catch (err) {
@@ -181,60 +208,20 @@ User Context telemetry:
       }
     }
 
-    // 2. Anthropic Direct SDK Fallback (especially for Vision & Multimodal analysis)
-    const anthropicKey = process.env.VITE_ANTHROPIC_API_KEY || process.env.ANTHROPIC_API_KEY;
-    if (!replyText && anthropicKey) {
+    // 2. OpenAI Direct API Fallback
+    if (!replyText) {
       try {
-        const sdkClient = new Anthropic({ apiKey: anthropicKey });
-        const userMsgContent = [];
-
-        if (hasImage) {
-          const base64Data = req.body.image.base64.replace(/^data:image\/\w+;base64,/, '');
-          let mediaType = req.body.image.mimeType || 'image/jpeg';
-          if (mediaType === 'image/jpg') mediaType = 'image/jpeg';
-
-          userMsgContent.push({
-            type: 'image',
-            source: {
-              type: 'base64',
-              media_type: mediaType,
-              data: base64Data
-            }
-          });
-        }
-
-        userMsgContent.push({
-          type: 'text',
-          text: promptText || "Analyze this image and provide mindful executive guidance."
+        const openAIReply = await fetchOpenAIChatCompletion({
+          messages: [{ role: 'user', content: promptText }],
+          systemPrompt,
+          maxTokens: 350
         });
-
-        const candidateAnthropicModels = [
-          'claude-3-5-sonnet-20241022',
-          'claude-3-7-sonnet-20250219',
-          'claude-3-haiku-20240307'
-        ];
-
-        for (const antModel of candidateAnthropicModels) {
-          try {
-            const msgResponse = await sdkClient.messages.create({
-              model: antModel,
-              max_tokens: 350,
-              system: systemPrompt,
-              messages: [{ role: 'user', content: userMsgContent }]
-            });
-
-            const textRes = msgResponse.content?.find(c => c.text)?.text || msgResponse.content?.[0]?.text || "";
-            if (textRes && textRes.trim().length > 0) {
-              replyText = textRes.trim();
-              console.log(`Voice converse successfully responded via Anthropic SDK (${antModel}) vision fallback`);
-              break;
-            }
-          } catch (mErr) {
-            console.warn(`Anthropic SDK model ${antModel} failed:`, mErr.message);
-          }
+        if (openAIReply) {
+          replyText = openAIReply;
+          console.log("Voice converse responded via OpenAI Direct API fallback");
         }
-      } catch (sdkErr) {
-        console.warn("Anthropic SDK vision fallback error:", sdkErr.message);
+      } catch (oaiErr) {
+        console.warn("OpenAI Direct API fallback failed:", oaiErr.message);
       }
     }
 
@@ -242,7 +229,7 @@ User Context telemetry:
       replyText = "Lumen is present and listening. Take your time.";
     }
 
-    // 2. Synthesize with Amazon Polly (Neural Voice) if AWS configured
+    // 3. Synthesize with Amazon Polly (Neural Voice) if AWS configured
     let audioBase64 = null;
     if (process.env.AWS_ACCESS_KEY_ID && process.env.AWS_SECRET_ACCESS_KEY) {
       try {
@@ -272,7 +259,62 @@ User Context telemetry:
   }
 });
 
-// Daily insights endpoint — Powered by OpenAI GPT-6.1 Sol on Amazon Bedrock
+// --------------------------------------------------------------------------
+// General Chat API (Powered by OpenAI ChatGPT)
+// --------------------------------------------------------------------------
+app.post('/api/chat', async (req, res) => {
+  try {
+    const { messages, system } = req.body;
+    const systemPrompt = system || "You are a supportive AI companion powered by OpenAI ChatGPT. Be warm, honest, and concise.";
+
+    let content = "";
+
+    // 1. Bedrock OpenAI models
+    if (process.env.AWS_ACCESS_KEY_ID && process.env.AWS_SECRET_ACCESS_KEY) {
+      const candidateModels = [
+        "openai.gpt-6.1-sol",
+        "openai.gpt-6.1",
+        process.env.BEDROCK_MODEL_ID,
+        "openai.gpt-oss-120b-1:0",
+        "openai.gpt-oss-20b-1:0"
+      ].filter(Boolean);
+
+      for (const model of candidateModels) {
+        try {
+          const command = new ConverseCommand({
+            modelId: model,
+            messages: Array.isArray(messages) ? messages.map(m => ({ role: m.role || 'user', content: [{ text: m.content || m.text || '' }] })) : [],
+            system: [{ text: systemPrompt }],
+            inferenceConfig: { maxTokens: 500, temperature: 0.7 }
+          });
+          const response = await bedrock.send(command);
+          content = response.output?.message?.content?.find(c => c.text)?.text || "";
+          if (content) break;
+        } catch (err) {
+          console.warn(`Chat model ${model} failed:`, err.message);
+        }
+      }
+    }
+
+    // 2. Direct OpenAI API fallback
+    if (!content) {
+      content = await fetchOpenAIChatCompletion({ messages: messages || [], systemPrompt, maxTokens: 500 });
+    }
+
+    if (!content) {
+      content = "I'm here to support you on your journey. What's on your mind?";
+    }
+
+    res.json({ content, provider: 'chatgpt' });
+  } catch (error) {
+    console.error('Chat API error:', error);
+    res.status(500).json({ error: error.message || 'Failed to process chat' });
+  }
+});
+
+// --------------------------------------------------------------------------
+// Daily Insights Endpoint — Powered by OpenAI GPT-6.1 Sol / ChatGPT
+// --------------------------------------------------------------------------
 app.post('/api/insights', async (req, res) => {
   try {
     const { prompt } = req.body;
@@ -287,8 +329,7 @@ app.post('/api/insights', async (req, res) => {
         process.env.BEDROCK_INSIGHTS_MODEL_ID,
         process.env.BEDROCK_MODEL_ID,
         "openai.gpt-oss-120b-1:0",
-        "openai.gpt-oss-20b-1:0",
-        "eu.anthropic.claude-haiku-4-5-20251001-v1:0"
+        "openai.gpt-oss-20b-1:0"
       ].filter(Boolean);
 
       const runBedrockInsights = async (targetModel) => {
@@ -326,17 +367,16 @@ app.post('/api/insights', async (req, res) => {
       }
     }
 
-    // 2. Fallback to Anthropic SDK if Bedrock unavailable and key configured
-    if (!content && process.env.ANTHROPIC_API_KEY) {
+    // 2. Direct OpenAI API fallback
+    if (!content) {
       try {
-        const message = await anthropic.messages.create({
-          model: 'claude-sonnet-4-20250514',
-          max_tokens: 1024,
-          messages: [{ role: 'user', content: prompt }]
+        content = await fetchOpenAIChatCompletion({
+          messages: [{ role: 'user', content: prompt }],
+          systemPrompt: "You are an executive wellness and life telemetry coach powered by OpenAI ChatGPT.",
+          maxTokens: 1024
         });
-        content = message.content[0].text;
-      } catch (anthropicErr) {
-        console.error('Anthropic SDK insights error:', anthropicErr.message);
+      } catch (oaiErr) {
+        console.error('OpenAI Direct API insights fallback error:', oaiErr.message);
       }
     }
 
@@ -356,7 +396,7 @@ app.get('/api/health', (req, res) => {
   res.json({ 
     status: 'ok',
     bedrockConfigured: Boolean(process.env.AWS_ACCESS_KEY_ID && process.env.AWS_SECRET_ACCESS_KEY),
-    region: process.env.AWS_REGION || 'us-east-1'
+    region: process.env.AWS_REGION || 'eu-north-1'
   });
 });
 

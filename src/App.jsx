@@ -324,7 +324,7 @@ function App() {
           />
         )}
 
-        {/* Claude Daily Executive Intelligence */}
+        {/* ChatGPT Daily Executive Intelligence */}
         {!tilesState.dailyInsights?.hidden && (
           <DailyInsights 
             isCollapsed={tilesState.dailyInsights?.collapsed}
