@@ -58,11 +58,12 @@
 
     <!-- Slide Selector -->
     <div class="flex items-center gap-1.5 bg-black/40 p-1.5 rounded-full border border-white/10">
-      <button onclick="goToSlide(0)" class="slide-nav-btn text-xs font-medium px-3 py-1 rounded-full transition-all" data-slide="0">01 Overview</button>
-      <button onclick="goToSlide(1)" class="slide-nav-btn text-xs font-medium px-3 py-1 rounded-full transition-all" data-slide="1">02 AI Architecture</button>
-      <button onclick="goToSlide(2)" class="slide-nav-btn text-xs font-medium px-3 py-1 rounded-full transition-all" data-slide="2">03 Telemetry Engine</button>
-      <button onclick="goToSlide(3)" class="slide-nav-btn text-xs font-medium px-3 py-1 rounded-full transition-all" data-slide="3">04 visionOS Dock</button>
-      <button onclick="goToSlide(4)" class="slide-nav-btn text-xs font-medium px-3 py-1 rounded-full transition-all" data-slide="4">05 Production Scale</button>
+      <button onclick="goToSlide(0)" class="slide-nav-btn text-xs font-medium px-3 py-1 rounded-full transition-all" data-slide="0">Cover</button>
+      <button onclick="goToSlide(1)" class="slide-nav-btn text-xs font-medium px-3 py-1 rounded-full transition-all" data-slide="1">01 Overview</button>
+      <button onclick="goToSlide(2)" class="slide-nav-btn text-xs font-medium px-3 py-1 rounded-full transition-all" data-slide="2">02 AI Stack</button>
+      <button onclick="goToSlide(3)" class="slide-nav-btn text-xs font-medium px-3 py-1 rounded-full transition-all" data-slide="3">03 Telemetry</button>
+      <button onclick="goToSlide(4)" class="slide-nav-btn text-xs font-medium px-3 py-1 rounded-full transition-all" data-slide="4">04 visionOS Dock</button>
+      <button onclick="goToSlide(5)" class="slide-nav-btn text-xs font-medium px-3 py-1 rounded-full transition-all" data-slide="5">05 Delivery</button>
     </div>
 
     <!-- Speaker Notes Toggle -->
@@ -105,7 +106,7 @@
   <!-- Bottom Navigation -->
   <footer class="relative z-10 px-8 py-4 flex items-center justify-between border-t border-white/10 glass-card">
     <div class="text-xs text-slate-400 flex items-center gap-2">
-      <span>Slide <strong id="current-slide-num" class="text-white">1</strong> of 5</span>
+      <span>Slide <strong id="current-slide-num" class="text-white">1</strong> of 6</span>
       <span class="text-slate-600">•</span>
       <span class="hidden md:inline">Navigate with <kbd class="px-1.5 py-0.5 rounded bg-white/10 text-slate-200">←</kbd> and <kbd class="px-1.5 py-0.5 rounded bg-white/10 text-slate-200">→</kbd> arrow keys</span>
     </div>
@@ -124,6 +125,63 @@
 
   <script>
     const SLIDES = [
+      // Slide 0: Cover Slide with Logo
+      {
+        badge: "Upwork Technical Proposal // Featured Project",
+        title: "",
+        subtitle: "",
+        isCover: true,
+        content: `
+          <div class="glass-card p-8 md:p-12 rounded-3xl border border-white/15 relative overflow-hidden">
+            <div class="flex flex-col md:flex-row items-center gap-10">
+              
+              <!-- Left: Aperture Logo Vector -->
+              <div class="relative w-36 h-36 md:w-44 md:h-44 flex-shrink-0">
+                <div class="absolute inset-0 bg-cyan-400/20 rounded-full blur-3xl"></div>
+                <img src="/clarity.svg" alt="Clarity Logo" class="relative w-full h-full drop-shadow-[0_12px_30px_rgba(56,189,248,0.45)]" />
+              </div>
+
+              <!-- Center/Right: Title & Specs -->
+              <div class="flex-1 text-center md:text-left">
+                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-500/10 border border-cyan-400/30 text-[11px] font-mono text-cyan-400 uppercase tracking-widest mb-3">
+                  <span class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span>
+                  <span>Senior Full-Stack AI Engineer Portfolio</span>
+                </div>
+
+                <h1 class="text-4xl md:text-6xl font-black text-white tracking-tight leading-none mb-2">
+                  CLARITY
+                </h1>
+                <p class="text-base md:text-xl font-medium text-cyan-300 mb-4">
+                  Executive Telemetry &amp; Multimodal AI Copilot
+                </p>
+                <p class="text-xs md:text-sm text-slate-300 leading-relaxed max-w-2xl font-light mb-6">
+                  A visionOS 2.0 liquid glass platform combining behavioral telemetry with an ambient voice and vision partner powered by Amazon Bedrock (DeepSeek-V3.2) and Polly Neural Voice.
+                </p>
+
+                <!-- Technical Badges -->
+                <div class="flex flex-wrap items-center justify-center md:justify-start gap-2.5 mb-6 text-xs font-mono text-slate-300">
+                  <span class="px-2.5 py-1 rounded-lg bg-white/5 border border-white/10">React 18 + Vite 6</span>
+                  <span class="px-2.5 py-1 rounded-lg bg-white/5 border border-white/10 text-indigo-300">AWS Bedrock DeepSeek</span>
+                  <span class="px-2.5 py-1 rounded-lg bg-white/5 border border-white/10 text-pink-300">Polly Neural Voice</span>
+                  <span class="px-2.5 py-1 rounded-lg bg-white/5 border border-white/10 text-emerald-300">Standalone PWA</span>
+                  <span class="px-2.5 py-1 rounded-lg bg-white/5 border border-white/10 text-amber-300">Web Audio Synth</span>
+                </div>
+
+                <!-- Launch Button -->
+                <div class="flex items-center justify-center md:justify-start gap-4 pt-2 border-t border-white/10">
+                  <button onclick="nextSlide()" class="px-6 py-2.5 rounded-xl bg-gradient-to-r from-cyan-500 to-indigo-600 text-white font-bold text-xs shadow-lg shadow-cyan-500/30 hover:brightness-110 transition-all flex items-center gap-2">
+                    <span>Explore Case Study</span>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+                  </button>
+                  <span class="text-xs font-mono text-slate-400">Author: <strong class="text-white">Georgie Akopashvili</strong></span>
+                </div>
+              </div>
+            </div>
+          </div>
+        `,
+        notes: "Welcome to the Clarity case study. As a senior full-stack AI engineer, I specialize in taking high-concept ideas—combining complex cloud LLM orchestration, local-first offline resilience, and high-fidelity Apple-standard UI—and turning them into robust, production-deployed web applications."
+      },
+      // Slide 1: Executive Overview
       {
         badge: "Case Study 01 // Executive Overview",
         title: "High-Performance Life Telemetry & Multimodal AI Platform",
@@ -182,6 +240,7 @@
         `,
         notes: "When proposing for Upwork clients, emphasize end-to-end delivery: you take an ambitious problem statement and deliver a clean, production-grade application that works reliably across devices with measurable latency and payload reductions."
       },
+      // Slide 2: AI Architecture
       {
         badge: "Case Study 02 // Cloud & AI Systems",
         title: "Amazon Bedrock & Polly Multi-Turn Pipeline",
@@ -250,6 +309,7 @@
         `,
         notes: "Highlight the cost and efficiency trade-offs: by performing image preprocessing in the browser using the HTML5 Canvas API, you saved the client substantial AWS inference costs while guaranteeing sub-second responsiveness."
       },
+      // Slide 3: Frontend Architecture
       {
         badge: "Case Study 03 // Frontend Architecture",
         title: "Apple visionOS 2.0 Design System & Micro-Haptics",
@@ -304,6 +364,7 @@
         `,
         notes: "For clients looking for high design standards, emphasize how the UI follows Apple HIG and visionOS 2.0 specs: concentric radii, dynamic specular lighting, and pure Web Audio micro-haptics synthesized without any heavy external audio files."
       },
+      // Slide 4: visionOS Dock
       {
         badge: "Case Study 04 // UX Innovation",
         title: "The VisionDock: Zero Redundancy, Pure Utility",
@@ -376,6 +437,7 @@
         `,
         notes: "Explain how you solved a core UX problem: rather than cluttering navigation with duplicate shortcuts, you transformed the floating dock into an executive utility toolbar. This demonstrates proactive product thinking, not just code writing."
       },
+      // Slide 5: Production Scale & Terms
       {
         badge: "Case Study 05 // Delivery & Engagement",
         title: "Enterprise Delivery: PWA Engine & Technical Highlights",
@@ -447,14 +509,18 @@
       void container.offsetWidth; // Trigger reflow
       container.className = 'slide-enter w-full';
 
-      container.innerHTML = `
-        <div class="mb-4">
-          <span class="text-xs font-bold tracking-widest uppercase text-cyan-400 mb-1 inline-block font-mono">${slide.badge}</span>
-          <h2 class="text-xl md:text-2xl font-black text-white tracking-tight leading-tight">${slide.title}</h2>
-          <p class="text-xs md:text-sm text-slate-300 mt-1 max-w-3xl">${slide.subtitle}</p>
-        </div>
-        ${slide.content}
-      `;
+      if (slide.isCover) {
+        container.innerHTML = slide.content;
+      } else {
+        container.innerHTML = `
+          <div class="mb-4">
+            <span class="text-xs font-bold tracking-widest uppercase text-cyan-400 mb-1 inline-block font-mono">${slide.badge}</span>
+            <h2 class="text-xl md:text-2xl font-black text-white tracking-tight leading-tight">${slide.title}</h2>
+            <p class="text-xs md:text-sm text-slate-300 mt-1 max-w-3xl">${slide.subtitle}</p>
+          </div>
+          ${slide.content}
+        `;
+      }
 
       // Update slide number and navigation pills
       document.getElementById('current-slide-num').textContent = currentSlide + 1;
@@ -467,7 +533,7 @@
       });
 
       // Update notes
-      document.getElementById('notes-title').textContent = `Slide ${currentSlide + 1}: ${slide.title}`;
+      document.getElementById('notes-title').textContent = slide.isCover ? 'Presentation Introduction' : `Slide ${currentSlide}: ${slide.title}`;
       document.getElementById('notes-content').textContent = slide.notes;
     }
 
