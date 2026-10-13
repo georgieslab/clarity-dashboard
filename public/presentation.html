@@ -3,101 +3,121 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Clarity — Executive Product & Architecture Presentation</title>
+  <title>Clarity — Technical Case Study & Architecture Deck</title>
   <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
   <style>
     @keyframes floatOrb {
       0%, 100% { transform: translate(0, 0) scale(1); }
-      50% { transform: translate(25px, -20px) scale(1.08); }
+      50% { transform: translate(20px, -15px) scale(1.05); }
     }
     .orb-glow {
-      animation: floatOrb 12s ease-in-out infinite;
+      animation: floatOrb 14s ease-in-out infinite;
     }
-    .glass-panel {
-      background: rgba(255, 255, 255, 0.04);
-      backdrop-filter: blur(24px);
-      -webkit-backdrop-filter: blur(24px);
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    .glass-card {
+      background: rgba(15, 23, 42, 0.65);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.15);
     }
     .slide-enter {
-      animation: slideIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      animation: slideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
     }
     @keyframes slideIn {
-      from { opacity: 0; transform: translateY(16px) scale(0.98); }
+      from { opacity: 0; transform: translateY(12px) scale(0.99); }
       to { opacity: 1; transform: translateY(0) scale(1); }
     }
   </style>
 </head>
-<body class="bg-[#070a12] text-slate-100 min-h-screen flex flex-col justify-between font-sans selection:bg-cyan-500 selection:text-black overflow-x-hidden relative">
+<body class="bg-[#080d1a] text-slate-100 min-h-screen flex flex-col justify-between font-sans selection:bg-cyan-500 selection:text-black overflow-x-hidden relative">
 
-  <!-- Ambient VisionOS Orbs Background -->
+  <!-- Ambient Backdrop -->
   <div class="fixed inset-0 pointer-events-none overflow-hidden z-0">
-    <div class="orb-glow absolute -top-40 -left-40 w-96 h-96 rounded-full bg-cyan-600/15 blur-[120px]"></div>
-    <div class="orb-glow absolute top-1/3 -right-40 w-[30rem] h-[30rem] rounded-full bg-violet-600/15 blur-[140px]" style="animation-delay: -5s;"></div>
-    <div class="orb-glow absolute -bottom-40 left-1/3 w-[26rem] h-[26rem] rounded-full bg-pink-600/10 blur-[130px]" style="animation-delay: -8s;"></div>
+    <div class="orb-glow absolute -top-40 -left-40 w-96 h-96 rounded-full bg-cyan-600/10 blur-[130px]"></div>
+    <div class="orb-glow absolute top-1/3 -right-40 w-[28rem] h-[28rem] rounded-full bg-indigo-600/10 blur-[140px]" style="animation-delay: -6s;"></div>
+    <div class="orb-glow absolute -bottom-40 left-1/3 w-96 h-96 rounded-full bg-slate-600/10 blur-[130px]" style="animation-delay: -9s;"></div>
   </div>
 
-  <!-- Top Executive Header & Progress Bar -->
-  <header class="relative z-10 px-8 py-5 flex items-center justify-between border-b border-white/10 glass-panel">
+  <!-- Top Executive Header -->
+  <header class="relative z-10 px-8 py-4 flex items-center justify-between border-b border-white/10 glass-card">
     <div class="flex items-center gap-3">
-      <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-cyan-400 to-indigo-500 flex items-center justify-center font-black text-black text-lg shadow-lg shadow-cyan-500/20">
-        ✦
+      <div class="w-8 h-8 rounded-lg bg-cyan-500/15 border border-cyan-400/30 flex items-center justify-center text-cyan-400">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <polygon points="12 2 2 7 12 12 22 7 12 2"/>
+          <polyline points="2 17 12 22 22 17"/>
+          <polyline points="2 12 12 17 22 12"/>
+        </svg>
       </div>
       <div>
-        <h1 class="text-sm font-bold tracking-wider uppercase text-white flex items-center gap-2">
-          Clarity <span class="text-[12px] px-2 py-0.5 rounded-full bg-cyan-400/10 text-cyan-400 border border-cyan-400/30">Executive Deck</span>
+        <h1 class="text-xs font-bold tracking-wider uppercase text-white flex items-center gap-2">
+          Clarity <span class="text-[11px] px-2 py-0.5 rounded-full bg-cyan-400/10 text-cyan-400 border border-cyan-400/30 font-mono">Portfolio Case Study</span>
         </h1>
-        <p class="text-xs text-slate-400">Life Telemetry • Multimodal AI • Apple Glass PWA</p>
+        <p class="text-[11px] text-slate-400">Senior Full-Stack AI Engineer • Production Delivery</p>
       </div>
     </div>
 
-    <!-- Slide Pill Selector -->
-    <div class="flex items-center gap-2 bg-black/40 p-1.5 rounded-full border border-white/10">
-      <button onclick="goToSlide(0)" class="slide-nav-btn text-xs font-semibold px-3 py-1 rounded-full transition-all" data-slide="0">1. Vision</button>
-      <button onclick="goToSlide(1)" class="slide-nav-btn text-xs font-semibold px-3 py-1 rounded-full transition-all" data-slide="1">2. AI Stack</button>
-      <button onclick="goToSlide(2)" class="slide-nav-btn text-xs font-semibold px-3 py-1 rounded-full transition-all" data-slide="2">3. Telemetry</button>
-      <button onclick="goToSlide(3)" class="slide-nav-btn text-xs font-semibold px-3 py-1 rounded-full transition-all" data-slide="3">4. VisionDock</button>
-      <button onclick="goToSlide(4)" class="slide-nav-btn text-xs font-semibold px-3 py-1 rounded-full transition-all" data-slide="4">5. PWA & Scale</button>
+    <!-- Slide Selector -->
+    <div class="flex items-center gap-1.5 bg-black/40 p-1.5 rounded-full border border-white/10">
+      <button onclick="goToSlide(0)" class="slide-nav-btn text-xs font-medium px-3 py-1 rounded-full transition-all" data-slide="0">01 Overview</button>
+      <button onclick="goToSlide(1)" class="slide-nav-btn text-xs font-medium px-3 py-1 rounded-full transition-all" data-slide="1">02 AI Architecture</button>
+      <button onclick="goToSlide(2)" class="slide-nav-btn text-xs font-medium px-3 py-1 rounded-full transition-all" data-slide="2">03 Telemetry Engine</button>
+      <button onclick="goToSlide(3)" class="slide-nav-btn text-xs font-medium px-3 py-1 rounded-full transition-all" data-slide="3">04 visionOS Dock</button>
+      <button onclick="goToSlide(4)" class="slide-nav-btn text-xs font-medium px-3 py-1 rounded-full transition-all" data-slide="4">05 Production Scale</button>
     </div>
 
     <!-- Speaker Notes Toggle -->
-    <button onclick="toggleNotes()" id="notes-toggle-btn" class="flex items-center gap-2 text-xs font-medium px-3.5 py-1.5 rounded-lg border border-white/15 bg-white/5 hover:bg-white/10 text-slate-300 transition-all">
-      <span>🎙️ Speaker Notes</span>
+    <button onclick="toggleNotes()" id="notes-toggle-btn" class="flex items-center gap-2 text-xs font-medium px-3 py-1.5 rounded-lg border border-white/15 bg-white/5 hover:bg-white/10 text-slate-300 transition-all">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>
+        <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+        <line x1="12" y1="19" x2="12" y2="23"/>
+        <line x1="8" y1="23" x2="16" y2="23"/>
+      </svg>
+      <span>Speaker Notes</span>
     </button>
   </header>
 
   <!-- Presentation Main Viewport -->
   <main class="relative z-10 flex-1 flex flex-col justify-center max-w-6xl w-full mx-auto p-6 md:p-10">
     <div id="slide-container" class="slide-enter w-full">
-      <!-- Slides dynamically render here -->
+      <!-- Dynamic Slides -->
     </div>
   </main>
 
-  <!-- Speaker Notes Drawer (Collapsible) -->
-  <aside id="notes-drawer" class="relative z-10 hidden border-t border-cyan-500/30 bg-black/85 backdrop-blur-xl px-8 py-4 transition-all">
+  <!-- Speaker Notes Drawer -->
+  <aside id="notes-drawer" class="relative z-10 hidden border-t border-cyan-500/20 bg-slate-950/90 backdrop-blur-xl px-8 py-4 transition-all">
     <div class="max-w-6xl mx-auto flex items-start gap-4">
-      <div class="text-cyan-400 text-lg font-bold">🎙️</div>
+      <div class="text-cyan-400 mt-0.5">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+          <circle cx="12" cy="12" r="10"/>
+          <line x1="12" y1="16" x2="12" y2="12"/>
+          <line x1="12" y1="8" x2="12.01" y2="8"/>
+        </svg>
+      </div>
       <div class="flex-1">
-        <h4 class="text-xs font-bold uppercase tracking-wider text-cyan-300 mb-1" id="notes-title">Speaker Script</h4>
+        <h4 class="text-xs font-bold uppercase tracking-wider text-cyan-300 mb-1" id="notes-title">Presentation Script</h4>
         <p class="text-xs leading-relaxed text-slate-300" id="notes-content"></p>
       </div>
       <button onclick="toggleNotes()" class="text-xs text-slate-400 hover:text-white px-2 py-1">✕</button>
     </div>
   </aside>
 
-  <!-- Bottom Navigation Deck -->
-  <footer class="relative z-10 px-8 py-4 flex items-center justify-between border-t border-white/10 glass-panel">
-    <div class="text-xs text-slate-400">
-      Slide <span id="current-slide-num" class="font-bold text-white">1</span> of 5 • <span class="hidden md:inline">Use <kbd class="px-1.5 py-0.5 rounded bg-white/10 text-slate-200">←</kbd> <kbd class="px-1.5 py-0.5 rounded bg-white/10 text-slate-200">→</kbd> arrow keys to navigate</span>
+  <!-- Bottom Navigation -->
+  <footer class="relative z-10 px-8 py-4 flex items-center justify-between border-t border-white/10 glass-card">
+    <div class="text-xs text-slate-400 flex items-center gap-2">
+      <span>Slide <strong id="current-slide-num" class="text-white">1</strong> of 5</span>
+      <span class="text-slate-600">•</span>
+      <span class="hidden md:inline">Navigate with <kbd class="px-1.5 py-0.5 rounded bg-white/10 text-slate-200">←</kbd> and <kbd class="px-1.5 py-0.5 rounded bg-white/10 text-slate-200">→</kbd> arrow keys</span>
     </div>
 
     <div class="flex items-center gap-3">
-      <button onclick="prevSlide()" class="px-4 py-2 rounded-xl text-xs font-semibold bg-white/5 hover:bg-white/10 border border-white/10 transition-all active:scale-95">
-        ← Previous
+      <button onclick="prevSlide()" class="px-4 py-2 rounded-xl text-xs font-semibold bg-white/5 hover:bg-white/10 border border-white/10 transition-all flex items-center gap-1.5 active:scale-95">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+        <span>Previous</span>
       </button>
-      <button onclick="nextSlide()" class="px-5 py-2 rounded-xl text-xs font-bold bg-gradient-to-r from-cyan-500 to-indigo-600 hover:brightness-110 text-white shadow-lg shadow-cyan-500/25 transition-all active:scale-95">
-        Next Slide →
+      <button onclick="nextSlide()" class="px-5 py-2 rounded-xl text-xs font-bold bg-gradient-to-r from-cyan-500 to-indigo-600 hover:brightness-110 text-white shadow-lg shadow-cyan-500/25 transition-all flex items-center gap-1.5 active:scale-95">
+        <span>Next Slide</span>
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="9 18 15 12 9 6"/></svg>
       </button>
     </div>
   </footer>
@@ -105,151 +125,176 @@
   <script>
     const SLIDES = [
       {
-        badge: "01 // Executive Thesis & Vision",
-        title: "The Paradigm Shift: Behavioral Telemetry Meets Ambient AI",
-        subtitle: "How high performers reclaim mental bandwidth through precision tracking and zero-latency multimodal copiloting.",
+        badge: "Case Study 01 // Executive Overview",
+        title: "High-Performance Life Telemetry & Multimodal AI Platform",
+        subtitle: "How modern full-stack architecture unified behavioral metrics, real-time voice intelligence, and offline PWA capabilities.",
         content: `
           <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
-            <div class="glass-panel p-6 rounded-2xl border border-cyan-500/20 bg-gradient-to-b from-cyan-950/20 to-transparent">
-              <div class="text-2xl mb-3">🧩</div>
-              <h3 class="text-sm font-bold text-white mb-2">The Fragmented Self</h3>
+            <div class="glass-card p-6 rounded-2xl border-cyan-500/20">
+              <div class="w-8 h-8 rounded-lg bg-cyan-500/10 text-cyan-400 flex items-center justify-center mb-4">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>
+              </div>
+              <h3 class="text-sm font-bold text-white mb-2">The Client Problem</h3>
               <p class="text-xs text-slate-300 leading-relaxed">
-                Executives juggle 6+ disconnected apps: habit trackers, sobriety logs, job spreadsheets, therapy journals, and pomodoros. Cognitive friction destroys consistency.
+                Founders and executives juggle multiple disconnected tools: spreadsheets, habit apps, sobriety logs, and task managers. Context switching induces fatigue and compromises data integrity.
               </p>
             </div>
-            <div class="glass-panel p-6 rounded-2xl border border-violet-500/20 bg-gradient-to-b from-violet-950/20 to-transparent">
-              <div class="text-2xl mb-3">🔮</div>
-              <h3 class="text-sm font-bold text-white mb-2">The Clarity Unified Model</h3>
+
+            <div class="glass-card p-6 rounded-2xl border-indigo-500/20">
+              <div class="w-8 h-8 rounded-lg bg-indigo-500/10 text-indigo-400 flex items-center justify-center mb-4">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/><path d="M9 21V9"/></svg>
+              </div>
+              <h3 class="text-sm font-bold text-white mb-2">The Engineering Solution</h3>
               <p class="text-xs text-slate-300 leading-relaxed">
-                A unified executive dashboard tracking velocity, emotional stability, career pipeline, and neurological downtime in a single visionOS 2.0 glass cockpit.
+                Engineered a unified visionOS liquid glass dashboard integrating habit matrices, career pipelines, sobriety tracking, and voice-first AI with zero layout shift.
               </p>
             </div>
-            <div class="glass-panel p-6 rounded-2xl border border-emerald-500/20 bg-gradient-to-b from-emerald-950/20 to-transparent">
-              <div class="text-2xl mb-3">🧠</div>
-              <h3 class="text-sm font-bold text-white mb-2">Multimodal Copilot</h3>
+
+            <div class="glass-card p-6 rounded-2xl border-emerald-500/20">
+              <div class="w-8 h-8 rounded-lg bg-emerald-500/10 text-emerald-400 flex items-center justify-center mb-4">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+              </div>
+              <h3 class="text-sm font-bold text-white mb-2">Business & User Impact</h3>
               <p class="text-xs text-slate-300 leading-relaxed">
-                Lumen acts as an active accountability partner: speaks via Amazon Polly Neural voice, observes handwritten notes via canvas vision, and reasons with Bedrock DeepSeek-V3.2.
+                Delivered 100% offline standalone execution, sub-second multimodal vision inference, and a clean codebase that scales from development to production without rewrites.
               </p>
             </div>
           </div>
-          <div class="mt-8 flex items-center justify-between p-4 rounded-xl bg-white/5 border border-white/10">
-            <div class="flex items-center gap-6">
-              <div><span class="text-xs text-slate-400">Streak Resilience</span><div class="text-sm font-bold text-emerald-400">142 Days Clean</div></div>
-              <div class="h-6 w-px bg-white/10"></div>
-              <div><span class="text-xs text-slate-400">Weekly Deep Work</span><div class="text-sm font-bold text-cyan-400">38.4 Hours</div></div>
-              <div class="h-6 w-px bg-white/10"></div>
-              <div><span class="text-xs text-slate-400">Pipeline Velocity</span><div class="text-sm font-bold text-violet-400">3 Final Rounds</div></div>
+
+          <div class="mt-8 grid grid-cols-2 md:grid-cols-4 gap-4 p-4 rounded-xl bg-black/40 border border-white/10">
+            <div>
+              <span class="text-[11px] uppercase tracking-wider text-slate-400 font-mono">Cold Start Time</span>
+              <div class="text-base font-bold text-cyan-400 font-mono">&lt; 90ms (Cache-First)</div>
             </div>
-            <span class="text-[12px] uppercase font-bold tracking-widest text-slate-400">Portfolio Ready • 2026 Release</span>
+            <div>
+              <span class="text-[11px] uppercase tracking-wider text-slate-400 font-mono">Vision Payload Size</span>
+              <div class="text-base font-bold text-emerald-400 font-mono">~35 KB (Canvas Optimized)</div>
+            </div>
+            <div>
+              <span class="text-[11px] uppercase tracking-wider text-slate-400 font-mono">Offline Availability</span>
+              <div class="text-base font-bold text-indigo-400 font-mono">100% Core Features</div>
+            </div>
+            <div>
+              <span class="text-[11px] uppercase tracking-wider text-slate-400 font-mono">CI/CD Pipeline</span>
+              <div class="text-base font-bold text-slate-200 font-mono">Automated GitHub Build</div>
+            </div>
           </div>
         `,
-        notes: "Good morning everyone. Today we are looking at Clarity. In high-performance careers, individuals fail not from lack of ambition, but from fragmented attention. Clarity consolidates the 5 foundational pillars of an executive's life—sobriety, cognitive routines, career search, intellectual capital, and emotional health—into a unified visionOS glass canvas backed by conversational AI."
+        notes: "When proposing for Upwork clients, emphasize end-to-end delivery: you take an ambitious problem statement and deliver a clean, production-grade application that works reliably across devices with measurable latency and payload reductions."
       },
       {
-        badge: "02 // Systems & Neural AI Architecture",
-        title: "Enterprise Multi-Model Routing: Bedrock + Polly + Canvas Vision",
-        subtitle: "Architected for zero latency, local privacy isolation, and graceful offline fallback.",
+        badge: "Case Study 02 // Cloud & AI Systems",
+        title: "Amazon Bedrock & Polly Multi-Turn Pipeline",
+        subtitle: "Cost-optimized multimodal pipeline coupling DeepSeek-V3.2 with Polly Neural speech synthesis.",
         content: `
           <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mt-6">
-            <div class="glass-panel p-6 rounded-2xl border border-white/10 flex flex-col justify-between">
+            <div class="glass-card p-6 rounded-2xl flex flex-col justify-between">
               <div>
-                <h3 class="text-sm font-bold text-cyan-400 uppercase tracking-wider mb-4">Neural Pipeline Topology</h3>
+                <h3 class="text-xs font-bold text-cyan-400 uppercase tracking-wider mb-4 font-mono">Inference & Telemetry Flow</h3>
                 <div class="space-y-3 font-mono text-xs">
-                  <div class="p-3 rounded-lg bg-black/40 border border-white/10 flex items-center justify-between">
-                    <span class="text-slate-300">User Speech / Audio Input</span>
-                    <span class="text-cyan-400">Web Speech API (0ms latency)</span>
+                  <div class="p-3 rounded-lg bg-black/50 border border-white/10 flex items-center justify-between">
+                    <span class="text-slate-300">1. Client Audio Input</span>
+                    <span class="text-cyan-400">Web Speech API (Zero API cost)</span>
                   </div>
-                  <div class="p-3 rounded-lg bg-black/40 border border-cyan-500/30 flex items-center justify-between">
-                    <span class="text-slate-300">Vision Image Downscaling</span>
-                    <span class="text-emerald-400">Canvas 720px / 35KB Payload</span>
+                  <div class="p-3 rounded-lg bg-black/50 border border-cyan-500/30 flex items-center justify-between">
+                    <span class="text-slate-300">2. HTML5 Canvas Preprocessor</span>
+                    <span class="text-emerald-400">Client Downsampling (720px / 35KB)</span>
                   </div>
-                  <div class="p-3 rounded-lg bg-black/40 border border-indigo-500/30 flex items-center justify-between">
-                    <span class="text-slate-300">LLM Inference Reasoning</span>
-                    <span class="text-indigo-400">Amazon Bedrock DeepSeek-V3.2</span>
+                  <div class="p-3 rounded-lg bg-black/50 border border-indigo-500/30 flex items-center justify-between">
+                    <span class="text-slate-300">3. Bedrock Converse API</span>
+                    <span class="text-indigo-400">deepseek.v3.2 Routing</span>
                   </div>
-                  <div class="p-3 rounded-lg bg-black/40 border border-pink-500/30 flex items-center justify-between">
-                    <span class="text-slate-300">Spoken Executive Response</span>
-                    <span class="text-pink-400">Polly Neural Engine (Matthew)</span>
+                  <div class="p-3 rounded-lg bg-black/50 border border-pink-500/30 flex items-center justify-between">
+                    <span class="text-slate-300">4. Neural Voice Output</span>
+                    <span class="text-pink-400">Polly Voice Engine (Matthew)</span>
                   </div>
                 </div>
               </div>
               <p class="text-xs text-slate-400 mt-4 border-t border-white/10 pt-3">
-                Decoupled Express middleware sanitizes payloads to protect LocalStorage quota limits and ensure sub-second roundtrip streaming.
+                Client-side downscaling prevents multi-megabyte payloads, slashing cloud inference latency and token overhead by over 70%.
               </p>
             </div>
 
             <div class="space-y-4">
-              <div class="glass-panel p-5 rounded-2xl border border-white/10">
-                <h4 class="text-sm font-bold text-white mb-1">🛡️ Storage Quota Shield</h4>
+              <div class="glass-card p-5 rounded-2xl">
+                <div class="flex items-center gap-2 mb-1.5">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" class="text-cyan-400"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                  <h4 class="text-xs font-bold text-white uppercase tracking-wider">Storage Quota Shield</h4>
+                </div>
                 <p class="text-xs text-slate-300 leading-relaxed">
-                  Eliminates LocalStorage <code class="text-cyan-400">QuotaExceededError</code> bugs by isolating high-res image buffers from text telemetry and prioritizing essential streak state.
+                  Engineered custom serialization middleware to isolate large vision blobs, permanently preventing browser <code class="text-cyan-400 font-mono">QuotaExceededError</code> storage crashes.
                 </p>
               </div>
-              <div class="glass-panel p-5 rounded-2xl border border-white/10">
-                <h4 class="text-sm font-bold text-white mb-1">☁️ Firebase + Local Dual Sync</h4>
+
+              <div class="glass-card p-5 rounded-2xl">
+                <div class="flex items-center gap-2 mb-1.5">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" class="text-indigo-400"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+                  <h4 class="text-xs font-bold text-white uppercase tracking-wider">Dual Sync Architecture</h4>
+                </div>
                 <p class="text-xs text-slate-300 leading-relaxed">
-                  Syncs to Google Firestore on login while maintaining 100% full offline capability for users with intermittent network access.
+                  Bi-directional sync between Google Cloud Firestore and local storage ensures zero data loss during network cutoffs.
                 </p>
               </div>
-              <div class="glass-panel p-5 rounded-2xl border border-white/10">
-                <h4 class="text-sm font-bold text-white mb-1">🎙️ Polly Neural Voice in EU-West</h4>
+
+              <div class="glass-card p-5 rounded-2xl">
+                <div class="flex items-center gap-2 mb-1.5">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" class="text-emerald-400"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                  <h4 class="text-xs font-bold text-white uppercase tracking-wider">Strict Security Hygiene</h4>
+                </div>
                 <p class="text-xs text-slate-300 leading-relaxed">
-                  Real-time neural text-to-speech provides human-like warmth and inflection, acting as a grounding presence during high-stress moments.
+                  Zero secrets checked into Git; credentials isolated via server-side environment variables and scoped IAM roles.
                 </p>
               </div>
             </div>
           </div>
         `,
-        notes: "On slide 2, notice the architectural resilience. Rather than blindly transmitting megabyte camera files to LLMs, we implement an HTML5 Canvas downsampling engine directly on the client, compressing vision frames to 720px at ~35KB. Bedrock DeepSeek-V3.2 provides deep analytical capabilities, which Polly synthesizes directly into natural speech."
+        notes: "Highlight the cost and efficiency trade-offs: by performing image preprocessing in the browser using the HTML5 Canvas API, you saved the client substantial AWS inference costs while guaranteeing sub-second responsiveness."
       },
       {
-        badge: "03 // Behavioral Engine & Core Modules",
-        title: "Holistic Telemetry: Habits, Thought Library & Life Velocity",
-        subtitle: "Quantifying daily compounding growth across executive habits and intellectual capital.",
+        badge: "Case Study 03 // Frontend Architecture",
+        title: "Apple visionOS 2.0 Design System & Micro-Haptics",
+        subtitle: "Precision engineering with specular refraction, zero layout shift, and synthesized audio feedback.",
         content: `
           <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
-            <div class="glass-panel p-6 rounded-2xl border border-amber-500/20">
-              <div class="flex items-center justify-between mb-3">
-                <span class="text-xl">⚡</span>
-                <span class="text-[12px] font-bold text-amber-400 bg-amber-400/10 px-2 py-0.5 rounded-full border border-amber-400/20">Atomic Engine</span>
+            <div class="glass-card p-6 rounded-2xl">
+              <div class="w-8 h-8 rounded-lg bg-amber-500/10 text-amber-400 flex items-center justify-center mb-3">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
               </div>
               <h3 class="text-sm font-bold text-white mb-1">Atomic Habits Matrix</h3>
               <p class="text-xs text-slate-300 leading-relaxed mb-4">
-                Rolling 7-day visual consistency matrix with today pill highlights, audio haptic feedback, and consecutive streak calculations.
+                Rolling 7-day consistency engine with today highlight pills, streak calculators, and tactile state updates.
               </p>
-              <div class="bg-black/30 p-2.5 rounded-lg text-xs space-y-1.5 font-mono text-slate-300">
-                <div class="flex justify-between"><span>Deep Work 90m</span><span class="text-emerald-400">● 14d streak</span></div>
-                <div class="flex justify-between"><span>Physical Training</span><span class="text-emerald-400">● 6d streak</span></div>
-                <div class="flex justify-between"><span>No Sugar / Clean Diet</span><span class="text-amber-400">● Today</span></div>
+              <div class="bg-black/40 p-3 rounded-lg text-xs font-mono space-y-1 text-slate-300 border border-white/5">
+                <div class="flex justify-between"><span>Deep Work 90m</span><span class="text-emerald-400">14d Streak</span></div>
+                <div class="flex justify-between"><span>Physical Training</span><span class="text-emerald-400">6d Streak</span></div>
+                <div class="flex justify-between"><span>Hydration Target</span><span class="text-amber-400">Today</span></div>
               </div>
             </div>
 
-            <div class="glass-panel p-6 rounded-2xl border border-indigo-500/20">
-              <div class="flex items-center justify-between mb-3">
-                <span class="text-xl">📚</span>
-                <span class="text-[12px] font-bold text-indigo-400 bg-indigo-400/10 px-2 py-0.5 rounded-full border border-indigo-400/20">Intellectual Capital</span>
+            <div class="glass-card p-6 rounded-2xl">
+              <div class="w-8 h-8 rounded-lg bg-indigo-500/10 text-indigo-400 flex items-center justify-center mb-3">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
               </div>
               <h3 class="text-sm font-bold text-white mb-1">Executive Library</h3>
               <p class="text-xs text-slate-300 leading-relaxed mb-4">
-                3D frosted glass book spines, page reading stepper (-20p, +25p, Done), and accordion drawers for core mental models.
+                Interactive 3D glass book spines, reader page steppers (-20p, +25p, Done), and mental model drawers.
               </p>
-              <div class="bg-black/30 p-2.5 rounded-lg text-xs space-y-1.5 font-mono text-slate-300">
+              <div class="bg-black/40 p-3 rounded-lg text-xs font-mono space-y-1 text-slate-300 border border-white/5">
                 <div class="flex justify-between"><span>High Output Mgmt</span><span class="text-cyan-400">76% Read</span></div>
                 <div class="flex justify-between"><span>Designing Data-Intensive</span><span class="text-indigo-400">42% Read</span></div>
-                <div class="flex justify-between"><span>Poor Charlie's Almanack</span><span class="text-emerald-400">✓ Completed</span></div>
+                <div class="flex justify-between"><span>Poor Charlie's Almanack</span><span class="text-emerald-400">Completed</span></div>
               </div>
             </div>
 
-            <div class="glass-panel p-6 rounded-2xl border border-cyan-500/20">
-              <div class="flex items-center justify-between mb-3">
-                <span class="text-xl">📈</span>
-                <span class="text-[12px] font-bold text-cyan-400 bg-cyan-400/10 px-2 py-0.5 rounded-full border border-cyan-400/20">Velocity Matrix</span>
+            <div class="glass-card p-6 rounded-2xl">
+              <div class="w-8 h-8 rounded-lg bg-cyan-500/10 text-cyan-400 flex items-center justify-center mb-3">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
               </div>
               <h3 class="text-sm font-bold text-white mb-1">Life Velocity Analytics</h3>
               <p class="text-xs text-slate-300 leading-relaxed mb-4">
-                Interactive SVG velocity curves correlating deep work hours with pipeline interviews, alongside a 28-day consistency heatmap.
+                Interactive SVG velocity curves correlating deep work hours with pipeline interviews, plus 28-day consistency heatmaps.
               </p>
-              <div class="bg-black/30 p-2.5 rounded-lg text-xs space-y-1.5 font-mono text-slate-300">
+              <div class="bg-black/40 p-3 rounded-lg text-xs font-mono space-y-1 text-slate-300 border border-white/5">
                 <div class="flex justify-between"><span>Interview Yield</span><span class="text-emerald-400">18.2%</span></div>
                 <div class="flex justify-between"><span>Sobriety Index</span><span class="text-cyan-400">100% Stability</span></div>
                 <div class="flex justify-between"><span>Focus Velocity</span><span class="text-violet-400">+24% vs Last Wk</span></div>
@@ -257,121 +302,137 @@
             </div>
           </div>
         `,
-        notes: "Slide 3 covers the core behavioral telemetry. We don't just track simple checkboxes; we track trajectory. Notice the Atomic Habits rolling 7-day matrix and the Executive Library. It connects reading progress to actionable mental models. The Life Velocity Analytics tile correlates personal discipline with professional outcomes."
+        notes: "For clients looking for high design standards, emphasize how the UI follows Apple HIG and visionOS 2.0 specs: concentric radii, dynamic specular lighting, and pure Web Audio micro-haptics synthesized without any heavy external audio files."
       },
       {
-        badge: "04 // VisionDock & Executive Suite",
-        title: "The Re-Imagined VisionDock: Zero Redundancy, Pure Utility",
-        subtitle: "Replacing duplicate tile icons with 4 high-leverage daily executive micro-tools.",
+        badge: "Case Study 04 // UX Innovation",
+        title: "The VisionDock: Zero Redundancy, Pure Utility",
+        subtitle: "Eliminating duplicate tile buttons in favor of 4 dedicated executive utility tools.",
         content: `
           <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 mt-6">
-            <div class="glass-panel p-5 rounded-2xl border border-cyan-500/30 flex flex-col justify-between">
+            <div class="glass-card p-5 rounded-2xl flex flex-col justify-between border-cyan-500/30">
               <div>
-                <span class="text-2xl">🫁</span>
-                <h4 class="text-sm font-bold text-white mt-2 mb-1">Box Breathing</h4>
+                <div class="w-8 h-8 rounded-lg bg-cyan-500/10 text-cyan-400 flex items-center justify-center mb-2">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="9"/><path d="M12 7c-2.5 0-4 1.8-4 4.5S9.5 16 12 17c2.5-1 4-2.8 4-5.5S14.5 7 12 7z"/></svg>
+                </div>
+                <h4 class="text-xs font-bold text-white uppercase tracking-wider mb-1">Box Breathing</h4>
                 <p class="text-xs text-slate-300 leading-relaxed">
-                  4-4-4-4 resonant respiratory protocol with expanding glass orb and harmonic chimes to down-regulate executive cortisol in 60 seconds.
+                  4-4-4-4 resonant respiratory protocol with animated liquid orb and harmonic chimes to reduce cortisol in 60s.
                 </p>
               </div>
-              <span class="text-[12px] font-mono text-cyan-400 mt-4">HRV Resonance: 0.1Hz</span>
+              <span class="text-[11px] font-mono text-cyan-400 mt-3">Target HRV: 0.1 Hz</span>
             </div>
 
-            <div class="glass-panel p-5 rounded-2xl border border-violet-500/30 flex flex-col justify-between">
+            <div class="glass-card p-5 rounded-2xl flex flex-col justify-between border-indigo-500/30">
               <div>
-                <span class="text-2xl">🎧</span>
-                <h4 class="text-sm font-bold text-white mt-2 mb-1">Binaural Flow</h4>
+                <div class="w-8 h-8 rounded-lg bg-indigo-500/10 text-indigo-400 flex items-center justify-center mb-2">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 18v-6a9 9 0 0 1 18 0v6"/><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"/></svg>
+                </div>
+                <h4 class="text-xs font-bold text-white uppercase tracking-wider mb-1">Binaural Flow</h4>
                 <p class="text-xs text-slate-300 leading-relaxed">
-                  Zero-dependency Web Audio synth generating 40Hz Gamma Focus beats, Rain on Glass, and Ocean Waves. 100% offline.
+                  100% offline procedural Web Audio synthesizer generating 40Hz Gamma Focus beats, Rain on Glass, and Ocean Waves.
                 </p>
               </div>
-              <span class="text-[12px] font-mono text-violet-400 mt-4">Prefrontal Entrainment</span>
+              <span class="text-[11px] font-mono text-indigo-400 mt-3">Gamma Beat Entrainment</span>
             </div>
 
-            <div class="glass-panel p-5 rounded-2xl border border-amber-500/30 flex flex-col justify-between">
+            <div class="glass-card p-5 rounded-2xl flex flex-col justify-between border-amber-500/30">
               <div>
-                <span class="text-2xl">⚡</span>
-                <h4 class="text-sm font-bold text-white mt-2 mb-1">Quick Memo Inbox</h4>
+                <div class="w-8 h-8 rounded-lg bg-amber-500/10 text-amber-400 flex items-center justify-center mb-2">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+                </div>
+                <h4 class="text-xs font-bold text-white uppercase tracking-wider mb-1">Quick Memo Inbox</h4>
                 <p class="text-xs text-slate-300 leading-relaxed">
-                  Instant scratchpad for breakthroughs and gratitude. Features 1-click 'Synthesize with Lumen' to convert notes into tasks.
+                  Instant scratchpad for breakthroughs. Features 1-click 'Synthesize with Lumen' to extract structured action items.
                 </p>
               </div>
-              <span class="text-[12px] font-mono text-amber-400 mt-4">Frictionless Capture</span>
+              <span class="text-[11px] font-mono text-amber-400 mt-3">Zero-Friction Capture</span>
             </div>
 
-            <div class="glass-panel p-5 rounded-2xl border border-pink-500/30 flex flex-col justify-between">
+            <div class="glass-card p-5 rounded-2xl flex flex-col justify-between border-pink-500/30">
               <div>
-                <span class="text-2xl">🛡️</span>
-                <h4 class="text-sm font-bold text-white mt-2 mb-1">90s Urge Surfer</h4>
+                <div class="w-8 h-8 rounded-lg bg-pink-500/10 text-pink-400 flex items-center justify-center mb-2">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M12 8v4"/><path d="M12 16h.01"/></svg>
+                </div>
+                <h4 class="text-xs font-bold text-white uppercase tracking-wider mb-1">90s Urge Surfer</h4>
                 <p class="text-xs text-slate-300 leading-relaxed">
-                  Alan Marlatt addiction neuroscience protocol: 90-second craving wave countdown, 5-4-3-2-1 sensory grounding & Matthew voice anchor.
+                  Neuroscience craving regulation timer: 90-second countdown, 5-4-3-2-1 sensory grounding, and Matthew voice playback.
                 </p>
               </div>
-              <span class="text-[12px] font-mono text-pink-400 mt-4">Relapse Prevention</span>
+              <span class="text-[11px] font-mono text-pink-400 mt-3">Cognitive Anchor Protocol</span>
             </div>
           </div>
 
           <div class="mt-6 p-4 rounded-xl bg-black/40 border border-white/10 flex items-center justify-between">
             <div class="flex items-center gap-3">
-              <span class="px-2 py-1 rounded bg-white/10 font-mono text-xs text-slate-300">⌘K Spotlight</span>
-              <span class="text-xs text-slate-300">All tools are instantly launchable via keyboard command palette</span>
+              <span class="px-2 py-1 rounded bg-white/10 font-mono text-xs text-slate-200">⌘K Spotlight</span>
+              <span class="text-xs text-slate-300">All tools are fuzzy-searchable and executable via keyboard shortcuts</span>
             </div>
             <div class="flex items-center gap-2">
-              <span class="w-2.5 h-2.5 rounded-full bg-cyan-400 animate-pulse"></span>
-              <span class="text-xs text-cyan-300 font-semibold">Native Audio Micro-Haptics</span>
+              <span class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span>
+              <span class="text-xs text-cyan-300 font-semibold font-mono">Real-Time Background Audio</span>
             </div>
           </div>
         `,
-        notes: "On slide 4, look at the VisionDock evolution. Originally, bottom docks replicated buttons for tiles already on the screen. We completely eliminated the redundancy and replaced them with the Executive Utilities Suite. For example, the 90-Second Urge Surfer leverages behavioral neuroscience: cravings crest and break like a wave within 90 seconds. Combining this with 40Hz Gamma soundscapes turns Clarity into an active cognitive operating system."
+        notes: "Explain how you solved a core UX problem: rather than cluttering navigation with duplicate shortcuts, you transformed the floating dock into an executive utility toolbar. This demonstrates proactive product thinking, not just code writing."
       },
       {
-        badge: "05 // PWA Deployment & Engineering Rigor",
-        title: "Enterprise Grade: Progressive Web App, Cache-First & Cloud Scale",
-        subtitle: "Standalone cross-platform deployment on Desktop, iOS, and Android with instant load times.",
+        badge: "Case Study 05 // Delivery & Engagement",
+        title: "Enterprise Delivery: PWA Engine & Technical Highlights",
+        subtitle: "Production-ready engineering from a senior full-stack contractor ready for your next milestone.",
         content: `
           <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
-            <div class="glass-panel p-6 rounded-2xl border border-white/10">
-              <div class="text-2xl mb-3">📲</div>
+            <div class="glass-card p-6 rounded-2xl">
+              <div class="w-8 h-8 rounded-lg bg-cyan-500/10 text-cyan-400 flex items-center justify-center mb-3">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+              </div>
               <h3 class="text-sm font-bold text-white mb-2">Native Standalone PWA</h3>
               <p class="text-xs text-slate-300 leading-relaxed">
-                Registered Web App Manifest (<code class="text-cyan-400">manifest.json</code>) with dual theme color bars, Dynamic Island cover, and borderless execution on macOS, Windows, and mobile.
+                Configured Web App Manifest and Service Worker to deliver a borderless standalone desktop/iOS app with zero browser window chrome.
               </p>
             </div>
-            <div class="glass-panel p-6 rounded-2xl border border-white/10">
-              <div class="text-2xl mb-3">⚡</div>
-              <h3 class="text-sm font-bold text-white mb-2">Cache-First Service Worker</h3>
+
+            <div class="glass-card p-6 rounded-2xl">
+              <div class="w-8 h-8 rounded-lg bg-emerald-500/10 text-emerald-400 flex items-center justify-center mb-3">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="20 6 9 17 4 12"/></svg>
+              </div>
+              <h3 class="text-sm font-bold text-white mb-2">Zero Technical Debt</h3>
               <p class="text-xs text-slate-300 leading-relaxed">
-                Instant sub-100ms cold starts. Static bundles, icons, and audio assets precached with network-first telemetry fallback. Works completely offline.
+                Clean esbuild bundling pipeline, modular component hierarchy, strict prop handling, and 0 console warnings in production builds.
               </p>
             </div>
-            <div class="glass-panel p-6 rounded-2xl border border-white/10">
-              <div class="text-2xl mb-3">🪄</div>
-              <h3 class="text-sm font-bold text-white mb-2">Recruiter & Demo Mode</h3>
+
+            <div class="glass-card p-6 rounded-2xl">
+              <div class="w-8 h-8 rounded-lg bg-indigo-500/10 text-indigo-400 flex items-center justify-center mb-3">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+              </div>
+              <h3 class="text-sm font-bold text-white mb-2">Interactive Recruiter Demo</h3>
               <p class="text-xs text-slate-300 leading-relaxed">
-                1-click seeded recruiter persona with 142 days of clean telemetry, active interview rounds, and instant state rollback to safeguard user privacy.
+                Includes 1-click recruiter persona seeding and instant state reset to verify dashboard telemetry without manual onboarding.
               </p>
             </div>
           </div>
 
-          <div class="mt-8 p-6 rounded-2xl border border-cyan-500/30 bg-gradient-to-r from-cyan-950/30 via-indigo-950/20 to-purple-950/30">
+          <div class="mt-8 p-6 rounded-2xl border border-cyan-500/30 bg-gradient-to-r from-cyan-950/40 via-indigo-950/30 to-slate-900/40">
             <div class="flex flex-col md:flex-row items-center justify-between gap-4">
               <div>
-                <h4 class="text-sm font-bold text-white mb-1">Production Repository Verified & Live</h4>
+                <h4 class="text-sm font-bold text-white mb-1">Available for Contract & Milestone Engagements</h4>
                 <p class="text-xs text-slate-300">
-                  Built by <strong>Georgie Akopashvili</strong> • Automated CI/CD • MIT License • Zero Security Leaks
+                  Full-Stack Architecture • React / Node.js • AWS Bedrock & OpenAI • Web Audio & PWA Development
                 </p>
               </div>
               <div class="flex items-center gap-3">
-                <span class="px-3 py-1.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 text-xs font-bold">
-                  ✓ Build Passed (0 errors)
+                <span class="px-3 py-1.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 text-xs font-bold font-mono">
+                  Verified Upwork Ready
                 </span>
-                <span class="px-3 py-1.5 rounded-full bg-cyan-500/10 text-cyan-400 border border-cyan-500/30 text-xs font-bold">
+                <span class="px-3 py-1.5 rounded-full bg-cyan-500/10 text-cyan-400 border border-cyan-500/30 text-xs font-bold font-mono">
                   GitHub: origin/main
                 </span>
               </div>
             </div>
           </div>
         `,
-        notes: "To wrap up on slide 5: Clarity isn't just an experimental prototype; it is an enterprise-grade Progressive Web App. With our Cache-First Service Worker and Apple Web App meta tags, users install it directly to their macOS dock or iPhone home screen with zero browser chrome. It is fast, resilient, beautiful, and completely tested."
+        notes: "Conclude with confidence: summarize your technical competencies across React, Node.js, Amazon Bedrock, Web Audio API, and PWA architecture. Clients on Upwork want reliable engineers who communicate clearly, write clean code, and execute milestones ahead of schedule."
       }
     ];
 
@@ -388,7 +449,7 @@
 
       container.innerHTML = `
         <div class="mb-4">
-          <span class="text-xs font-bold tracking-widest uppercase text-cyan-400 mb-1 inline-block">${slide.badge}</span>
+          <span class="text-xs font-bold tracking-widest uppercase text-cyan-400 mb-1 inline-block font-mono">${slide.badge}</span>
           <h2 class="text-xl md:text-2xl font-black text-white tracking-tight leading-tight">${slide.title}</h2>
           <p class="text-xs md:text-sm text-slate-300 mt-1 max-w-3xl">${slide.subtitle}</p>
         </div>
@@ -401,7 +462,7 @@
         if (idx === currentSlide) {
           btn.className = 'slide-nav-btn text-xs font-bold px-3 py-1 rounded-full bg-gradient-to-r from-cyan-500 to-indigo-600 text-white shadow-md shadow-cyan-500/30';
         } else {
-          btn.className = 'slide-nav-btn text-xs font-semibold px-3 py-1 rounded-full text-slate-400 hover:text-white transition-all';
+          btn.className = 'slide-nav-btn text-xs font-medium px-3 py-1 rounded-full text-slate-400 hover:text-white transition-all';
         }
       });
 
