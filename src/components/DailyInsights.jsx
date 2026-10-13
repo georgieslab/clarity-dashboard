@@ -132,16 +132,16 @@ export default function DailyInsights({ isCollapsed, onToggleCollapse, onHide })
   };
 
   const formatInsights = (text) => {
-    // Split by double newlines to get sections
-    const sections = text.split('\n\n');
+    if (!text) return null;
+    const sections = text.split('\n\n').filter(Boolean);
     
     return sections.map((section, i) => {
       // Check if it's a header line
-      if (section.includes('What\'s Working') || section.includes('✨')) {
+      if (section.includes("What's Working") || section.includes('✨')) {
         return (
           <div key={i} className="insight-section">
             <h3 className="insight-header working">✨ What's Working</h3>
-            <p className="insight-text">{section.replace(/\*\*.*?\*\*/g, '').replace('✨', '').trim()}</p>
+            <p className="insight-text">{section.replace(/\*\*.*?\*\*/g, '').replace('✨', '').replace(/What's Working/gi, '').trim()}</p>
           </div>
         );
       }
@@ -150,7 +150,7 @@ export default function DailyInsights({ isCollapsed, onToggleCollapse, onHide })
         return (
           <div key={i} className="insight-section">
             <h3 className="insight-header attention">⚠️ What Needs Attention</h3>
-            <p className="insight-text">{section.replace(/\*\*.*?\*\*/g, '').replace('⚠️', '').trim()}</p>
+            <p className="insight-text">{section.replace(/\*\*.*?\*\*/g, '').replace('⚠️', '').replace(/What Needs Attention/gi, '').trim()}</p>
           </div>
         );
       }
@@ -159,7 +159,7 @@ export default function DailyInsights({ isCollapsed, onToggleCollapse, onHide })
         return (
           <div key={i} className="insight-section action">
             <h3 className="insight-header action">🎯 One Action This Week</h3>
-            <p className="insight-text">{section.replace(/\*\*.*?\*\*/g, '').replace('🎯', '').trim()}</p>
+            <p className="insight-text">{section.replace(/\*\*.*?\*\*/g, '').replace('🎯', '').replace(/One Action/gi, '').trim()}</p>
           </div>
         );
       }
@@ -169,8 +169,12 @@ export default function DailyInsights({ isCollapsed, onToggleCollapse, onHide })
         return null;
       }
       
-      return null;
-    });
+      return (
+        <div key={i} className="insight-section">
+          <p className="insight-text">{section.trim()}</p>
+        </div>
+      );
+    }).filter(Boolean);
   };
 
   return (
@@ -183,10 +187,10 @@ export default function DailyInsights({ isCollapsed, onToggleCollapse, onHide })
           <div className="card-header-actions" onClick={e => e.stopPropagation()}>
             {isCollapsed && (
               <span className="card-stat-pill">
-                {insights ? 'Analysis Ready' : 'GPT-Sol Ready'}
+                {insights ? 'Analysis Ready' : 'DeepSeek Ready'}
               </span>
             )}
-            <span className="card-badge">OpenAI GPT-6.1 Sol</span>
+            <span className="card-badge">Bedrock DeepSeek-V3.2</span>
             <button 
               className="card-action-btn"
               onClick={onToggleCollapse}

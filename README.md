@@ -1,61 +1,103 @@
-# 🔮 Clarity — Executive Telemetry & Multimodal AI Copilot
+# 🔮 Clarity — Executive Telemetry, Multimodal AI & Apple Glass PWA
 
 [![React](https://img.shields.io/badge/React-18.3-61DAFB?logo=react&logoColor=white)](https://reactjs.org/)
 [![Node.js](https://img.shields.io/badge/Node.js-Express-339933?logo=node.js&logoColor=white)](https://nodejs.org/)
-[![OpenAI GPT-6.1 Sol](https://img.shields.io/badge/AI_Engine-OpenAI_ChatGPT-412991?logo=openai&logoColor=white)](https://openai.com/)
-[![AWS Bedrock](https://img.shields.io/badge/Cloud_AI-Amazon_Bedrock-FF9900?logo=amazon-aws&logoColor=white)](https://aws.amazon.com/bedrock/)
+[![Amazon Bedrock](https://img.shields.io/badge/Cloud_AI-Amazon_Bedrock-FF9900?logo=amazon-aws&logoColor=white)](https://aws.amazon.com/bedrock/)
+[![Amazon Polly](https://img.shields.io/badge/Voice_AI-Amazon_Polly-FF9900?logo=amazon-aws&logoColor=white)](https://aws.amazon.com/polly/)
+[![PWA Ready](https://img.shields.io/badge/PWA-Installable_&_Offline-4A154B?logo=pwa&logoColor=white)](https://web.dev/progressive-web-apps/)
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
-**Clarity** is a full-stack executive life telemetry dashboard and multimodal AI copilot built on Apple's **visionOS liquid glass design system**. It combines personal wellness tracking (sobriety, therapy, focus routines, and job search pipeline) with **Lumen**, a real-time voice and vision AI copilot powered by **OpenAI ChatGPT / GPT-6.1 Sol** and **Amazon Bedrock**.
+**Clarity** is an executive-grade life telemetry dashboard, multimodal AI copilot, and Progressive Web App built with Apple’s **visionOS 2.0 / macOS Sequoia liquid glass** design system. 
+
+It combines holistic executive wellness and career tracking (Sobriety, Career Pipeline, Therapy, Atomic Habits, Executive Thought Library, and Focus Rhythm) with **Lumen**, an ambient multimodal voice and vision partner powered by **Amazon Bedrock (DeepSeek-V3.2 / Converse API)** and **Amazon Polly Neural Voice (Matthew)**.
 
 ---
 
-## 🌟 Key Features
+## 🌟 What's Inside
 
-### 🎙️ 1. Lumen — Multimodal Voice & Vision Copilot
-- **Voice-to-Voice Intelligence**: Conversational voice agent backed by **Amazon Polly Neural Engine** (Calm Male Voice: *Matthew*) and Web Speech API fallbacks.
-- **Multimodal AI Vision**: Capture or attach photos to analyze physical notes, documents, or environments. Features client-side HTML5 canvas downscaling (`720px / ~35KB JPEG payloads`) for instant response times.
-- **ChatGPT Engine Routing**: Priority model chain powered by **OpenAI GPT-6.1 Sol**, **GPT-4o**, and **Amazon Bedrock**.
-- **Collapsed Floating Badge**: Sleek floating glass badge with live status pulse dot that opens the Lumen assistant from anywhere.
+### 📱 1. Standalone Progressive Web App (PWA) & Offline Resilience
+* **Desktop & Mobile Installability**: Runs borderless as a standalone native app on macOS, Windows, iOS, and Android.
+* **Service Worker Cache-First Engine** (`public/sw.js`): High-speed asset precaching with graceful offline API fallback telemetry.
+* **Apple Mobile Integration**: Native iOS status bar translucency, notch/Dynamic Island edge-to-edge support (`viewport-fit=cover`), and home-screen install guide.
 
-### 📊 2. Executive Telemetry Dashboard Modules
-- **📈 Life Velocity & Telemetry Analytics**: Interactive SVG velocity chart (7d/14d/30d focus vs. applications), 28-day consistency heatmap matrix, and correlation index metrics (Interview yield %, Focus velocity, Sobriety stability).
-- **🌱 Sobriety Tracker**: Real-time clean streak counter with milestone badges and motivational celebrations.
-- **💼 Job Search Pipeline**: Drag-and-stage application tracker with active **Interview Shimmer Mode** for glowing active interview cards.
-- **🧠 Therapy Tracker**: Reflection logs, emotional horizon trends, and mental health micro-badges.
-- **⏳ Focus Rhythm (Pomodoro)**: Customizable work/break timer routines with daily telemetry metrics.
-- **✨ Executive Intelligence Briefing**: AI daily synthesis report powered by **OpenAI ChatGPT** with a dynamic 3D neural thinking orb stage.
+### 🎙️ 2. Lumen — Multimodal Voice & Vision Copilot
+* **Amazon Bedrock DeepSeek-V3.2 Engine**: Real-time conversational partner powered by high-reasoning LLMs via the AWS Converse API.
+* **Amazon Polly Neural TTS**: Spoken responses generated with Polly's natural, calm male executive voice (*Matthew*).
+* **HTML5 Canvas Downscaled Vision**: Instant camera & screenshot analysis compressed to optimized `720px / ~35KB` JPEG payloads.
+* **Interactive Floating Capsule**: Spatial frosted glass indicator with live audio waveform pulses.
 
-### 🎨 3. Apple visionOS Liquid Glass Design System
-- **Specular Highlights & Ambient Fluid Orbs**: Multi-stop glass refraction edges and organic ambient background blur.
-- **Customizable Neon Tile Outer Glows**: Distinct aura glows for each module (Rose, Emerald, Indigo, Amber, Cyan) with global and per-popover ON/OFF controls.
-- **Tiles Layout Customizer**: Collapse, expand, or hide modules to tailor your workflow workspace.
-- **Mobile-First Responsiveness**: Converts into a native mobile bottom-sheet drawer on smartphones and responsive single-column layouts across all devices.
+### 🫁 3. VisionDock & The Executive Utilities Suite
+Floating visionOS bottom dock stripped of duplicate tiles and equipped with high-leverage daily executive micro-tools:
+* **🫁 Vagus Nerve Box Breathing Reset**: 4-4-4-4 resonant respiratory protocol (Inhale 4s &rarr; Hold 4s &rarr; Exhale 4s &rarr; Rest 4s) with an animated liquid orb and harmonic chimes.
+* **🎧 Binaural Flow Soundscapes**: Zero-dependency, 100% offline procedural Web Audio synthesizer:
+  * **40Hz Gamma Focus** (216Hz + 256Hz binaural beat for deep cognitive flow)
+  * **Rain on Glass** (Acoustic pink noise filter)
+  * **Deep Ocean Waves** (0.12Hz LFO rhythmic tidal sweep)
+  * **Zen Resonance** (432Hz harmonic drone)
+* **⚡ Executive Quick Memo & Idea Inbox**: Frictionless scratchpad with instant local persistence and **"✨ Synthesize with Lumen"** task extraction.
+* **🛡️ 90-Second Urge Surfer & Anchor**: Alan Marlatt craving regulation protocol with a 90-second circular countdown, 5-4-3-2-1 sensory grounding, Matthew voice anchor, and 988 emergency lifelines.
+* **🔊 Audio Micro-Haptics Engine**: Native Web Audio synthesized spatial taps, ticks, and chimes with mute toggle.
 
-### 🛡️ 4. Enterprise-Grade Storage & Cloud Resilience
-- **Dual-Storage Synchronization**: Cloud sync via **Firebase Auth** and **Firestore** paired with local `localStorage` persistence.
-- **Storage Quota Protection**: Sanitizes image payloads to protect `localStorage` from `QuotaExceededError` crashes and isolates offline local state from cloud permission drops.
+### 📊 4. Core Executive Telemetry Modules
+* **⚡ Atomic Habits Matrix**: 7-day rolling micro-habit matrix, today highlight pills, streak engine, and tactile audio feedback.
+* **📚 Executive Thought & Reading Library**: 3D liquid glass book spines, page reading stepper (`-20p`, `+25p`, `✓ Done`), and mental model drawer.
+* **📈 Life Velocity Analytics**: Interactive SVG velocity chart (7d/14d/30d applications vs. deep work) and 28-day consistency heatmap matrix.
+* **🌱 Sobriety Tracker**: Real-time milestone unlocks with celebratory confetti micro-effects.
+* **💼 Career Pipeline**: Drag-and-stage application tracker with active **Interview Shimmer Mode**.
+* **🧠 Therapy Tracker**: Reflection logs, emotional horizon trends, and mental health micro-badges.
+* **⏳ Focus Rhythm (Pomodoro)**: Customizable work/break routines with daily velocity logs.
+* **✨ Executive Intelligence Briefing**: AI daily synthesis report with behavioral correlation insights.
+
+### ⌘ 5. Spotlight Command Palette & Showcase Modals
+* **Command Palette (<kbd>⌘K</kbd> / <kbd>Ctrl+K</kbd>)**: Keyboard-first navigation to jump to any module or launch executive tools.
+* **⚡ Engineering Architecture Modal**: Interactive system specs covering AWS Bedrock, Polly, Web Audio, and Firestore synchronization.
+* **🪄 Share Executive Telemetry Card**: Generate and export high-res frosted glass metric badges for social/portfolio showcase.
+* **✨ 1-Click Executive Demo Mode**: Pre-seeded recruiter persona (142d sobriety, active offers, deep work logs) with zero-risk state restoration.
 
 ---
 
-## 🏗️ Architecture & Tech Stack
+## 🏗️ Architecture & Technology Stack
 
-- **Frontend**: React 18, Vite 6, HTML5 Canvas API, Web Audio API, CSS3 Liquid Glass Tokens.
-- **Backend & Middleware**: Node.js, Express, CORS, dotenv, 15MB extended body parser.
-- **AI & Multimodal Engines**:
-  - **Amazon Bedrock**: `openai.gpt-6.1-sol`, `openai.gpt-6.1`, `openai.gpt-oss-120b-1:0`
-  - **OpenAI Direct API Fallback**: `gpt-4o`, `gpt-4o-mini`
-  - **Amazon Polly**: Neural Voice engine (`eu-west-1` Ireland deployment)
-- **Database & Auth**: Firebase Firestore, Firebase Authentication (Google Sign-In).
-- **Deployment**: Render / Node.js production server with automated GitHub CI/CD.
+```
+                                  ┌───────────────────────────────┐
+                                  │      Client (React + Vite)    │
+                                  │   visionOS Liquid Glass UI    │
+                                  └───────────────┬───────────────┘
+                                                  │
+                    ┌─────────────────────────────┼─────────────────────────────┐
+                    ▼                             ▼                             ▼
+       ┌────────────────────────┐    ┌────────────────────────┐    ┌────────────────────────┐
+       │   PWA Service Worker   │    │  Web Audio Synthesizer │    │   Spotlight & Canvas   │
+       │ Cache-First / Offline  │    │  Binaural 40Hz + Beats │    │ 720px Compressed Vision│
+       └────────────────────────┘    └────────────────────────┘    └────────────────────────┘
+                                                  │
+                                                  ▼
+                                  ┌───────────────────────────────┐
+                                  │     Node.js / Express API     │
+                                  │    Quota Shield & Fallback    │
+                                  └───────────────┬───────────────┘
+                                                  │
+                    ┌─────────────────────────────┴─────────────────────────────┐
+                    ▼                                                           ▼
+       ┌────────────────────────┐                                  ┌────────────────────────┐
+       │  Amazon Bedrock Engine │                                  │  Amazon Polly Service  │
+       │     DeepSeek-V3.2      │                                  │  Neural Voice: Matthew │
+       │  Converse API Routing  │                                  │  `eu-west-1` Ireland   │
+       └────────────────────────┘                                  └────────────────────────┘
+```
+
+* **Frontend**: React 18, Vite 6, Web Audio API procedural synthesis, HTML5 Canvas API, PWA Service Worker.
+* **Backend**: Node.js, Express, AWS SDK v3 (`@aws-sdk/client-bedrock-runtime`, `@aws-sdk/client-polly`).
+* **Cloud AI**: Amazon Bedrock (`deepseek.v3.2`), Amazon Polly Neural Voice (`Matthew`).
+* **Data & Cloud Sync**: Firebase Authentication (Google OAuth), Cloud Firestore, resilient `localStorage` quota shield.
 
 ---
 
 ## 🚀 Getting Started
 
 ### Prerequisites
-- **Node.js** v18.0.0 or higher
-- **npm** v8.0.0 or higher
+* **Node.js** v18.0.0 or higher
+* **npm** v9.0.0 or higher
 
 ### Installation
 
@@ -71,65 +113,78 @@
    ```
 
 3. **Configure Environment Variables**:
-   Create a `.env` file in the `clarity/` directory:
+   Create a `.env` file in the `clarity/` root directory:
    ```env
    PORT=3000
    NODE_ENV=development
 
-   # Amazon Bedrock & Polly Credentials
-   AWS_ACCESS_KEY_ID=your_aws_access_key
-   AWS_SECRET_ACCESS_KEY=your_aws_secret_key
+   # AWS Bedrock & Polly Credentials
    AWS_REGION=eu-north-1
    POLLY_REGION=eu-west-1
    POLLY_VOICE_ID=Matthew
-
-   # OpenAI Direct API Fallback Key
-   OPENAI_API_KEY=your_openai_api_key
-   VITE_OPENAI_API_KEY=your_openai_api_key
+   BEDROCK_MODEL_ID=deepseek.v3.2
+   AWS_ACCESS_KEY_ID=your_aws_access_key_id
+   AWS_SECRET_ACCESS_KEY=your_aws_secret_access_key
    ```
 
-4. **Run the Application**:
+4. **Launch Development Environment**:
+   ```bash
+   npm run dev:all
+   ```
+   * Open [http://localhost:5173](http://localhost:5173) in your browser.
 
-   - **Development (Frontend + Backend concurrently)**:
-     ```bash
-     npm run dev:all
-     ```
-     - Open [http://localhost:5173](http://localhost:5173) in your browser.
-
-   - **Production Build & Server**:
-     ```bash
-     npm run build
-     npm start
-     ```
+5. **Production Build & Execution**:
+   ```bash
+   npm run build
+   npm start
+   ```
+   * Accessible at [http://localhost:3000](http://localhost:3000).
 
 ---
 
-## 📂 Project Structure
+## 📂 Project Directory Structure
 
 ```text
 clarity/
-├── dist/                      # Static production bundle
-├── public/                    # Logos, SVG assets, and icons
+├── dist/                          # Minified production bundle & service worker
+├── public/                        # PWA Manifest, SW, logos & 192/512 icons
+│   ├── manifest.json              # Web App Manifest (standalone, theme colors)
+│   ├── sw.js                      # Cache-First Service Worker
+│   ├── icon-192.png               # High-res PWA icon (192x192)
+│   ├── icon-512.png               # High-res PWA icon (512x512)
+│   └── clarity.svg                # Brand SVG aperture logo
 ├── src/
 │   ├── components/
-│   │   ├── VoiceAssistant.jsx # Lumen Multimodal Voice & Vision Copilot
-│   │   ├── DailyInsights.jsx  # Executive Intelligence Briefing
-│   │   ├── TelemetryAnalytics.jsx # Life Velocity & Telemetry Analytics (SVG charts & heatmap)
-│   │   ├── JobSearchTracker.jsx# Job Pipeline & Interview Shimmer Mode
-│   │   ├── SobrietyTracker.jsx# Clean streak counter & milestones
-│   │   ├── TherapyTracker.jsx  # Reflection log & emotional horizon
-│   │   ├── PomodoroTimer.jsx   # Focus rhythm timer
-│   │   ├── AuthButton.jsx      # Google Firebase Sign-In
-│   │   └── ThemeToggle.jsx     # Floating theme switcher
+│   │   ├── VoiceAssistant.jsx     # Lumen Multimodal Voice & Vision Copilot
+│   │   ├── VisionDock.jsx         # visionOS floating dock with executive tools
+│   │   ├── BreathingResetModal.jsx# 4-4-4-4 Vagus Nerve Box Breathing
+│   │   ├── BinauralFlowModal.jsx  # 40Hz Gamma & Ambient Soundscapes Modal
+│   │   ├── QuickMemoModal.jsx     # Executive Quick Memo & Idea Inbox
+│   │   ├── UrgeSurferModal.jsx    # 90-Second Urge Surfer & Anchor
+│   │   ├── AtomicHabits.jsx       # 7-day rolling micro-habit matrix
+│   │   ├── ExecutiveLibrary.jsx   # 3D glass book spines & reading tracker
+│   │   ├── SpotlightCommand.jsx   # ⌘K Fuzzy Command Palette
+│   │   ├── ArchitectureModal.jsx  # Engineering specs & architecture modal
+│   │   ├── ShareCardModal.jsx     # Exportable glass executive telemetry card
+│   │   ├── PWAInstallBanner.jsx   # Standalone PWA install pill & iOS guide
+│   │   ├── DailyInsights.jsx      # Executive AI intelligence briefing
+│   │   ├── TelemetryAnalytics.jsx # Velocity charts & 28-day consistency heatmap
+│   │   ├── JobSearchTracker.jsx   # Job Pipeline & Interview Shimmer Mode
+│   │   ├── SobrietyTracker.jsx    # Clean streak counter & milestones
+│   │   ├── TherapyTracker.jsx     # Reflection logs & emotional horizon
+│   │   └── PomodoroTimer.jsx      # Focus rhythm timer
 │   ├── utils/
-│   │   ├── firebase.js        # Firebase Firestore & Auth integration
-│   │   ├── storage.js         # Decoupled LocalStorage & Cloud storage manager
-│   │   └── openai.js          # OpenAI ChatGPT backend API utilities
-│   ├── App.jsx                # Main dashboard container & tile customizer
-│   ├── App.css                # Apple visionOS liquid glass design system
-│   └── main.jsx               # React entry point
-├── build.js                   # High-performance esbuild bundler script
-├── server.js                  # Express API server for Bedrock OpenAI, Polly & Vision
+│   │   ├── audioEffects.js        # Spatial Web Audio micro-haptics
+│   │   ├── binauralEngine.js      # Procedural Web Audio synthesizer (100% offline)
+│   │   ├── demoData.js            # Recruiter persona seeding & restore engine
+│   │   ├── firebase.js            # Firestore & Google Auth integration
+│   │   ├── storage.js             # Dual local/cloud quota shield manager
+│   │   └── openai.js              # Bedrock DeepSeek-V3.2 API client
+│   ├── App.jsx                    # Core layout container & modal router
+│   ├── App.css                    # visionOS 2.0 liquid glass tokens & animations
+│   └── main.jsx                   # React 18 DOM mount point
+├── build.js                       # High-performance esbuild bundler script
+├── server.js                      # Express API server for Bedrock, Polly & Vision
 └── package.json
 ```
 
@@ -138,8 +193,6 @@ clarity/
 ## 📄 License
 
 Distributed under the MIT License. See `LICENSE` for more information.
-
----
 
 <p align="center">
   Built with precision by <strong>Georgie Akopashvili</strong> 🔮

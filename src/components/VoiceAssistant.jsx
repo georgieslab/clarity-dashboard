@@ -40,6 +40,26 @@ export default function VoiceAssistant() {
     loadSavedHistory();
   }, []);
 
+  // Listen for external open command (Dock, Spotlight, or Demo tour)
+  useEffect(() => {
+    const handleOpenExternal = () => setIsOpen(true);
+    const handleStorageUpdate = async () => {
+      try {
+        const saved = await storage.get('lumen_chat_history');
+        if (Array.isArray(saved) && saved.length > 0) {
+          setMessages(saved);
+        }
+      } catch (err) {}
+    };
+
+    window.addEventListener('clarity-open-lumen', handleOpenExternal);
+    window.addEventListener('clarity-storage-updated', handleStorageUpdate);
+    return () => {
+      window.removeEventListener('clarity-open-lumen', handleOpenExternal);
+      window.removeEventListener('clarity-storage-updated', handleStorageUpdate);
+    };
+  }, []);
+
   // Helper to downscale and compress images on the client before network/storage
   const compressImage = (file, maxDim = 640, quality = 0.6) => {
     return new Promise((resolve, reject) => {
@@ -419,20 +439,6 @@ export default function VoiceAssistant() {
           </filter>
         </defs>
       </svg>
-
-      {/* Floating Hovering Badge when Chat is Collapsed */}
-      {!isOpen && (
-        <div 
-          className="voice-fab-badge"
-          onClick={() => setIsOpen(true)}
-          role="button"
-          tabIndex={0}
-          title="Open Lumen AI Assistant"
-        >
-          <span className="voice-badge-dot"></span>
-          <span className="voice-badge-text">LUMEN AI Assistant</span>
-        </div>
-      )}
 
       {/* Floating Liquid Orb FAB */}
       <button 

@@ -4,6 +4,7 @@ import { BedrockRuntimeClient, ConverseCommand } from '@aws-sdk/client-bedrock-r
 import { PollyClient, SynthesizeSpeechCommand } from '@aws-sdk/client-polly';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
+import { existsSync } from 'fs';
 import dotenv from 'dotenv';
 
 dotenv.config();
@@ -37,13 +38,16 @@ const polly = new PollyClient({
   credentials: awsCredentials
 });
 
-// Serve static files in production with cache headers
-if (process.env.NODE_ENV === 'production') {
+// Serve static files from dist if built, or fallback to public
+if (existsSync(join(__dirname, 'dist'))) {
   app.use(express.static(join(__dirname, 'dist'), {
-    maxAge: '1d',
+    maxAge: process.env.NODE_ENV === 'production' ? '1d' : '0',
     etag: true,
     lastModified: true
   }));
+}
+if (existsSync(join(__dirname, 'public'))) {
+  app.use(express.static(join(__dirname, 'public')));
 }
 
 // Helper for OpenAI direct REST API fallback
@@ -177,9 +181,10 @@ User Context telemetry:
     // 1. Try Amazon Bedrock (OpenAI ChatGPT models)
     if (process.env.AWS_ACCESS_KEY_ID && process.env.AWS_SECRET_ACCESS_KEY) {
       const candidateModels = [
+        process.env.BEDROCK_MODEL_ID,
+        "deepseek.v3.2",
         "openai.gpt-6.1-sol",
         "openai.gpt-6.1",
-        process.env.BEDROCK_MODEL_ID,
         "openai.gpt-oss-120b-1:0",
         "openai.gpt-oss-20b-1:0"
       ].filter(Boolean);
@@ -276,9 +281,10 @@ app.post('/api/chat', async (req, res) => {
     // 1. Bedrock OpenAI models
     if (process.env.AWS_ACCESS_KEY_ID && process.env.AWS_SECRET_ACCESS_KEY) {
       const candidateModels = [
+        process.env.BEDROCK_MODEL_ID,
+        "deepseek.v3.2",
         "openai.gpt-6.1-sol",
         "openai.gpt-6.1",
-        process.env.BEDROCK_MODEL_ID,
         "openai.gpt-oss-120b-1:0",
         "openai.gpt-oss-20b-1:0"
       ].filter(Boolean);
@@ -317,7 +323,7 @@ app.post('/api/chat', async (req, res) => {
 });
 
 // --------------------------------------------------------------------------
-// Daily Insights Endpoint — Powered by OpenAI GPT-6.1 Sol / ChatGPT
+// Daily Insights Endpoint — Powered by Amazon Bedrock
 // --------------------------------------------------------------------------
 app.post('/api/insights', async (req, res) => {
   try {
@@ -325,13 +331,14 @@ app.post('/api/insights', async (req, res) => {
 
     let content = "";
 
-    // 1. Try Amazon Bedrock with OpenAI ChatGPT models
+    // 1. Try Amazon Bedrock models
     if (process.env.AWS_ACCESS_KEY_ID && process.env.AWS_SECRET_ACCESS_KEY) {
       const candidateModels = [
-        "openai.gpt-6.1-sol",
-        "openai.gpt-6.1",
         process.env.BEDROCK_INSIGHTS_MODEL_ID,
         process.env.BEDROCK_MODEL_ID,
+        "deepseek.v3.2",
+        "openai.gpt-6.1-sol",
+        "openai.gpt-6.1",
         "openai.gpt-oss-120b-1:0",
         "openai.gpt-oss-20b-1:0"
       ].filter(Boolean);
@@ -404,9 +411,12 @@ app.get('/api/health', (req, res) => {
   });
 });
 
-// Serve React app for all other routes (production)
-if (process.env.NODE_ENV === 'production') {
+// Serve React app for all other non-API routes if built
+if (existsSync(join(__dirname, 'dist', 'index.html'))) {
   app.get('*', (req, res) => {
+    if (req.path.startsWith('/api')) {
+      return res.status(404).json({ error: 'Endpoint not found' });
+    }
     res.sendFile(join(__dirname, 'dist', 'index.html'));
   });
 }

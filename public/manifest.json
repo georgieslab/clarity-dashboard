@@ -1,0 +1,52 @@
+{
+  "name": "Clarity — Executive Life & Growth Telemetry",
+  "short_name": "Clarity",
+  "description": "High-performance executive life, career, and sobriety telemetry dashboard with multimodal AI copilot.",
+  "start_url": "/",
+  "id": "/",
+  "display": "standalone",
+  "background_color": "#090d16",
+  "theme_color": "#090d16",
+  "orientation": "any",
+  "lang": "en",
+  "scope": "/",
+  "categories": ["productivity", "health", "lifestyle"],
+  "icons": [
+    {
+      "src": "/clarity.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Sobriety Streak",
+      "url": "/#sobriety",
+      "description": "Check daily sobriety progress"
+    },
+    {
+      "name": "Atomic Habits",
+      "url": "/#habits",
+      "description": "Log daily micro-habits"
+    },
+    {
+      "name": "Deep Work Timer",
+      "url": "/#pomodoro",
+      "description": "Start a 25-minute focus sprint"
+    }
+  ]
+}
+
